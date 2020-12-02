@@ -20,7 +20,7 @@ Route::get('/', function () {
 Route::get('/', function(){
     $controller = request('controller');
     $method = request('method');
-    return view('hola', ['controller'=>$controller, 'method'=> $method]);
+    return view('welcome', ['controller'=>$controller, 'method'=> $method]);
     });
 
 //Willcards
