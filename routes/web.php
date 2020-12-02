@@ -16,3 +16,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/', function(){
+    $controller = request('controller');
+    $method = request('method');
+    return view('hola', ['controller'=>$controller, 'method'=> $method]);
+    });
+
+//Willcards
