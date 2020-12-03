@@ -1,8 +1,10 @@
 <?php
 
 use App\Models\Classes;
+use App\Models\Courses;
 use App\Models\Enrollments;
 use App\Models\JoinQueries;
+use App\Models\Notifications;
 use App\Models\Schedules;
 use App\Models\Students;
 use App\Models\Teachers;
@@ -41,6 +43,11 @@ Route::get('/{type}', function($type){
         case 'Students': $c = new Students(); break;
         case 'Teachers': $c = new teachers(); break;
         case 'Admin': $c = new UsersAdmin();break;
+        case 'Notifications': $c = new Notifications();break;
+        case 'Percentage': $c = new \App\Models\Percentages();break;
+        case 'Works': $c = new \App\Models\Works(); break;
+        case 'Exams': $c = new \App\Models\Exams(); break;
+        default: return $c = 'ERROR';
     }
     $c->getAll();
     dd($c);
