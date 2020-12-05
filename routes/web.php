@@ -10,6 +10,7 @@ use App\Models\Students;
 use App\Models\Teachers;
 use App\Models\UsersAdmin;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,7 +34,19 @@ Route::get('/', function(){
     });
 */
 //Willcards
-Route::get('/{type}', function($type){
+Route::get('/', function (){
+    return view('login',);
+});
+Route::get('/signin', function (){
+    return view('signin',);
+});
+
+Route::match(array('GET', 'POST'),'/{controller}/{method}', function ($controller, $method, Request $request){
+
+
+});
+
+Route::match(array('GET', 'POST'),'/{type}', function($type, Request $request){
     switch ($type){
         case 'JoinQueries': $c = new JoinQueries(); $c->getByDOW(); dd($c);
         case 'Classes': $c = new Classes(); break;
@@ -49,6 +62,7 @@ Route::get('/{type}', function($type){
         case 'Exams': $c = new \App\Models\Exams(); break;
         default: return $c = 'ERROR';
     }
+    dd($request->input('nombre'));
     $c->getAll();
     dd($c);
 });

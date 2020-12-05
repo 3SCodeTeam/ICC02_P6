@@ -31,11 +31,10 @@
                 <div><input type="submit" value="Enviar"></div>
             </form>
         </div>
-        <?php
-        require_once('login.var.php');
-        if(isset(LogInvar::$errormsg)){echo('<div class="errmsg">'.LogInvar::$errormsg.'</div>');}
-        ?>
+        @if (isset($errmsg))
+            <div class="errmsg">{{$errmsg}}</div>
+        @endif
     </div>
-    <?php include("Recursos/html/footer.html"); ?>
+    <?php /*include("Recursos/html/footer.html"); */?>
 </body>
 </html>

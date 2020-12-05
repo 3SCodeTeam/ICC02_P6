@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Entities\Data;
 use Illuminate\Support\Facades\DB;
 
 class UsersAdmin extends DbQueries
@@ -11,6 +12,7 @@ class UsersAdmin extends DbQueries
     public function __construct()
     {
         parent::__construct('users_admin');
+        $this->data = new Data();
     }
 
     public function getAll(){$this->data = parent::getAll();}
