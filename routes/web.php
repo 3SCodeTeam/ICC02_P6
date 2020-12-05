@@ -34,6 +34,7 @@ Route::get('/', function(){
     });
 */
 //Willcards
+
 Route::get('/', function (){
     return view('login',);
 });
