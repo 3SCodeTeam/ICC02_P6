@@ -37,7 +37,7 @@
         </form>
     </div>
     @if (isset($msg))
-        <div class="errmsg">{{$msg}}</div>
+        <div class="msg">{{$msg}}</div>
     @endif
     @include('footer');
 </body>

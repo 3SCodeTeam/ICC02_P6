@@ -41,8 +41,8 @@ Route::get('/', function (){
     return view('login',);
 });
 
-Route::get('/{init}', function ($init){
-    if($init === 'signin'){return view('signin',);}
+Route::get('/{key}', function ($key){
+    if($key === 'signin'){return view('signin');}
     return view('login');
 });
 
