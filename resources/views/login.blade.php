@@ -12,10 +12,11 @@
     <title>3SCode Academy Manager</title>
 </head>
 <body>
+@include('header');
     <div class= "main-container">
         <div>
             <h1>Inicia sesión</h1>
-            <span>o <a href="http://localhost/?controller=signin&method=new">Registrate</a></span>
+            <span>o <a href="{{asset('/signin')}}">Registrate</a></span>
         </div>
         <div class="form-container">
             <div class="selector-container">
@@ -26,17 +27,18 @@
                     <option value="admin">Administrador</option>
                 </select>
             </div>
-            <form action="/?controller=login&method=post" method="post" id="login">
+            <form action="{{asset('/login/post')}}" method="post" id="login">
                 <div><input type="text" name="username" placeholder="Nombre de usuario" required></div>
                 <div><input type="email" name="email" placeholder="Email" required></div>
                 <div><input type="password" name="pass" placeholder="Contraseña" required></div>
+                <input type="hidden" name="_token" value="{{csrf_token()}}">
                 <div><input type="submit" value="Enviar"></div>
             </form>
         </div>
-        @if (isset($errmsg))
-            <div class="errmsg">{{$errmsg}}</div>
+        @if (isset($msg))
+            <div class="msg">{{$msg}}</div>
         @endif
     </div>
-    <?php /*include("Recursos/html/footer.html"); */?>
-</body>
+    @include('footer');
+    </body>
 </html>

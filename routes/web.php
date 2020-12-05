@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\LogInController;
+use App\Http\Controllers\SignInController;
 use App\Models\Classes;
 use App\Models\Courses;
 use App\Models\Enrollments;
@@ -38,15 +40,34 @@ Route::get('/', function(){
 Route::get('/', function (){
     return view('login',);
 });
-Route::get('/signin', function (){
-    return view('signin',);
+
+Route::get('/{init}', function ($init){
+    if($init === 'signin'){return view('signin',);}
+    return view('login');
 });
 
-Route::match(array('GET', 'POST'),'/{controller}/{method}', function ($controller, $method, Request $request){
-
-
+//LOGIN ROUTE
+Route::match(array('GET', 'POST'),'/login/{method}', function ($method, Request $request){
+    switch ($method){
+        case 'end': LogInController::end();
+        case 'new': return LogInController::new();
+        case 'post': return LogInController::post($request);
+        default:
+            return LogInController::error('La ruta solicitada no es accesible.');
+    }
 });
 
+//SIGNIN ROUTE
+Route::match(array('GET', 'POST'),'/signin/{method}', function ($method, Request $request){
+    switch ($method){
+        case 'post': return SignInController::post($request);
+        case 'new': return view('signin');
+        default:
+            SignInController::error('La ruta solicitada no es accesible.');
+    }
+});
+
+//RUTAS DE TESTEO
 Route::match(array('GET', 'POST'),'/{type}', function($type, Request $request){
     switch ($type){
         case 'JoinQueries': $c = new JoinQueries(); $c->getByDOW(); dd($c);

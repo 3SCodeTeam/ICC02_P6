@@ -4,6 +4,7 @@
 namespace App\Models;
 
 
+use App\Entities\Data;
 use Illuminate\Support\Facades\DB;
 
 class Students extends DbQueries
@@ -13,12 +14,14 @@ class Students extends DbQueries
     public function __construct()
     {
         parent::__construct('students');
+        $this->data = new Data();
     }
 
     public function getAll(){$this->data = parent::getAll();}
-    public function getById(int $id) { $this->data = parent::getByAttribute('id',$id);}
-    public function getByEmail($email) {$this->data = parent::getByAttribute('email',$email);}
-    public function getByUsername(string $username) {$this->data = parent::getByAttribute('username',$username);}
+    public function getById(int $value) { $this->data = parent::getByAttribute('id',$value);}
+    public function getByEmail($value) {$this->data = parent::getByAttribute('email',$value);}
+    public function getByUsername(string $value) {$this->data = parent::getByAttribute('username',$value);}
+    public function getByNif($value) {$this->data = parent::getByAttribute('nif',$value);}
     public function updateValue($attribute, $new_value, $col, $val) {
         $this->data = parent::updateValue($attribute, $new_value, $col, $val);
     }
