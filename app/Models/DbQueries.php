@@ -22,10 +22,10 @@ class DbQueries
             $res = DB::connection('mysql')->select('select * from '.$this->table);
             $this->data->len = count($res);
             $this->data->res = $res;
-            $this->data->stat = true;
+            $this->data->status = true;
         }catch(Exception $e){
             $this->data->err = $e;
-            $this->data->stat = false;
+            $this->data->status = false;
             dd($e->getMessage());
         } finally {
             return $this->data;
@@ -39,10 +39,10 @@ class DbQueries
             $res = DB::connection('mysql')->select($stm, $values);
             $this->data->len = count($res);
             $this->data->res = $res;
-            $this->data->stat = true;
+            $this->data->status = true;
         }catch(Exception $e){
             $this->data->err = $e;
-            $this->data->stat = false;
+            $this->data->status = false;
             dd($e->getMessage());
         } finally {
             return $this->data;
@@ -55,10 +55,10 @@ class DbQueries
             $res = DB::connection('mysql')->select($stm, $values);
             $this->data->len = count($res);
             $this->data->res = $res;
-            $this->data->stat = true;
+            $this->data->status = true;
         }catch(Exception $e){
             $this->data->err = $e;
-            $this->data->stat = false;
+            $this->data->status = false;
             dd($e->getMessage());
         } finally {
             return $this->data;
@@ -71,11 +71,11 @@ class DbQueries
         $stm = "UPDATE ".$this->table." SET ".$attribute." = ? WHERE ".$col." = ?";
         try{
             $res = DB::connection('mysql')->update($stm, $values);
-            $this->data->stat = true;
+            $this->data->status = true;
             $this->data->affected_rows = $res;
         }catch(Exception $e){
             $this->data->err = $e;
-            $this->data->stat = false;
+            $this->data->status = false;
             dd($e->getMessage());
         } finally {
             return $this->data;

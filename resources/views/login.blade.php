@@ -12,7 +12,7 @@
     <title>3SCode Academy Manager</title>
 </head>
 <body>
-@include('header');
+    @include('header');
     <div class= "main-container">
         <div>
             <h1>Inicia sesión</h1>
@@ -31,7 +31,7 @@
                 <div><input type="text" name="username" placeholder="Nombre de usuario" required></div>
                 <div><input type="email" name="email" placeholder="Email" required></div>
                 <div><input type="password" name="pass" placeholder="Contraseña" required></div>
-                <input type="hidden" name="_token" value="{{csrf_token()}}">
+                @csrf
                 <div><input type="submit" value="Enviar"></div>
             </form>
         </div>

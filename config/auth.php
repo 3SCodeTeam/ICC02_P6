@@ -13,10 +13,10 @@ return [
     |
     */
 
-    //'defaults' => [
-    //    'guard' => 'web',
-    //    'passwords' => 'users',
-    //],
+    'defaults' => [
+        'guard' => 'student',
+        //'passwords' => 'users',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -34,11 +34,19 @@ return [
     | Supported: "session", "token"
     |
     */
-/*
+
     'guards' => [
-        'web' => [
+        'student' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'Students',
+        ],
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'UsersAdmin',
+        ],
+        'teacher' =>[
+            'driver' => 'session',
+            'provider' => 'Teachers',
         ],
 
         'api' => [
@@ -47,7 +55,7 @@ return [
             'hash' => false,
         ],
     ],
-*/
+
     /*
     |--------------------------------------------------------------------------
     | User Providers
@@ -71,10 +79,22 @@ return [
     //       'model' => App\Models\User::class,
     //    ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+         'students' => [
+            'driver' => 'database',
+            'table' => 'students',
+         ],
+        'admins' =>[
+            'driver' => 'database',
+            'table' => 'users_admin'
+        ],
+        'teachers' =>[
+            'driver' => 'database',
+            'table' => 'teachers'
+        ],
+
+
+
+
     //],
 
     /*
@@ -91,8 +111,8 @@ return [
     | they have less time to be guessed. You may change this as needed.
     |
     */
-
-    /*'passwords' => [
+/*
+    'passwords' => [
         'users' => [
             'provider' => 'users',
             'table' => 'password_resets',
@@ -100,7 +120,7 @@ return [
             'throttle' => 60,
         ],
     ],
-    */
+*/
 
     /*
     |--------------------------------------------------------------------------
@@ -113,6 +133,6 @@ return [
     |
     */
 
-    //'password_timeout' => 10800,
+    'password_timeout' => 10800,
 
 ];

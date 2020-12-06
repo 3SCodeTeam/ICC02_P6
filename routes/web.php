@@ -2,15 +2,8 @@
 
 use App\Http\Controllers\LogInController;
 use App\Http\Controllers\SignInController;
-use App\Models\Classes;
-use App\Models\Courses;
-use App\Models\Enrollments;
-use App\Models\JoinQueries;
-use App\Models\Notifications;
-use App\Models\Schedules;
-use App\Models\Students;
-use App\Models\Teachers;
-use App\Models\UsersAdmin;
+use App\Http\Controllers\StudentController;
+
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -49,7 +42,7 @@ Route::get('/{key}', function ($key){
 //LOGIN ROUTE
 Route::match(array('GET', 'POST'),'/login/{method}', function ($method, Request $request){
     switch ($method){
-        case 'end': LogInController::end();
+        case 'end': return LogInController::end();
         case 'new': return LogInController::new();
         case 'post': return LogInController::post($request);
         default:
@@ -63,28 +56,32 @@ Route::match(array('GET', 'POST'),'/signin/{method}', function ($method, Request
         case 'post': return SignInController::post($request);
         case 'new': return view('signin');
         default:
-            SignInController::error('La ruta solicitada no es accesible.');
+            return SignInController::error('La ruta solicitada no es accesible.');
     }
 });
 
-//RUTAS DE TESTEO
-Route::match(array('GET', 'POST'),'/{type}', function($type, Request $request){
-    switch ($type){
-        case 'JoinQueries': $c = new JoinQueries(); $c->getByDOW(); dd($c);
-        case 'Classes': $c = new Classes(); break;
-        case 'Courses': $c = new Courses(); break;
-        case 'Schedules': $c = new Schedules(); break;
-        case 'Enrollments': $c = new Enrollments(); break;
-        case 'Students': $c = new Students(); break;
-        case 'Teachers': $c = new teachers(); break;
-        case 'Admin': $c = new UsersAdmin();break;
-        case 'Notifications': $c = new Notifications();break;
-        case 'Percentage': $c = new \App\Models\Percentages();break;
-        case 'Works': $c = new \App\Models\Works(); break;
-        case 'Exams': $c = new \App\Models\Exams(); break;
-        default: return $c = 'ERROR';
+Route::get('/student/{method}', function ($method, Request $req){
+    switch ($method){
+        case 'start': return StudentController::start($req);
+        case 'profile': return StudentController::profile($req);
+        case 'enrollment': return StudentController::enrollment();
+        case 'schedule': return StudentController::schedule();
+        case 'wSchedule': return StudentController::wSchedule();
+        case 'dSchedule': return StudentController::dSchedule();
+        case 'record': return StudentController::record();
+        default:
+            return LogInController::error('Recurso no deisponible');
     }
-    dd($request->input('nombre'));
-    $c->getAll();
-    dd($c);
+});
+Route::post('/student/{method}', function ($method, Request $request){
+    switch ($method){
+        case 'enrollmentPost': return StudentController::enrollmentPost($request);
+        case 'profilePost': return StudentController::profilePost($request);
+        case 'recordDetail':return StudentController::recordDetail($request);
+        //TODO: horario día concreto
+        //TODO: horario semana concreta
+        //TODO: horario mes concreto
+        default:
+            return LogInController::error('Recurso no disponible');
+    }
 });

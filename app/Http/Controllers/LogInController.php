@@ -27,7 +27,7 @@ class LogInController extends Controller
 
         if($user_data->len == 0){ return self::error('La combinación usuario, email, password no existe.');}
         if(!self::checkPassword($form_data,$user_data->res[0])){return self::error('La combinación usuario, email, password no existe.');}
-        return self::callUserTemplate($form_data, $user_data->res[0]);
+        return self::callUserTemplate($form_data, $user_data->res[0], $request);
     }
 
     public static function error(string $msg=NULL){
@@ -41,20 +41,18 @@ class LogInController extends Controller
         }
     }
 
-    private static function callUserTemplate($form_data, $user_data){
+    private static function callUserTemplate($form_data, $user_data, Request $req){
         switch($form_data['type']){
             case 'student':
-                return view('login',['UserId'=> $user_data->id, 'msg'=>'LogIn Satisfactorio']);
-                //$route = new Router('student', 'start');
-                //break;
+                $req->session()->put('sql_user_id', $user_data->id);
+                return view('student',['selectedMenu'=>'profile', 'user_data'=> $user_data]);
             case 'admin':
+                $req->session()->put('sql_user_id', $user_data->id_user_admin);
                 return view('admin',['UserId'=> $user_data->id_user_admin]);
-                //$route = new Router('admin', 'start');
-                //break;
             case 'teacher':
+                $req->session()->put('sql_user_id', $user_data->id_teacher);
+
                 return view('teacher',['UserId'=> $user_data->id_teacher]);
-                //$route = new Router('teacher', 'start');
-                //break;
             default:
                 return self::error('Tipo de usuario desconocido.');
         }

@@ -17,7 +17,7 @@
     </div>
     <div class="main-container">
         <form action="{{asset('/signin/post')}}" method="post">
-            <input type="hidden" name="_token" value="{{csrf_token()}}">
+            @csrf
             <div class="signin-form-input">
                 <input class="signin-form-input" type="text" name="username" placeholder="Nombre de usuario" required/>
                 <input class="signin-form-input" type="email" name="email" placeholder="Email" required/>

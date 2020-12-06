@@ -36,10 +36,10 @@ class Students extends DbQueries
             $res = DB::connection('mysql')->insert($stm, $values);
         }catch(Exception $e){
             $this->data->err = $e;
-            $this->data->stat = false;
+            $this->data->status = false;
             dd($e->getMessage());
         }
-        $this->data->stat = true;
+        $this->data->status = true;
         $this->data->affected_rows = $res;
     }
 
@@ -50,10 +50,10 @@ class Students extends DbQueries
             $res = DB::connection('mysql')->delete($stm, $values);
         } catch (Exception $e) {
             $this->data->err = $e;
-            $this->data->stat = false;
+            $this->data->status = false;
             dd($e->getMessage());
         }
-        $this->data->stat = true;
+        $this->data->status = true;
         $this->data->affected_rows = $res;
     }
 }

@@ -5,7 +5,7 @@ namespace App\Models;
 
 
 use Illuminate\Support\Facades\DB;
-use PHPUnit\Exception;
+
 
 class Classes extends DbQueries
 {
@@ -37,11 +37,12 @@ class Classes extends DbQueries
             $res = DB::connection('mysql')->select($stm, $values);
         }catch(Exception $e){
             $this->data->err = $e;
-            $this->data->stat = false;
+            $this->data->status = false;
             dd($e->getMessage());
+        }finally{
+            $this->data->status = true;
+            $this->data->affected_rows = $res;
         }
-        $this->data->stat = true;
-        $this->data->affected_rows = $res;
     }
 
     public function insertValues($id_teacher, $id_course, $id_schedule, $name, $color) {
@@ -51,11 +52,12 @@ class Classes extends DbQueries
             $res = DB::connection('mysql')->insert($stm, $values);
         }catch(Exception $e){
             $this->data->err = $e;
-            $this->data->stat = false;
+            $this->data->status = false;
             dd($e->getMessage());
+        } finally {
+            $this->data->status = true;
+            $this->data->affected_rows = $res;
         }
-        $this->data->stat = true;
-        $this->data->affected_rows = $res;
     }
 
     public function deleteById($id) {
@@ -65,10 +67,10 @@ class Classes extends DbQueries
             $res = DB::connection('mysql')->delete($stm, $values);
         }catch(Exception $e){
             $this->data->err = $e;
-            $this->data->stat = false;
+            $this->data->status = false;
             dd($e->getMessage());
         }
-        $this->data->stat = true;
+        $this->data->status = true;
         $this->data->affected_rows = $res;
     }
     public function deleteByScheduleId($id) {
@@ -78,10 +80,10 @@ class Classes extends DbQueries
             $res = DB::connection('mysql')->delete($stm, $values);
         }catch(Exception $e){
             $this->data->err = $e;
-            $this->data->stat = false;
+            $this->data->status = false;
             dd($e->getMessage());
         }
-        $this->data->stat = true;
+        $this->data->status = true;
         $this->data->affected_rows = $res;
     }
 }

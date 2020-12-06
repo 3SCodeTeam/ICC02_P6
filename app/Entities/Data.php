@@ -9,6 +9,6 @@ class Data
     public $res;
     public $err;
     public $len;
-    public $stat;
+    public $status;
     public $affected_rows;
 }
