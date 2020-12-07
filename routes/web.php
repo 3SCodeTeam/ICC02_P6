@@ -65,12 +65,12 @@ Route::get('/student/{method}', function ($method, Request $req){
         case 'start': return StudentController::start($req);
         case 'profile': return StudentController::profile($req);
         case 'enrollment': return StudentController::enrollment($req);
-        case 'schedule': return StudentController::schedule();
+        case 'mSchedule': return StudentController::mSchedule($req);
         case 'wSchedule': return StudentController::wSchedule();
         case 'dSchedule': return StudentController::dSchedule();
         case 'record': return StudentController::record();
         default:
-            return LogInController::error('Recurso no deisponible');
+            return LogInController::error('Recurso no disponible');
     }
 });
 Route::post('/student/{method}', function ($method, Request $request){

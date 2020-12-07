@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Models\Courses;
 use App\Models\Enrollments;
 use App\Models\Students;
+use App\Utils\ScheduleTools;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -87,7 +88,12 @@ class StudentController extends Controller
         $studentCourses = self::coursesArrayByStatus($userId);
         return view('student',['selectedMenu'=>'enrollment', 'courses_data'=>$course_mod->data->res, 'studentCourses'=>$studentCourses, 'msg'=>$msg]);
     }
-    public static function schedule(){/*SECCIÓN HOARIO PRIMERA CARGA DESDE EL MENÚ*/}
+    public static function mSchedule(Request $req){/*SECCIÓN HOARIO PRIMERA CARGA DESDE EL MENÚ*/
+        $userId = $req->session()->get('sql_user_id');
+        $schedule_data = ScheduleTools::buildMonthSchedule($userId);
+        //dd($schedule_data);
+        return view('student', ['selectedMenu'=>'mSchedule', 'schedule_data' => $schedule_data]);
+    }
     public static function wSchedule(){/*SECCION HORARIO SEMANAL CARGA DESDE EL MENÚ*/}
     public static function dSchedule(){/*SECCION HORARIO DIARIO CARGA DESDE EL MENÚ*/}
     //TODO: horario día concreto

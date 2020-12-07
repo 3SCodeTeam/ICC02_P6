@@ -6,7 +6,7 @@
         <a {{(!($selectedMenu == 'enrollment')) ? 'href='.asset('/student/enrollment').'':''}}>Matrícula</a>
     </div>
     <div class="item {{($selectedMenu == 'schedule') ? 'selected':''}}">
-        <a {{(!($selectedMenu == 'schedule')) ? 'href='.asset('/student/schedule').'':''}}>Horario</a>
+        <a {{(!($selectedMenu == 'schedule')) ? 'href='.asset('/student/mSchedule').'':''}}>Horario</a>
     </div>
     <div class="item {{($selectedMenu == 'record') ? 'selected':''}}">
         <a {{(!($selectedMenu == 'record')) ? 'href='.asset('/student/record').'':''}}>Expediente</a>
