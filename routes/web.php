@@ -30,8 +30,12 @@ Route::get('/', function(){
 */
 //Willcards
 
+Route::get('/no-auth',function (){
+    return view('login',['msg'=>'Debes iniciar sesión.']);
+})->name('login');
+
 Route::get('/', function (){
-    return view('login',);
+    return view('login');
 });
 
 Route::get('/{key}', function ($key){
@@ -66,13 +70,14 @@ Route::get('/student/{method}', function ($method, Request $req){
         case 'profile': return StudentController::profile($req);
         case 'enrollment': return StudentController::enrollment($req);
         case 'mSchedule': return StudentController::mSchedule($req);
-        case 'wSchedule': return StudentController::wSchedule();
-        case 'dSchedule': return StudentController::dSchedule();
+        case 'wSchedule': return StudentController::wSchedule($req);
+        case 'dSchedule': return StudentController::dSchedule($req);
         case 'record': return StudentController::record();
         default:
             return LogInController::error('Recurso no disponible');
     }
-});
+})->middleware('Session');
+
 Route::post('/student/{method}', function ($method, Request $request){
     switch ($method){
         case 'enrollmentPost': return StudentController::enrollmentPost($request);
@@ -84,4 +89,4 @@ Route::post('/student/{method}', function ($method, Request $request){
         default:
             return LogInController::error('Recurso no disponible');
     }
-});
+})->middleware('Session');
