@@ -1,12 +1,12 @@
-/*HORARIO MENSUAL*/
+/*HORARIO */
 #main-container{
     display: block;
     font-family: Arial, Helvetica, sans-serif;
     margin-bottom: 100px;
+    margin-top: 50px;
 }
 table{
     display:inline-table;
-    height: 100%;
     border: thick black solid;
     width: 95%;
     border-radius: 15px;
@@ -18,12 +18,23 @@ table th{
 }
 td{
     border: thin black solid;
-    height: 100px;
     border-radius: 5px;
 }
+.col.HORA td{
+    width: 1%;
+}
+.row.header th{
+    height: 50px;
+}
 
-.col{
-    width: 75px;
+/*Row high for monthly schedule*/
+.row.week td{
+    height: 75px;
+}
+
+/*Row high for daily and weekly schedule*/
+.row.week.hour td{
+    height: 35px;
 }
 
 .week.col.SEMANA{
@@ -38,7 +49,7 @@ td{
     background-color: rgba(243, 241, 241, 0.849);
     width: 5%;
 }
-/*HORARIO MENSUAL END*/
+/*HORARIO END*/
 
 /*EDICIÓN DATOS PERFIL*/
 .profile-data-container{
@@ -74,3 +85,39 @@ td{
     display: inline-table;
 }
 /*EDICIÓN ASIGNATURAS END*/
+
+/*MATRICULA*/
+.row.courses-title th{
+    height: 50px;
+    font-size: larger;
+}
+.row.courses-data td{
+    font-size: small;
+    height: 10px;
+}
+
+.student-enrollment.course-table{
+    border: hidden;
+    border-collapse: collapse;
+    width: 85%;
+    margin-bottom: 3%;
+}
+.student-enrollment.course-table th{
+    border: hidden;
+}
+
+.col-course-name{
+    text-align: left;
+}
+.col-course-name span{
+    padding-left: 20px;
+}
+
+.button{
+    font-size: x-large;
+    width: auto;
+    height: auto;
+    padding: 5px;
+}
+
+/*MATRICULA END*/

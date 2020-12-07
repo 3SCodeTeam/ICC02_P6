@@ -7,9 +7,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>3SCode Academy Manager</title>
     <link rel="stylesheet" href="{{asset('css/style.css')}}">
-    <link rel="stylesheet" href="{{asset('css/login.css')}}">
-    <link rel="stylesheet" href="{{asset('css/student.css')}}">
     <link rel="stylesheet" href="{{asset('css/menu.css')}}">
+    <link rel="stylesheet" href="{{asset('css/student.css')}}">
 </head>
 <body>
     @include('header')
@@ -21,11 +20,13 @@
         @switch($selectedMenu)
             {{--INSERTAR VISTA PERFIL--}}
             @case('profile')
-                @include('student/studentProfile', ['user_data'=>$user_data])
+                @include('student/studentProfile', ['user_data'=>$user_data, 'selectedMenu'=>$selectedMenu])
             @break
             {{--INSERTAR VISTA HORARIO--}}
             @case('mSchedule')
-                @include('student/studentSchedule', ['schedule_data'=>$schedule_data])
+            @case('wSchedule')
+            @case('dSchedule')
+                @include('student/studentSchedule', ['schedule_data'=>$schedule_data, 'selectedMenu'=>$selectedMenu])
             @break
             {{--INSERTAR VISTA MATRÍCULA--}}
             @case('enrollment')

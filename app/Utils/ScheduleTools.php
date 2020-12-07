@@ -8,6 +8,7 @@ use App\Models\JoinQueries;
 use DateInterval;
 use DateTime;
 
+
 class ScheduleTools
 {
    private static $hours = ['08:00', '09:00', '10:00', '11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00'];
@@ -50,7 +51,9 @@ class ScheduleTools
    }
     public static function buildWeekSchedule($id_student){
         $plus1Day = new DateInterval('P1D');
-        $date = new DateTime(date('Y-m-d'));
+        date_default_timezone_set('Europe/London');
+        $date = new DateTime();
+/*Si se asigna el valor $date a $ctrlDate las variables apuntan a la misma dirección de memoria al ser static.*/
         $ctrlDate = self::getFirstDate($date); //Fecha del primer día de la semana actual.
 
         $weekData=[];
@@ -59,15 +62,16 @@ class ScheduleTools
         foreach(self::$hours as $h){
             $hourData=[];
             foreach(self::$dow as $d){
-                if($d==='HORA'){
+                if($d=='HORA'){
                     $hourData[]=['col'=>$d, 'value'=>$h];
                 }else{
-                    $hourData[]=['col'=>$d, 'value'=>self::getClassesByHour($ctrlDate, $h, $id_student), 'date'=>$ctrlDate, 'hour'=>$h];
+                    $hourData[]=['col'=>$d, 'value'=>self::getClassesByHour($ctrlDate, $h, $id_student), 'date'=>$ctrlDate->format("Y-m-d"), 'hour'=>$h];
                     $ctrlDate->add($plus1Day);
                 }
             }
             $weekData[]=$hourData;
             $ctrlDate = self::getFirstDate($date);
+            //var_dump($date->format("Y-m-d"));
         }
         return $weekData;
     }
@@ -106,8 +110,9 @@ class ScheduleTools
    }
     private static function getFirstDate($date){//Devuelve la fecha del primer día de la semana actual.
         $days = 0;
-        switch($date->format("D")){
-            case 'Mon': return $date;
+        $d = new dateTime($date->format("Y-m-d"));
+        switch($d->format("D")){
+            case 'Mon': return $d;
             case 'Tue': $days+=1; break;
             case 'Wed': $days+=2; break;
             case 'Thu': $days+=3; break;
@@ -115,26 +120,26 @@ class ScheduleTools
             case 'Sat': $days+=5; break;
             case 'Sun': $days+=6; break;
         }
-        return $date->sub(self::subDaysToDate($days));
+        return $d->sub(self::subDaysToDate($days));
     }
 
-    private static function subDaysToDate($numOfDays){//Subtrae días a una fecha dada
+    private static function subDaysToDate($numOfDays){//Substrae días a una fecha dada
         return new DateInterval('P'.$numOfDays.'D');
     }
 
     private static function getClassesByHour($date, $hour, $id){
         $mod = new JoinQueries();
-        $dayData =[];
+        $hourData=[];
         $date = $date->format("Y-m-d");
         $mod->getClassesOfDay($id, $date);
         if($mod->data->len > 0){
             foreach($mod->data->res as $item){
                 if(substr($item->time_start,0,5) == $hour){
-                    $dayData[]=['color'=>$item->class_color, 'name'=>$item->class_name, 'id'=>$item->id_class];
+                    $hourData[]=['color'=>$item->color, 'name'=>$item->class_name, 'course'=>$item->course_name, 'id'=>$item->id_class];
                 }
             }
         }
-        return $dayData;
+        return $hourData;
     }
 
     private static function getClassesByDay($date, $id){
@@ -144,7 +149,7 @@ class ScheduleTools
        $mod->getClassesOfDay($id, $date);
        if($mod->data->len >0){
            foreach($mod->data->res as $item){
-               $dayData[]=['color'=>$item->class_color, 'name'=>$item->class_name, 'id'=>$item->id_class];
+               $dayData[]=['color'=>$item->color, 'name'=>$item->class_name, 'course'=>$item->course_name,'id'=>$item->id_class];
             }
         }
         return $dayData;

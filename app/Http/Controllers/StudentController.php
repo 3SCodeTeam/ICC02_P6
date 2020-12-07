@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 
 class StudentController extends Controller
 {
+    /*MAIN FUNCTIONS*/
     public static function start(Request $req){/*PRIMERA CARGA DESDE EL LOGIN*/
         //Lo enviamos al perfil.
         return self::profile($req);
@@ -91,17 +92,24 @@ class StudentController extends Controller
     public static function mSchedule(Request $req){/*SECCIÓN HOARIO PRIMERA CARGA DESDE EL MENÚ*/
         $userId = $req->session()->get('sql_user_id');
         $schedule_data = ScheduleTools::buildMonthSchedule($userId);
-        //dd($schedule_data);
         return view('student', ['selectedMenu'=>'mSchedule', 'schedule_data' => $schedule_data]);
     }
-    public static function wSchedule(){/*SECCION HORARIO SEMANAL CARGA DESDE EL MENÚ*/}
-    public static function dSchedule(){/*SECCION HORARIO DIARIO CARGA DESDE EL MENÚ*/}
-    //TODO: horario día concreto
-    //TODO: horario semana concreta
-    //TODO: horario mes concreto
-    public static function record(){/*SECCIÖN RECORD CARGA DESDE EL MENÚ*/}
+    public static function wSchedule(Request $req){/*SECCIÓN HORARIO SEMANAL CARGA DESDE EL MENÚ*/
+        $userId = $req->session()->get('sql_user_id');
+        $schedule_data = ScheduleTools::buildWeekSchedule($userId);
+
+        return view('student', ['selectedMenu'=>'wSchedule', 'schedule_data'=>$schedule_data]);
+    }
+    public static function dSchedule(Request $req){/*SECCIÓN HORARIO DIARIO CARGA DESDE EL MENÚ*/
+        $userId = $req->session()->get('sql_user_id');
+        $schedule_data = ScheduleTools::buildDaySchedule($userId);
+
+        return view('student', ['selectedMenu'=>'dSchedule', 'schedule_data'=>$schedule_data]);
+    }
+    public static function record(){/*SECCIÓN RECORD CARGA DESDE EL MENÚ*/}
     public static function recordDetail($id_class){/*SECCIÓN DETALLES ASIGNATURA*/}
 
+    /*AUX FUNCTIONS*/
     private static function updateData($value, $option, $user_data){
         switch ($option){
             case 'email': return self::Email($value, $user_data);

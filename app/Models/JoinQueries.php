@@ -16,7 +16,7 @@ class JoinQueries
     }
     public function getClassesOfDay($id, $date){
         $values = [$id, $date];
-        $stm = 'SELECT S.id_class, S.day, S.time_start, S.time_end, C.name, C.color, Co.name FROM schedule as S inner JOIN class as C ON S.id_class=C.id_class INNER JOIN courses as Co ON C.id_course = Co.id_course
+        $stm = 'SELECT S.id_class, S.day, S.time_start, S.time_end, C.name as class_name, C.color, Co.name as course_name FROM schedule as S inner JOIN class as C ON S.id_class=C.id_class INNER JOIN courses as Co ON C.id_course = Co.id_course
         WHERE Co.id_course IN (SELECT id_course FROM enrollment WHERE id_student = ?) and S.day =? ORDER BY S.day, S.time_start';
         try{
             $res = DB::connection('mysql')->select($stm, $values);
@@ -32,7 +32,7 @@ class JoinQueries
         }
     }
     public function getByDOW(){
-        $stm='SELECT DISTINCT DAYOFWEEK(S.day) as DOW, S.time_start, S.time_end, C.name, C.color, Co.name as course_name, T.email, T.name as Tname, T.surname
+        $stm='SELECT DISTINCT DAYOFWEEK(S.day) as DOW, S.time_start, S.time_end, C.name as class_name, C.color, Co.name as course_name, T.email, T.name as Tname, T.surname
         FROM class as C
         INNER JOIN courses as Co ON C.id_course = Co.id_course
         INNER JOIN teachers AS T ON C.id_teacher = T.id_teacher

@@ -24,7 +24,7 @@
                     <td class="col course-description"><span>{{$c->description}}</span></td>
                 </tr>
             @endforeach
-            </tbody></table>
-        <input type="submit" value = "Matricularse"/>
+            </tbody></table><br>
+        <input class="button" type="submit" value = "Matricularse"/>
     </form>
 </div>
