@@ -4,6 +4,8 @@
 namespace App\Http\Controllers;
 
 
+use App\Models\Courses;
+use App\Models\Enrollments;
 use App\Models\Students;
 use App\Utils\Utils;
 use Illuminate\Http\Request;
@@ -18,7 +20,7 @@ class StudentController extends Controller
     }
     public static function profile(Request $req){/*SECCION PROFILE*/
         $mod = new Students();
-        $mod->getById($req->get('sql_user_id'));
+        $mod->getById($req->session()->get('sql_user_id'));
         $user_data = $mod->data->res[0];
         return view('student',['selectedMenu'=>'profile', 'user_data'=>$user_data]);
     }
@@ -33,8 +35,58 @@ class StudentController extends Controller
         $mod->getById($user_data->id);
         return view('student',['selectedMenu'=>'profile', 'user_data'=>$mod->data->res[0], 'msg'=>$res['msg']]);
     }
-    public static function enrollment(){/*SECCION ENROLLMENT*/}
-    public static function enrollmentPost(Request $req){/*DATOS DEL FORMULARIO DE MATRICULACIÓN*/}
+    public static function enrollment(Request $req){/*SECCION ENROLLMENT*/
+        $mod = new Courses();
+        $mod->getByStatus(1);
+        $activeCourses = $mod->data->res;
+
+        $studentCourses= self::coursesArrayByStatus($req->session()->get('sql_user_id'));
+        return view('student',['selectedMenu'=>'enrollment', 'courses_data'=>$activeCourses, 'studentCourses'=>$studentCourses]);
+    }
+    public static function enrollmentPost(Request $req){/*DATOS DEL FORMULARIO DE MATRICULACIÓN*/
+        $id_course = $req->get('courses');
+        $userId = $req->session()->get('sql_user_id');
+        $course_mod = new Courses();
+        $enroll_mod = new Enrollments();
+
+
+        /*Comprobar si ya está matriculado de este curso.
+            SI: determinar estado del curso y cambiarlo al contrio.
+            No: Comprobar si está matriculado de otro curso activo.
+                SI: desactivar el curso antiguo y matricular y activar el nuevo.
+                NO: matricular el nuevo y activar.
+
+        Devolver los cursos activos, los cursos del estudiante, mensaje respuesta a la acción.
+        */
+
+        //ACTIVAR-DESACTIVAR MATRICULA CURSO
+        $enroll_mod ->getByCourseIdAndStudentId($id_course, $userId);
+        if($enroll_mod->data->len > 0){
+            $value = 1;
+            $course_mod->getById($id_course);
+            $msg = $course_mod->data->res[0]->name.' activado';
+            if($enroll_mod->data->res[0]->status > 0){
+                $value = 0;
+                $msg = $course_mod->data->res[0]->name.' desactivado';
+            }
+            $enroll_mod->updateValueById('status', $value, $enroll_mod->data->res[0]->id_enrollment);
+
+            $studentCourses = self::coursesArrayByStatus($userId);
+            $course_mod->getByStatus('1');
+            return view('student',['selectedMenu'=>'enrollment', 'courses_data'=>$course_mod->data->res, 'studentCourses'=>$studentCourses, 'msg'=>$msg]);
+        }
+
+        //NUEVA MATRICULA
+        $enroll_mod->getByStudentIdAndStatus($userId,'1');
+        if($enroll_mod->data->len > 0){
+            $enroll_mod->updateValueById('status', '0', $enroll_mod->data->res[0]->id_enrollment);
+        }
+        $enroll_mod->insertValues($userId, $id_course,'1');
+        $msg = 'Matricula realizada.';
+        $course_mod->getByStatus('1');
+        $studentCourses = self::coursesArrayByStatus($userId);
+        return view('student',['selectedMenu'=>'enrollment', 'courses_data'=>$course_mod->data->res, 'studentCourses'=>$studentCourses, 'msg'=>$msg]);
+    }
     public static function schedule(){/*SECCIÓN HOARIO PRIMERA CARGA DESDE EL MENÚ*/}
     public static function wSchedule(){/*SECCION HORARIO SEMANAL CARGA DESDE EL MENÚ*/}
     public static function dSchedule(){/*SECCION HORARIO DIARIO CARGA DESDE EL MENÚ*/}
@@ -156,5 +208,21 @@ class StudentController extends Controller
             return $res;
         }
         return self::updateDB($email,'email',$userData->id);
+    }
+
+    private static function coursesArrayByStatus($Id){
+        $mod = new Enrollments();
+        $mod->getByIdStudent($Id);
+        $courses = $mod->data->res;
+        $active = [];
+        $inactive = [];
+        foreach ($courses as $c){
+            if($c->status){
+                $inactive[]=$c->id_course;
+            }else{
+                $active[]=$c->id_course;
+            }
+        }
+        return ['active'=>$active, 'inactive'=>$inactive];
     }
 }

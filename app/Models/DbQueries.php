@@ -18,6 +18,7 @@ class DbQueries
     }
 
     protected function getAll() {
+        $this->data = new Data();
         try{
             $res = DB::connection('mysql')->select('select * from '.$this->table);
             $this->data->len = count($res);
@@ -33,6 +34,7 @@ class DbQueries
     }
 
     protected function getByAttribute(string $col, string $val) {
+        $this->data = new Data();
         $values = [$val];
         $stm = "SELECT * FROM ".$this->table." WHERE ".$col." = ?";
         try{
@@ -49,6 +51,7 @@ class DbQueries
         }
     }
     protected function getByAttributes($col1, $col2, $val1, $val2, string $operator = 'and') {
+        $this->data = new Data();
         $values = [$val1, $val2];
         $stm = "SELECT *  FROM ". $this->table ." WHERE ". $col1 .' = ? '.$operator.' '.$col2.' = ?';
         try{
@@ -67,6 +70,7 @@ class DbQueries
 
     //UPDATE METHOD
     public function updateValue($attribute, $new_value, $col, $val) {
+        $this->data = new Data();
         $values = [$new_value, $val];
         $stm = "UPDATE ".$this->table." SET ".$attribute." = ? WHERE ".$col." = ?";
         try{

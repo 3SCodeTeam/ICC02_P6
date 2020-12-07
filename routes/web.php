@@ -64,7 +64,7 @@ Route::get('/student/{method}', function ($method, Request $req){
     switch ($method){
         case 'start': return StudentController::start($req);
         case 'profile': return StudentController::profile($req);
-        case 'enrollment': return StudentController::enrollment();
+        case 'enrollment': return StudentController::enrollment($req);
         case 'schedule': return StudentController::schedule();
         case 'wSchedule': return StudentController::wSchedule();
         case 'dSchedule': return StudentController::dSchedule();

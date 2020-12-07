@@ -18,7 +18,7 @@ class Students extends DbQueries
     }
 
     public function getAll(){$this->data = parent::getAll();}
-    public function getById(int $value) { $this->data = parent::getByAttribute('id',$value);}
+    public function getById($value) { $this->data = parent::getByAttribute('id',$value);}
     public function getByEmail($value) {$this->data = parent::getByAttribute('email',$value);}
     public function getByUsername(string $value) {$this->data = parent::getByAttribute('username',$value);}
     public function getByNif($value) {$this->data = parent::getByAttribute('nif',$value);}

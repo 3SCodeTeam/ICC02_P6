@@ -23,10 +23,10 @@
             @case('profile') @include('student/studentProfile', ['user_data'=>$user_data])
             @break
             {{--INSERTAR VISTA HORARIO--}}
-            @case('schedule') @include('student/studentSchedule', ['selectedMenu'=>$selectedMenu, 'user_data'=>$user_data, 'schedule_data'=>$schedule_data])
+            @case('schedule') @include('student/studentSchedule', ['user_data'=>$user_data, 'schedule_data'=>$schedule_data])
             @break
             {{--INSERTAR VISTA MATRÍCULA--}}
-            @case('enrollment') @include('student/enrollment', ['selectedMenu'=>$selectedmenu, 'courses_data'=>$courses_data])
+            @case('enrollment') @include('student/studentEnrollment', ['courses_data'=>$courses_data, 'studentCourses'=>$studentCourses])
             @break
         @endswitch
     </div>
