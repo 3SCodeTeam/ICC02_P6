@@ -116,3 +116,4 @@ Route::post('/admin/{method}', function ($method, Request $req){
             return LogInController::error('Recurso no disponible');
     }
 })->middleware('Session');
+//TODO: introducir rol usuario en el control de sesión.
