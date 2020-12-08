@@ -8,9 +8,9 @@ use App\Models\Courses;
 use App\Models\Enrollments;
 use App\Models\Students;
 use App\Utils\ScheduleTools;
-use App\Utils\Utils;
+use App\Utils\DataValidator;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+
 
 
 class StudentController extends Controller
@@ -27,14 +27,26 @@ class StudentController extends Controller
         return view('student',['selectedMenu'=>'profile', 'user_data'=>$user_data]);
     }
     public static function profilePost(Request $req){/*ACTUALIZACIÓN DATOS PROFILE*/
+        $userId = $req->session()->get('sql_user_id');
+        $option = $req->input('user_data_option');
+        $value = $req->input('value');
+
         $mod = new Students();
-        $mod->getById(intval($req->session()->get('sql_user_id')));
-        $user_data =  $mod->data->res[0];
-        $res = self::updateData($req->input('value'),$req->input('user_data_option'), $user_data);
+        $mod->getById(intval($userId));
+        $user_data = $mod->data->res[0];
+
+        $checker = new DataValidator();
+        $res = $checker->verifyData($value,$option,$user_data);
         if(!$res['status']){
             return view('student',['selectedMenu'=>'profile','user_data'=>$user_data, 'msg'=>$res['msg']]);
         }
-        $mod->getById($user_data->id);
+        //TODO: db data check for username, email, nif,
+        $res = self::updateDB($value,$option,$userId);
+        if(!$res['status']){
+            return view('student',['selectedMenu'=>'profile','user_data'=>$user_data, 'msg'=>$res['msg']]);
+        }
+
+        $mod->getById($userId);
         return view('student',['selectedMenu'=>'profile', 'user_data'=>$mod->data->res[0], 'msg'=>$res['msg']]);
     }
     public static function enrollment(Request $req){/*SECCION ENROLLMENT*/
@@ -110,118 +122,21 @@ class StudentController extends Controller
     public static function recordDetail($id_class){/*SECCIÓN DETALLES ASIGNATURA*/}
 
     /*AUX FUNCTIONS*/
-    private static function updateData($value, $option, $user_data){
-        switch ($option){
-            case 'email': return self::Email($value, $user_data);
-            case 'name' :
-            case 'surname': return self::Name($value, $option, $user_data);
-            case 'username': return self::Username($value, $user_data);
-            case 'nif': return self::Nif($value, $user_data);
-            case 'telephone': return self::Phone($value, $user_data);
-            case 'password': return self::Password($value, $user_data);
-            default:
-                return ['msg'=>'Opción inválida', 'status'=>false];
+    private static function checkOption($option){
+        switch($option){
+            case 'Password':
+            case 'password': return 'pass';
         }
+        return $option;
     }
-
     private static function updateDB($newValue, $attr, $userId)
     {
         $mod = new Students();
-        $mod->updateValueById($attr, $newValue, $userId);
+        $mod->updateValueById(self::checkOption($attr), $newValue, $userId);
         if(!$mod->data->status || !($mod->data->affected_rows > 0)){
             return ['msg'=>'Error al actulizar el valor en la base de datos.', 'status'=>false];
         }
         return ['msg'=>'¡Valor actualizado!', 'status'=>true];
-    }
-    private static function Password($pass, $userData){
-        $res = ['msg'=>'','status'=>false];
-        if(!Utils::checkLen($pass,6)){
-            $res['msg']='La constraseña debe contener al menos 6 caracteres.';
-            return $res;
-        }
-        if(Hash::check($pass,$userData->pass)){
-            $res['msg']='Las nueva contraseña es idéntica a la anterior.';
-        }
-        return self::updateDB($pass,'pass',$userData->id);
-    }
-    private static function Phone($phone, $userData){
-        $res = ['msg'=>'','status'=>false];
-        if(!Utils::checkPhones($phone) || !Utils::checkLen($phone,9)){
-            $res['msg'] = 'El valor introducido no está bien formado.';
-            return $res;
-        }
-        if($phone === $userData->telephone){
-            $res['msg'] = 'El nuevo valor es identico al anteior.';
-            return $res;
-        }
-        return self::updateDB($phone,'telephone',$userData->id);
-    }
-    private static function Nif($nif, $userData){
-        $res=['msg'=>'', 'status'=>false];
-        $mod = new Students();
-        $value = Utils::checkNIF($nif);
-        if(!$value['status']){
-            $res['msg'] = $value['msg'];
-            return $res;
-        }
-        if($nif === $userData->nif){
-            $res['msg'] = 'El nuevo valor es idéntico al antarior.';
-            return $res;
-        }
-        $mod->getByNif($nif);
-        if($mod->data->len > 0){
-            $res['msg'] = 'El nuevo NIF ya existe en la base de datos.';
-            return $res;
-        }
-        return self::updateDB($nif,'nif',$userData->id);
-    }
-    private static function Username($username, $userData){
-        $res = ['msg'=>'','status'=>false];
-        $mod = new Students();
-        if(!(Utils::checkLen($username, 4))){
-            $res['msg'] = 'El nombre de usuario debe contener al menos 4 caracteres.';
-            return $res;
-        }
-        if($username === $userData->username){
-            $res['msg'] = 'El nuevo valor es idéntico al anterior.';
-            return $res;
-        }
-        $mod->getByUsername($username);
-        if($mod->data->len > 0){
-            $res['msg'] = 'El nuevo nombre de usuario ya existe en la base de datos.';
-            return $res;
-        }
-        return self::updateDB($username,'username',$userData->id);
-    }
-    private static function Name($name, $option, $userData){
-        $res = ['msg'=>'','status'=>false];
-        if(!Utils::checkNames($name)){
-            $res['msg'] = 'El nuevo valor contiene caracteres inválidos.';
-            return $res;
-        }
-        if($name === $userData->$option){
-            $res['msg'] = 'El nuevo valor es identico al anteior.';
-            return $res;
-        }
-        return self::updateDB($name, $option, $userData->id);
-    }
-    private static function Email($email, $userData){
-        $res = ['msg'=>'','status'=>false];
-        $mod = new Students();
-        if(!Utils::checkEmail($email)){
-            $res['msg'] = 'Email mal formado.';
-            return $res;
-        }
-        if($email === $userData->email){
-            $res['msg'] = 'El nuevo email es igual al anterior.';
-            return $res;
-        }
-        $mod->getByEmail($email);
-        if($mod->data->len > 0){
-            $res['msg'] = 'El nuevo email ya existe en la base de datos.';
-            return $res;
-        }
-        return self::updateDB($email,'email',$userData->id);
     }
 
     private static function coursesArrayByStatus($Id){

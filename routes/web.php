@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LogInController;
 use App\Http\Controllers\SignInController;
 use App\Http\Controllers\StudentController;
@@ -86,6 +87,31 @@ Route::post('/student/{method}', function ($method, Request $request){
         //TODO: horario día concreto
         //TODO: horario semana concreta
         //TODO: horario mes concreto
+        default:
+            return LogInController::error('Recurso no disponible');
+    }
+})->middleware('Session');
+
+Route::get('/admin/{method}', function ($method, Request $req){
+    switch ($method){
+        case 'start': return AdminController::start($req);
+        case 'profile': return AdminController::profile($req);
+        case 'teachers': return AdminController::teacher();
+        case 'courses': return AdminController::courses();
+        case 'classes': return AdminController::classes();
+        case 'delete': return AdminController::delete();
+        default:
+            return LogInController::error('Recurso no disponible');
+    }
+})->middleware('Session')->name('admin');
+
+Route::post('/admin/{method}', function ($method, Request $req){
+    switch ($method){
+        case 'profilePost': return AdminController::profilePost($req);
+        case 'teachersPost': return AdminController::teachersPost($req);
+        case 'coursesPost': return AdminController::coursesPost($req);
+        case 'classesPost': return AdminController::classesPost();
+        case 'deletePost': return AdminController::deletePost();
         default:
             return LogInController::error('Recurso no disponible');
     }

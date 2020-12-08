@@ -12,7 +12,7 @@
     <title>3SCode Academy Manager</title>
 </head>
 <body>
-    @include('header');
+    @include('header')
     <div class= "main-container">
         <div>
             <h1>Inicia sesión</h1>
@@ -39,6 +39,6 @@
             <div class="msg">{{$msg}}</div>
         @endif
     </div>
-    @include('footer');
+    @include('footer')
     </body>
 </html>

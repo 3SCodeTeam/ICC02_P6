@@ -10,7 +10,7 @@
     <link  rel="stylesheet" type="text/css" href="{{ asset('css/signin.css')}}"/>
 </head>
 <body>
-@include('header');
+@include('header')
     <div>
         <h1>Registrate</h1>
                 <span>o bien <a href="{{asset('/login')}}">Inicia sesión.</a></span>
@@ -39,6 +39,6 @@
     @if (isset($msg))
         <div class="msg">{{$msg}}</div>
     @endif
-    @include('footer');
+    @include('footer')
 </body>
 </html>

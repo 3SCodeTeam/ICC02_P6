@@ -48,7 +48,8 @@ class LogInController extends Controller
                 return view('student',['selectedMenu'=>'profile', 'user_data'=> $user_data]);
             case 'admin':
                 $req->session()->put('sql_user_id', $user_data->id_user_admin);
-                return view('admin',['UserId'=> $user_data->id_user_admin]);
+                //return view('admin',['selectedMenu'=>'profile', 'user_data'=> $user_data]);
+                return redirect()->route('admin',['start']);
             case 'teacher':
                 $req->session()->put('sql_user_id', $user_data->id_teacher);
 
@@ -74,29 +75,4 @@ class LogInController extends Controller
         }
         return $model->data;
     }
-
-    //TODO: CONTROL DE SESIÓN EN LARAVEL.
-    /*
-    private function checkUser(){
-        $user_data = $this->getUserData();
-        //var_dump($this->user_data);
-        if($this->user_data != 0){
-            if($this->userExist()&&$this->passMatch()){
-                $_SESSION['token']=password_hash($_COOKIE['PHPSESSID'], PASSWORD_BCRYPT);
-                switch ($this->tipo) {
-                    case 'student':
-                        $_SESSION['sql_user_id']=$this->user_data[0]->id;
-                        break;
-                    case 'admin':
-                        $_SESSION['sql_user_id']=$this->user_data[0]->id_user_admin;
-                        break;
-                }
-                $_SESSION['user_data']= $this->user_data[0];
-                @$_SESSION['user_data']->pass ='';
-                return $this->callUserTemplate();
-            }
-        }
-        return $this->errorMsg('Usuario y/o contraseña incorrectos.');
-    }
-    */
 }

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -40,6 +40,6 @@
         <div class="msg">{{$msg}}</div>
     @endisset
     </div>
-    @include('footer');
+    @include('footer')
 </body>
 </html>
