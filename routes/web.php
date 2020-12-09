@@ -110,7 +110,8 @@ Route::post('/admin/{method}', function ($method, Request $req){
         case 'profilePost': return AdminController::profilePost($req);
         case 'teachersPost': return AdminController::teachersPost($req);
         case 'coursesPost': return AdminController::coursesPost($req);
-        case 'classesPost': return AdminController::classesPost();
+        case 'classesPost': return AdminController::classesPost($req);
+        case 'classesPostSchedule': return AdminController::classesPostSchedule($req);
         case 'deletePost': return AdminController::deletePost();
         default:
             return LogInController::error('Recurso no disponible');

@@ -21,6 +21,7 @@ class Classes extends DbQueries
     public function getByIdSchedule($value) {$this->data = parent::getByAttribute('id_schedule',$value);}
     public function getByName(string $value) {$this->data = parent::getByAttribute('name',$value);}
     public function getByColor(string $value) {$this->data = parent::getByAttribute('color',$value);}
+    public function getByNameAndCourse($name, $id_course){$this->data = parent::getByAttributes('name','id_course',$name, $id_course,'and');}
 
     public function updateValue($attribute, $new_value, $col, $val) {
         $this->data = parent::updateValue($attribute, $new_value, $col, $val);

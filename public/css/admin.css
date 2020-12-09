@@ -191,38 +191,91 @@
 /*COURSES ENDS*/
 
 /*CLASSES*/
-.list-classes-container{
-    text-align: center;
+div.form.text.container{
+    margin-top: 3%;
+    padding: 2%;
+    display: inline-block;
+    border: 1px solid;
+    box-shadow: 5px 10px #888888;
+    width: 45%;
+}
+.form.input.submit input{
     margin: 1%;
-}
-.list-classes-container table{
-    display: inline-table;
-    width: 75%;
-    border: thin solid black;
-}
-.list-classes-container td{
-    border: thin solid black;
-}
-.list-classes-container th{
-    border: solid black;
-}
-
-.form-container.courses-teachers{
-    margin: 3%;
-}
-
-.selector{
-    display: inline;
-    margin: 3%;
-}
-
-.form-schedule{
-    width: 100%;
+    width: 25%;
     font-size: large;
-    border: solid;
 }
-.form-schedule .col{
-    border-left: thin black solid;
+.form.container.inputs{
+    display: inline-block;
+    padding: 1%;
+    text-align: left;
+}
+.form.container.inputs.right{
+    width: 60%;
+
+    padding: 10px;
+}
+.form.container.inputs.left{
+    width: 35%;
+}
+.form.container.inputs input{
+    border: solid thin;
+    width: 100%;
+    padding-left: 5px;
+    margin: 10px;
+}
+.form.container.inputs label{
+    padding: 2px;
+    display: block;
+    font-size: large;
+}
+div.form.table.container{
+    display: inline-block;
+    width: 100%;
+    margin-top: 2%;
+}
+.form.table.container table{
+    margin-right: auto;
+    margin-left: auto;
+    width: 65%;
+    border-collapse: collapse;
+    border: 1px solid;
+    box-shadow: 5px 10px #888888;
+}
+.form.table.container thead th{
+    color: white;
+    background-color: tomato;
+    font-size: medium;
+    padding: 0;
+    margin: 0;
+}
+.form.table.container tbody{
+    font-size: small;
+}
+.form.table.container td{
+    border: solid thin;
+    height: 15px;
+    width: 10px;
+}
+.col.SÁBADO{
+    background-color: tomato;
+}
+.col.DOMINGO{
+    background-color: tomato;
+}
+
+.row.hour input{
+    padding: 1px;
+    margin: 1px;
+    width: 10px;
+}
+
+.row.hour:hover{
+    background-color: lightgray;
+}
+.readonly{
+    font-size: larger;
+    border: none;
+    display: block;
 }
 /*CLASSSES END*/
 

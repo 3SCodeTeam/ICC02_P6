@@ -26,16 +26,18 @@ class Schedules extends DbQueries
     }
     public function maxByIdClass($val){
         $values=[$val];
-        $stm = "SELECT  max(id_schedule), id_class, time_start, time_end, day FROM schedule WHERE id_class = ?";
+        $stm = "SELECT  max(id_schedule) as id_schedule FROM schedule WHERE id_class = ?";
         try{
             $res = DB::connection('mysql')->select($stm, $values);
+            $this->data->len = count($res);
+            $this->data->res = $res;
+            $this->data->status = true;
         }catch(Exception $e){
             $this->data->err = $e;
             $this->data->status = false;
             dd($e->getMessage());
         }
-        $this->data->status = true;
-        $this->data->affected_rows = $res;
+
     }
     public function insertValues($id_class, $time_start, $time_end, $day) {
         $values=[$id_class, $time_start, $time_end, $day];

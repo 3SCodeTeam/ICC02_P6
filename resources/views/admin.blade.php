@@ -33,7 +33,10 @@
         @break
         {{--INSERTAR VISTA CLASES--}}
         @case('classes')
-        @include('admin/adminClasses',['classes_data'=>$classes_data])
+        @include('admin/adminClasses',['classes'=>$classes, 'teachers'=>$teachers, 'courses'=>$courses])
+        @break
+        @case('classesSchedule')
+        @include('admin/adminClassesSchedule',['freeHoursOfWeek'=>$freeHoursOfWeek, 'formValues'=>$formValues])
         @break
         {{--INSERTAR VISTA BORRAR--}}
         @case('delete')
@@ -42,6 +45,7 @@
     @endswitch
 </div>
 
+{{--TODO: CSS alert-msg--}}
 <div class="alert-msg">
     @isset($msg)
         <div class="msg">{{$msg}}</div>

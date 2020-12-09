@@ -3,12 +3,19 @@
 
 namespace App\Http\Controllers;
 
+
+use App\Models\Classes;
 use App\Models\Courses;
 
+use App\Models\JoinQueries;
+use App\Models\Schedules;
 use App\Models\Teachers;
 use App\Models\UsersAdmin;
 
 use App\Utils\DataValidator;
+use DateInterval;
+use DateTime;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use stdClass;
@@ -74,7 +81,7 @@ class AdminController extends Controller
                 case 'surname':
                     if(!$checker->checkNames($v)){
                         return self::adminError('admin','El nombre contiene caracteres no validos.', 'teachers',$data);
-                    };
+                    }
                     break;
                 case 'nif':
                     $res=$checker->checkNIF($v);
@@ -125,24 +132,167 @@ class AdminController extends Controller
 
         if(self::in_ArrayObject($values['name'], $courses_data, 'name')){
            return view('admin', ['selectedMenu'=>'courses', 'courses_data'=>$courses_data, 'msg'=>'Este nombre del curso ya existe.']);
-        }
+        } //Comprar q el nombre no existe.
         if($values['date_start'] >= $values['date_end']){
             return view('admin', ['selectedMenu'=>'courses', 'courses_data'=>$courses_data, 'msg'=>'La fecha de inicio no puede ser posterior o igual a la de finalización.']);
-        }
+        } //Comprobar que fecha fin superior fecha inicio.
         $mod->insertValues($values['name'],$values['description'],$values['date_start'],$values['date_end'],$values['active']);
         if($mod->data->affected_rows > 0){
             $mod->getAll();
             $courses_data=$mod->data->res;
             return view('admin', ['selectedMenu'=>'courses', 'courses_data'=>$courses_data, 'msg'=>'¡Curso añadido!.']);
-        }
+        } //Comprobar que se han insertado los datos.
         return view('admin', ['selectedMenu'=>'courses', 'courses_data'=>$courses_data, 'msg'=>'Error de acceso a la base de datos.']);
 
     }
-    public static function classes(){}
-    public static function classesPost(){}
+    public static function classes(string $msg=null){
+        $tmod = new Teachers();
+        $cmod = new Courses();
+        $jmod = new JoinQueries();
+
+        $tmod->getAll();
+        $cmod->getByStatus(1);
+        $jmod->getAllClassesData();
+
+        $teachers = $tmod->data->res;
+        $courses = $cmod->data->res;
+        $classes = $jmod->data->res;
+
+
+        return view('admin',['selectedMenu'=>'classes', 'teachers'=>$teachers, 'courses'=>$courses, 'classes'=>$classes, 'msg'=>$msg]);
+
+    }
+    public static function classesPost(Request $req, string $msg=null){
+        $values = $req->only(['teacher','course']);
+        $coursesMod = new Courses();
+        $teachersMod = new Teachers();
+        $coursesMod->getById($values['course']);
+        $teachersMod->getById($values['teacher']);
+        $course_data = $coursesMod->data->res;
+        $teacher_data = $teachersMod->data->res;
+
+        $mod = new JoinQueries();
+        $mod->getUsedHoursByTeacherByCourseByDates($values['teacher'], $values['course']);
+        $usedAvailableHours = $mod->data->res;
+
+        $freeHoursOfWeek = self::availableHours($usedAvailableHours);
+
+        $values['course_name'] = $course_data[0]->name;
+        $values['teacher_email'] = $teacher_data[0]->email;
+
+        return view('admin', ['selectedMenu'=>'classesSchedule', 'freeHoursOfWeek'=>$freeHoursOfWeek, 'formValues'=>$values, 'msg'=>$msg]);
+
+    }
+    public static function classesPostSchedule(Request $req){
+        $inputSchedule = $req->except(['_token','color','name','course','teacher']);
+        $inputValues = $req->only(['color','name','course','teacher']);
+
+        $classMod = new Classes();
+        $classMod -> getByIdCourse($inputValues['course']);
+
+        If(self::in_ArrayObject($inputValues['name'],$classMod->data->res,'name')){
+            return self::classesPost($req,'El nombre de la asignatura introducido ya existe en este curso.');
+        }
+
+        $classMod->insertValues($inputValues['teacher'],$inputValues['course'],0,$inputValues['name'],$inputValues['color']);
+        if(!$classMod->data->status){
+            return self::classesPost($req,'Error insertando los datos.');
+        }
+
+        $classMod->getByNameAndCourse($inputValues['name'], $inputValues['course']);
+        $classData = $classMod->data->res[0];
+
+        $courseMod = new Courses();
+        $courseMod -> getById($inputValues['course']);
+        $courseData = $courseMod->data->res[0];
+
+        $values = self::stringToArray($inputSchedule, ';');
+
+        $courseClasses = self::getArrayOfClasses($values, $courseData->date_start, $courseData->date_end, $classData->id_class);
+
+        $mod= new JoinQueries();
+        if($mod->insertSchedule($courseClasses)){
+            $scheduleMod = new Schedules();
+            $scheduleMod ->maxByIdClass($classData->id_class);
+            $scheduleData = $scheduleMod->data->res[0];
+
+            $classMod -> updateValueById('id_schedule',$scheduleData->id_schedule,$classData->id_class);
+            return self::classes('Asignatura '.$classData->name.' creada.');
+        }
+        $classMod->deleteById($classData->id_class);
+        return self::classesPost($req,'Error insertando los datos.');
+    }
     public static function delete(){}
 
     //AUX FUNCTIONS
+    private static function getArrayOfClasses($values, $date_start, $date_end, $id_class): array
+    {
+        $start = new DateTime($date_start);
+        $end = new DateTime($date_end);
+        $daysInterval = ($start->diff($end))->days;
+        $plus1Day = new DateInterval("P1D");
+        $plus1Hour = new DateInterval("PT1H");
+
+        $courseClasses=[];
+
+        for($i = 0; $i < $daysInterval; $i++){
+            foreach ($values as $dow=>$hours)
+                if(self::dowCheck(($start->format('w')+1),$dow)){
+                    foreach ($hours as $h){
+                        $end_date = new DateTime('2000-01-01 '.$h);
+                        $end_date->add($plus1Hour);
+                        $courseClasses[]=['day'=>$start->format('Y-m-d'), 'time_start'=>$h, 'time_end'=>$end_date->format('H').':00', 'id_class'=>$id_class];
+                    }
+                }
+            $start->add($plus1Day);
+        }
+        return $courseClasses;
+    }
+    private static function stringToArray($string, $separator): array
+    {
+        $values=[];
+        foreach ($string as $k=>$v){
+            $data=explode($separator,$k);
+            $values[$data[0]][] = $data[1];
+        }
+        return $values;
+    }
+    private static function availableHours($usedHours): array
+    {
+        //MYSQL DOW => 1-7=>Sun-Sat
+        $hours = ['08:00', '09:00', '10:00', '11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00'];
+        $dow = ['LUNES', 'MARTES','MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO', 'DOMINGO'];
+
+        $avilableHours = [];
+        foreach ($hours as $h){
+            $freeHours=[];
+            foreach ($dow as $d){
+                $freeHour = true;
+                foreach ($usedHours as $value){
+                    if(self::dowCheck($value->DOW, $d) && substr($value->time_start,0,5) == $h){
+                        $freeHour = false;
+                        break;
+                    }
+                }
+                $freeHours[$d]= $freeHour;
+            }
+            $avilableHours[$h] = $freeHours;
+        }
+        return $avilableHours;
+    }
+    private static function dowCheck($sql, $sp): bool
+    {
+        switch ($sql){
+            case '1': return ($sp == 'DOMINGO');
+            case '2': return ($sp == 'LUNES');
+            case '3': return ($sp == 'MARTES');
+            case '4': return ($sp == 'MIÉRCOLES');
+            case '5': return ($sp == 'JUEVES');
+            case '6': return ($sp == 'VIERNES');
+            case '7': return ($sp == 'SÁBADO');
+        }
+        return false;
+    }
     private static function getAdminUserData($res){
         $user_data = new stdClass();
         $user_data->name = $res[0]->name;
@@ -162,12 +312,14 @@ class AdminController extends Controller
     private static function checkOption($option){
         switch($option){
         }
+        //TODO: actualizar función update para hacerla común a varios models.
         return $option;
     }
     private static function adminError($view, $msg, $menu, $data){
         return view($view, ['selectedMenu'=>$menu, 'msg'=>$msg, $data['name']=>$data['values']]);
     }
-    private static function in_ArrayObject($value, $obj, $key){
+    private static function in_ArrayObject($value, $obj, $key): bool
+    {
         foreach($obj as $item){
             foreach ($item as $k=>$v){
                 if($k == $key){
