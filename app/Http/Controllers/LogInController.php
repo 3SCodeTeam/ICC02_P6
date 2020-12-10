@@ -45,14 +45,16 @@ class LogInController extends Controller
         switch($form_data['type']){
             case 'student':
                 $req->session()->put('sql_user_id', $user_data->id);
+                $req->session()->put('user_role', 'student');
                 return view('student',['selectedMenu'=>'profile', 'user_data'=> $user_data]);
             case 'admin':
                 $req->session()->put('sql_user_id', $user_data->id_user_admin);
+                $req->session()->put('user_role', 'admin');
                 //return view('admin',['selectedMenu'=>'profile', 'user_data'=> $user_data]);
                 return redirect()->route('admin',['start']);
             case 'teacher':
                 $req->session()->put('sql_user_id', $user_data->id_teacher);
-
+                $req->session()->put('user_role', 'teacher');
                 return view('teacher',['UserId'=> $user_data->id_teacher]);
             default:
                 return self::error('Tipo de usuario desconocido.');

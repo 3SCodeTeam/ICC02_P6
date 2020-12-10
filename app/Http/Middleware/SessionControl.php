@@ -14,13 +14,22 @@ class SessionControl
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next, $role='student')
     {
-        if (!is_null($request->session()->get('sql_user_id'))) {
+        if (is_null($request->session()->get('sql_user_id'))) {
             //return view('login', ['msg'=>'Debes iniciar sesión.']);
-            return $next($request);
+            return redirect()->route('login', );
         }
-
-        return redirect()->route('login');
+        switch ($request->session()->get('user_role')){
+            case 'admin': return $next($request);
+            case 'teacher': if($role === 'teacher'){
+                return $next($request);
+            };
+            break;
+            case 'student': if($role==='student'){
+                return $next($request);
+            }
+        }
+        return redirect()->route('login', );
     }
 }

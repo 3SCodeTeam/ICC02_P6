@@ -64,6 +64,7 @@ Route::match(array('GET', 'POST'),'/signin/{method}', function ($method, Request
     return SignInController::error('La ruta solicitada no es accesible.');
 });
 
+//SESION CONTROL FROM THIS POINT
 Route::get('/student/{method}', function ($method, Request $req){
     switch ($method){
         case 'start': return StudentController::start($req);
@@ -99,9 +100,9 @@ Route::get('/admin/{method}', function ($method, Request $req){
         case 'delete': return AdminController::delete();
         }
     return LogInController::error('Recurso no disponible');
-})->middleware('Session')->name('admin');
+})->middleware('Session:admin')->name('admin');
 
-Route::post('/admin/{method}', function ($method, Request $req){
+Route::post('/admin/{method}', ['middleware'=>'session:admin', function ($method, Request $req){
     switch ($method){
         case 'profilePost': return AdminController::profilePost($req);
         case 'teachersPost': return AdminController::teachersPost($req);
@@ -111,7 +112,7 @@ Route::post('/admin/{method}', function ($method, Request $req){
         case 'deletePost': return AdminController::deletePost();
     }
     return LogInController::error('Recurso no disponible');
-})->middleware('Session');
+}]);
 
 Route::get('details/{method}/{id}', function ($method, $id, Request $req){
     switch ($method){
@@ -121,5 +122,6 @@ Route::get('details/{method}/{id}', function ($method, $id, Request $req){
     }
     return LogInController::error('Recurso no disponible');
 
-})->middleware('Session');
+})->middleware('Session:teacher');
+
 //TODO: introducir rol usuario en el control de sesión.
