@@ -119,7 +119,44 @@ class JoinQueries
         }
 
     }
+    //Insert para multiples sentencias SCHEDULE TABLE
     public function insertSchedule(array $data){
         return DBAlias::table('schedule')->insert($data);
+    }
+
+    //Detalles de estudiantes de un curso
+    public function getStudentsByCourse($id_course){
+        $values=[$id_course];
+        $stm= 'SELECT id, name, surname, username, email, nif, telephone, status, id_course, id_enrollment from students as S inner join enrollment as E on S.id = E.id_student where id_course = ?';
+        try{
+            $res = DBAlias::connection('mysql')->select($stm, $values);
+            $this->data->len = count($res);
+            $this->data->res = $res;
+            $this->data->status = true;
+        }catch(Exception $e){
+            $this->data->err = $e;
+            $this->data->status = false;
+            dd($e->getMessage());
+        } finally {
+            return $this->data;
+        }
+    }
+
+    //Detalles de classes (datos profesor) de un curso
+    public function getClassesAndTeachersByCourse($id_course){
+       $values=[$id_course];
+       $stm = 'SELECT C.id_class, C.id_course, C.id_teacher, C.name as class_name, C.color, Co.name as course_name, Co.description, Co.date_start, Co.date_end, Co.active, T.email, T.name as teacher_name, T.nif, T.surname, T.telephone FROM class as C INNER JOIN courses as Co ON C.id_course = Co.id_course INNER JOIN teachers AS T ON C.id_teacher = T.id_teacher WHERE C.id_course = ?';
+        try{
+            $res = DBAlias::connection('mysql')->select($stm, $values);
+            $this->data->len = count($res);
+            $this->data->res = $res;
+            $this->data->status = true;
+        }catch(Exception $e){
+            $this->data->err = $e;
+            $this->data->status = false;
+            dd($e->getMessage());
+        } finally {
+            return $this->data;
+        }
     }
 }

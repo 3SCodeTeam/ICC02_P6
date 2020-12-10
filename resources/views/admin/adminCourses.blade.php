@@ -44,7 +44,7 @@
                     </tr>
                     @foreach($courses_data as $c)
                         <tr class="row courses {{($c->active ==0) ? 'inactive':'active'}}">
-                            <td class="col name"><span><a href="{{asset('admin/courses/'.$c->id_course)}}">{{$c->name}}</a></span></td>
+                            <td class="col name"><span><a href="{{asset('/details/students/'.$c->id_course)}}">{{$c->name}}</a></span></td>
                             <td class="col start"><span>{{$c->date_start}}</span></td>
                             <td class="col end"><span>{{$c->date_end}}</span></td>
                             <td class="col description"><span>{{$c->description}}</span></td>

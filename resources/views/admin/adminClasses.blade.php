@@ -38,10 +38,10 @@
                 </tr>
                 @foreach($classes as $c)
                     <tr>
-                        <td class="col name"><p>{{$c->class_name}}</p></td>
+                        <td class="col name"><p><a href="{{asset('/details/classes/'.$c->id_class)}}"{{$c->class_name}}</p></td>
                         <td class="col color" style="color: {{$c->color}}"></td>
-                        <td class="col course"><p><a href="{{asset('admin/courses/'.$c->id_course)}}">{{$c->course_name}}</a></p></td>
-                        <td class="col teacher"><p><a href="{{asset('admin/teachers/'.$c->id_teacher)}}">{{$c->surname.', '.$c->teacher_name}}</a><a href="mailto:{{$c->email}}">{{' ('.$c->email.')'}}</a></p></td>
+                        <td class="col course"><p><a href="{{asset('/details/courses/'.$c->id_course)}}">{{$c->course_name}}</a></p></td>
+                        <td class="col teacher"><p><a href="{{asset('/details/teachers/'.$c->id_teacher)}}">{{$c->surname.', '.$c->teacher_name}}</a><a href="mailto:{{$c->email}}">{{' ('.$c->email.')'}}</a></p></td>
                     </tr>
                 @endforeach
             </tbody></table>

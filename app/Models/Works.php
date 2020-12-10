@@ -54,4 +54,17 @@ class Works extends DbQueries
         $this->data->status = true;
         $this->data->affected_rows = $res;
     }
+    public function getDistinctByIdClass($id_class){
+        $values=[$id_class];
+        $stm = 'SELECT DISTINCT name FROM works WHERE id_class = ?';
+        try {
+            $res = DB::connection('mysql')->delete($stm, $values);
+        } catch (Exception $e) {
+            $this->data->err = $e;
+            $this->data->status = false;
+            dd($e->getMessage());
+        }
+        $this->data->status = true;
+        $this->data->affected_rows = $res;
+    }
 }

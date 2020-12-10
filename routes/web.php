@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\DetailsController;
 use App\Http\Controllers\LogInController;
 use App\Http\Controllers\SignInController;
 use App\Http\Controllers\StudentController;
@@ -50,9 +51,8 @@ Route::match(array('GET', 'POST'),'/login/{method}', function ($method, Request 
         case 'end': return LogInController::end();
         case 'new': return LogInController::new();
         case 'post': return LogInController::post($request);
-        default:
-            return LogInController::error('La ruta solicitada no es accesible.');
     }
+    return LogInController::error('La ruta solicitada no es accesible.');
 });
 
 //SIGNIN ROUTE
@@ -60,9 +60,8 @@ Route::match(array('GET', 'POST'),'/signin/{method}', function ($method, Request
     switch ($method){
         case 'post': return SignInController::post($request);
         case 'new': return view('signin');
-        default:
-            return SignInController::error('La ruta solicitada no es accesible.');
     }
+    return SignInController::error('La ruta solicitada no es accesible.');
 });
 
 Route::get('/student/{method}', function ($method, Request $req){
@@ -74,9 +73,8 @@ Route::get('/student/{method}', function ($method, Request $req){
         case 'wSchedule': return StudentController::wSchedule($req);
         case 'dSchedule': return StudentController::dSchedule($req);
         case 'record': return StudentController::record();
-        default:
-            return LogInController::error('Recurso no disponible');
     }
+    return LogInController::error('Recurso no disponible');
 })->middleware('Session');
 
 Route::post('/student/{method}', function ($method, Request $request){
@@ -87,9 +85,8 @@ Route::post('/student/{method}', function ($method, Request $request){
         //TODO: horario día concreto
         //TODO: horario semana concreta
         //TODO: horario mes concreto
-        default:
-            return LogInController::error('Recurso no disponible');
     }
+    return LogInController::error('Recurso no disponible');
 })->middleware('Session');
 
 Route::get('/admin/{method}', function ($method, Request $req){
@@ -100,9 +97,8 @@ Route::get('/admin/{method}', function ($method, Request $req){
         case 'courses': return AdminController::courses();
         case 'classes': return AdminController::classes();
         case 'delete': return AdminController::delete();
-        default:
-            return LogInController::error('Recurso no disponible');
-    }
+        }
+    return LogInController::error('Recurso no disponible');
 })->middleware('Session')->name('admin');
 
 Route::post('/admin/{method}', function ($method, Request $req){
@@ -113,8 +109,17 @@ Route::post('/admin/{method}', function ($method, Request $req){
         case 'classesPost': return AdminController::classesPost($req);
         case 'classesPostSchedule': return AdminController::classesPostSchedule($req);
         case 'deletePost': return AdminController::deletePost();
-        default:
-            return LogInController::error('Recurso no disponible');
     }
+    return LogInController::error('Recurso no disponible');
+})->middleware('Session');
+
+Route::get('details/{method}/{id}', function ($method, $id, Request $req){
+    switch ($method){
+        case 'students': return DetailsController::studentsDetails($id);
+        case 'classes': return DetailsController::classesDetails($id);
+        case 'subjects': return DetailsController::subjectsDetails($id);
+    }
+    return LogInController::error('Recurso no disponible');
+
 })->middleware('Session');
 //TODO: introducir rol usuario en el control de sesión.

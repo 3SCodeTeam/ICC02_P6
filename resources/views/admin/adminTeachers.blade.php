@@ -27,7 +27,7 @@
             </tr>
             @foreach($teachers_data as $t)
                 <tr class="row teacher">
-                    <td class="col name surname"><span><a href="{{asset('admin/teachers/'.$t->id_teacher)}}">{{$t->surname.', '.$t->name}}</a></span></td>
+                    <td class="col name surname"><span><a href="{{asset('/details/teachers/'.$t->id_teacher)}}">{{$t->surname.', '.$t->name}}</a></span></td>
                     {{--<td class="col surname"><span>{{$t->surname}}</span></td>--}}
                     <td class="col email"><span><a href="mailto:{{$t->email}}">{{$t->email}}</a></span></td>
                     <td class="col nif"><span>{{$t->nif}}</span></td>
