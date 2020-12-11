@@ -277,6 +277,92 @@ div.form.table.container{
     border: none;
     display: block;
 }
+
+.list.class.container table{
+    margin-top: 25px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 75%;
+    border: 1px solid;
+    padding: 10px;
+    box-shadow: 5px 10px #888888;
+}
+.list.class.container p{
+    text-align: left;
+    margin: 0
+}
+/*CLASS LIST CLASSES*/
+.list.class.container table{
+    margin-top: 25px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 45%;
+    border: 1px solid;
+    box-shadow: 5px 10px #888888;
+    border-collapse: collapse;
+}
+.list.class.container td{
+    border: solid thin;
+}
+.list.class.container p{
+    text-align: left;
+    padding-left: 10px;
+    margin: 0;
+}
+.list.class.container a{
+    color: black;
+    text-decoration: none;
+}
+.list.class.container .col.name:hover a{
+    color: white;
+}
+.list.class.container .col.name:hover{
+    background-color: tomato;
+}
+.list.class.container .col.course:hover a{
+    color: white;
+}
+.list.class.container .col.course:hover{
+    background-color: tomato;
+}
+.list.class.container .col.teacher:hover a{
+    color: white;
+}
+.list.class.container .col.teacher:hover{
+    background-color: tomato;
+}
+.list.class.container .header p{
+    font-size: medium;
+    padding: 1px;
+}
+.list.class.container th{
+    background-color: tomato;
+    color: white;
+}
+
+.form.class.container{
+    margin-top: 15px;
+    display: inline-block;
+    width: 35%;
+    border: 1px solid;
+    box-shadow: 5px 10px #888888;
+    border-collapse: collapse;
+}
+.form.class.container .left, .right{
+    margin: 15px;
+    display: inline-block;
+    width: auto;
+    text-align: left;
+}
+.form.class.container select{
+    width: 250px;
+}
+.form.class.container .input.button{
+    width: auto;
+    margin: 10px;
+    font-size: large;
+}
+
 /*CLASSSES END*/
 
 

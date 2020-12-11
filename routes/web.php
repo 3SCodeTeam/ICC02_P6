@@ -6,6 +6,7 @@ use App\Http\Controllers\LogInController;
 use App\Http\Controllers\SignInController;
 use App\Http\Controllers\StudentController;
 
+use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -102,7 +103,7 @@ Route::get('/admin/{method}', function ($method, Request $req){
     return LogInController::error('Recurso no disponible');
 })->middleware('Session:admin')->name('admin');
 
-Route::post('/admin/{method}', ['middleware'=>'session:admin', function ($method, Request $req){
+Route::post('/admin/{method}', [function ($method, Request $req){
     switch ($method){
         case 'profilePost': return AdminController::profilePost($req);
         case 'teachersPost': return AdminController::teachersPost($req);
@@ -112,16 +113,23 @@ Route::post('/admin/{method}', ['middleware'=>'session:admin', function ($method
         case 'deletePost': return AdminController::deletePost();
     }
     return LogInController::error('Recurso no disponible');
-}]);
+}])->middleware('Session:admin')->name('admin');
 
 Route::get('details/{method}/{id}', function ($method, $id, Request $req){
     switch ($method){
-        case 'students': return DetailsController::studentsDetails($id);
-        case 'classes': return DetailsController::classesDetails($id);
-        case 'subjects': return DetailsController::subjectsDetails($id);
+        case 'students': return DetailsController::studentsDetails($id,$req);
+        case 'classes': return DetailsController::classesDetails($id,$req);
+        case 'subjects': return DetailsController::subjectsDetails($id,$req);
     }
     return LogInController::error('Recurso no disponible');
 
 })->middleware('Session:teacher');
 
-//TODO: introducir rol usuario en el control de sesión.
+Route::match(array('get','post'), 'teachers/{method}', function ($method, Request $req){
+    switch ($method){
+        case 'start': return TeacherController::start($req);
+        case 'profile': return TeacherController::profile($req);
+        case 'profilePost': return TeacherController::profilePost($req);
+        case 'classes': return TeacherController::classes($req);
+    }
+})->middleware('Session:teacher');

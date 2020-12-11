@@ -22,10 +22,12 @@ class LogInController extends Controller
     }
 
     public static function post(Request $request){
+        //$form_data = $request->only('username' 'email', 'pass', 'rol_option');
         $form_data=['name'=>$request->input('username'), 'email'=>$request->input('email'),'pass'=>$request->input('pass'),'type'=>$request->input('rol_option')];
         $user_data = self::getUserData($form_data);
 
         if($user_data->len == 0){ return self::error('La combinación usuario, email, password no existe.');}
+
         if(!self::checkPassword($form_data,$user_data->res[0])){return self::error('La combinación usuario, email, password no existe.');}
         return self::callUserTemplate($form_data, $user_data->res[0], $request);
     }
@@ -42,25 +44,35 @@ class LogInController extends Controller
     }
 
     private static function callUserTemplate($form_data, $user_data, Request $req){
+        $user_data = self::safeUserData($user_data);
         switch($form_data['type']){
             case 'student':
-                $req->session()->put('sql_user_id', $user_data->id);
+                $req->session()->put('sql_user_id', $user_data['id']);
                 $req->session()->put('user_role', 'student');
                 return view('student',['selectedMenu'=>'profile', 'user_data'=> $user_data]);
             case 'admin':
-                $req->session()->put('sql_user_id', $user_data->id_user_admin);
+                $req->session()->put('sql_user_id', $user_data['id_user_admin']);
                 $req->session()->put('user_role', 'admin');
                 //return view('admin',['selectedMenu'=>'profile', 'user_data'=> $user_data]);
                 return redirect()->route('admin',['start']);
             case 'teacher':
-                $req->session()->put('sql_user_id', $user_data->id_teacher);
+                $req->session()->put('sql_user_id', $user_data['id_teacher']);
                 $req->session()->put('user_role', 'teacher');
-                return view('teacher',['UserId'=> $user_data->id_teacher]);
+
+                return view('teacher',['selectedMenu'=>'profile','user_data'=>$user_data]);
             default:
                 return self::error('Tipo de usuario desconocido.');
         }
     }
-
+    private static function safeUserData($user_data){
+        $data=[];
+        foreach ($user_data as $k => $v){
+            if(!in_array($k, ['pass', 'password'])){
+                $data[$k] = $v;
+            }
+        }
+        return $data;
+    }
     private static function getUserData($form_data){
         switch($form_data['type']){
             case 'admin':

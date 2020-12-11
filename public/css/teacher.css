@@ -1,0 +1,108 @@
+/*Profile*/
+
+.teacher.profile.form.container{
+    display: inline-block;
+    border: 1px solid;
+    box-shadow: 5px 10px #888888;
+    padding: 15px;
+}
+.teacher.profile.inputs.left, .teacher.profile.inputs.right{
+    display: inline-block;
+    padding: 10px;
+    text-align: left;
+}
+.teacher.profile.form input{
+    display: block;
+    width: 400px;
+    height: 30px;
+    border-radius: 4px;
+    padding-left: 5px;
+    margin: 10px;
+}
+.teacher.profile.form label{
+    font-size: large;
+    margin: 10px;
+    padding-left: 3px;
+}
+.teacher.profile.down{
+    display: block;
+    margin: 10px;
+}
+.teacher.profile.down input{
+    display: inline-block;
+    width: 300px
+}
+#reset{
+    display: block;
+    width: 100px;
+}
+/*End profile*/
+
+/*Classes*/
+.teacher.classes.list.container{
+    width: 85%;
+    margin: auto;
+    border: 1px solid;
+    box-shadow: 5px 10px #888888;
+    padding: 0;
+}
+.teacher.classes table{
+    border-collapse: collapse;
+    width: 100%;
+}
+.teacher.classes thead{
+    background-color: tomato;
+    color: white;
+    text-align: center;
+}
+.teacher.classes tbody{
+    text-align: left;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+.teacher.classes tbody tr{
+    border: solid thin;
+}
+.teacher.classes tbody td p{
+    margin: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.teacher.classes tbody::-webkit-scrollbar {
+    display: none;
+}
+.teacher.classes .col{
+    border: thin solid;
+    width: 200px;
+}
+.teacher.classes .col.color{
+    width: 30px;
+}
+.teacher.classes .col.color div{
+    margin: auto;
+    width: 30px;
+    padding-left: 20px;
+}
+.teacher.classes tbody p{
+    padding-left: 5px;
+    text-align: center
+}
+.teacher.classes tbody a{
+    text-decoration: none;
+    color: blue;
+}
+.teacher.classes .col.name:hover{
+    background-color: #888888;
+}
+.teacher.classes .col.name:hover a{
+    color: white;
+}
+.teacher.classes .col.course:hover{
+    background-color: #888888;
+}
+.teacher.classes .col.course:hover a{
+    color: white;
+}
+/*End classes*/

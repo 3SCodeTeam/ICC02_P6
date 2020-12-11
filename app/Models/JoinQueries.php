@@ -4,6 +4,7 @@
 namespace App\Models;
 
 
+use http\Exception;
 use Illuminate\Support\Facades\DB as DBAlias;
 use App\Entities\Data;
 
@@ -151,6 +152,25 @@ class JoinQueries
             $this->data->len = count($res);
             $this->data->res = $res;
             $this->data->status = true;
+        }catch(Exception $e){
+            $this->data->err = $e;
+            $this->data->status = false;
+            dd($e->getMessage());
+        } finally {
+            return $this->data;
+        }
+    }
+    public function getClassesCoursesStudentsByTeacher($id_teacher){
+        $values = [$id_teacher];
+        $stm = 'select C.name as class_name, c.color, c.id_class, c.id_course, CO.name as course_name, CO.active, CO.date_end, CO.date_start, CO.description, count(distinct E.id_student) as students from class as C INNER JOIN courses as CO ON C.id_course = CO.id_course INNER JOIN enrollment AS E ON E.id_course = C.id_course
+WHERE E.status = 1 and C.id_teacher = ?
+GROUP BY C.name, c.color, c.id_class, c.id_course, CO.name, CO.active, CO.date_end, CO.date_start, CO.description';
+        try{
+            $res = DBAlias::connection('mysql')->select($stm, $values);
+            $this->data->len = count($res);
+            $this->data->res = $res;
+            $this->data->status = true;
+
         }catch(Exception $e){
             $this->data->err = $e;
             $this->data->status = false;
