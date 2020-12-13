@@ -19,7 +19,7 @@
 <div id="main-container">
     @switch($selectedMenu)
         {{--ESTUDIANTES--}}
-        @case('studentDetails')
+        @case('studentsDetails')
         @include('details/studentsDetails', ['course'=>$course, 'students'=>$students])
         @break
         {{--CLASES--}}

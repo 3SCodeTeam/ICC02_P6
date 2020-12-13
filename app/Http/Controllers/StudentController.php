@@ -6,7 +6,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Courses;
 use App\Models\Enrollments;
+use App\Models\Exams;
+use App\Models\JoinQueries;
+use App\Models\Percentages;
 use App\Models\Students;
+use App\Models\Works;
 use App\Utils\ScheduleTools;
 use App\Utils\DataValidator;
 use Illuminate\Http\Request;
@@ -24,6 +28,7 @@ class StudentController extends Controller
         $mod = new Students();
         $mod->getById($req->session()->get('sql_user_id'));
         $user_data = $mod->data->res[0];
+        $user_data =DataValidator::safeUserData($user_data);
         return view('student',['selectedMenu'=>'profile', 'user_data'=>$user_data]);
     }
     public static function profilePost(Request $req){/*ACTUALIZACIÓN DATOS PROFILE*/
@@ -43,11 +48,13 @@ class StudentController extends Controller
         //TODO: db data check for username, email, nif,
         $res = self::updateDB($value,$option,$userId);
         if(!$res['status']){
+            $user_data =DataValidator::safeUserData($user_data);
             return view('student',['selectedMenu'=>'profile','user_data'=>$user_data, 'msg'=>$res['msg']]);
         }
 
         $mod->getById($userId);
-        return view('student',['selectedMenu'=>'profile', 'user_data'=>$mod->data->res[0], 'msg'=>$res['msg']]);
+        $user_data =DataValidator::safeUserData($mod->data->res[0]);
+        return view('student',['selectedMenu'=>'profile', 'user_data'=>$user_data, 'msg'=>$res['msg']]);
     }
     public static function enrollment(Request $req){/*SECCION ENROLLMENT*/
         $mod = new Courses();
@@ -118,10 +125,84 @@ class StudentController extends Controller
 
         return view('student', ['selectedMenu'=>'dSchedule', 'schedule_data'=>$schedule_data]);
     }
-    public static function record(){/*SECCIÓN RECORD CARGA DESDE EL MENÚ*/}
-    public static function recordDetail($id_class){/*SECCIÓN DETALLES ASIGNATURA*/}
+    public static function record(Request $req){/*SECCIÓN RECORD CARGA DESDE EL MENÚ*/
+        $userId = $req->session()->get('sql_user_id');
+        $jMod = new JoinQueries();
+        $classes = $jMod->getClassesByStudent($userId);
+
+        $cMod = new Courses();
+        $cMod-> getById($classes->res[0]->id_course);
+        $course = $cMod->data->res[0];
+
+        $marks = self::getClassesMarks($classes->res);
+        //dd($marks);
+        return view ('student', ['selectedMenu'=>'record', 'classes'=>$classes->res, 'course' =>$course, 'marks'=>$marks]);
+    }
+    public static function recordDetail($id_class, Request $req){/*SECCIÓN DETALLES ASIGNATURA*/
+        $userId = $req->session()->get('sql_user_id');
+        $wMod = new Works();
+        $eMod = new Exams();
+        $jMod = new JoinQueries();
+
+        $wMod->getByIdClassAndIdStudent($id_class, $userId);
+        $works = $wMod->data->res;
+
+        $eMod->getByIdClassAndIdStudent($id_class, $userId);
+        $exams = $eMod->data->res;
+
+        $jMod -> getAllClassDatabyId($id_class);
+        $data = $jMod->data->res[0];
+
+        return view('student', ['selectedMenu'=>'recordDetails', 'exams'=>$exams, 'works'=>$works, 'data'=>$data]);
+    }
 
     /*AUX FUNCTIONS*/
+    private static function getClassesMarksWeights($id_class){
+        $pMod = new Percentages();
+        $pMod->getByIdClass($id_class);
+        $eWeight = $pMod->data->res[0]->exams;
+        $wWeight = $pMod->data->res[0]->continuous_assessment;
+
+        return ['exam'=>$eWeight, 'works'=>$wWeight];
+    }
+    private static function getClassesMarks($classes){
+        $wMod = new Works();
+        $eMod = new Exams();
+        $marks = [];
+
+        foreach ($classes as $c){
+            $wMod->getByIdClass($c->id_class);
+            $worksMarks = '----';
+            foreach ($wMod->data->res as $w){
+                if(!(isset($w->mark))){
+                    $worksMarks = '----';
+                    break;
+                }
+                $worksMarks += $w->mark;
+            }
+            if(!$worksMarks == '----'){
+                $eMod->getByIdClass($c->id_class);
+                $examsMarks = '----';
+                foreach ($eMod->data->res as $e){
+                    if(!(isset($e->mark))){
+                        $examsMarks = '----';
+                        break;
+                    }
+                    $examsMarks += $e->mark;
+                }
+            }else{
+                $examsMarks = '----';
+            }
+            $weights = self::getClassesMarksWeights($c->id_class);
+            if($examsMarks === '----' || $worksMarks === '----'){
+                $marks[$c->id_class] = ['exam'=>$examsMarks, 'work'=>$worksMarks, 'global'=>'----', 'weights'=>$weights];
+            }else{
+                $global = $examsMarks*$weights['exams'] + $worksMarks*$weights['works'];
+                $marks[$c->id_class] = ['exam'=>$examsMarks, 'work'=>$worksMarks, 'global'=>$global, 'weights'=>$weights];
+            }
+        }
+        return $marks;
+    }
     private static function checkOption($option){
         switch($option){
             case 'Password':

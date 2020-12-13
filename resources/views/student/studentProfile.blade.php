@@ -1,12 +1,12 @@
 <div class="admin-profile-container">
     <H2>Datos del usuario</H2>
             <div class="profile-data-container">
-                <div class="profile-data profile-username"><span>Nombre de usuario: </span>{{$user_data->username}}</div>
-                <div class="profile-data profile-name"><span>Nombre: </span>{{$user_data->name}}</div>
-                <div class="profile-data profile-surname"><span>Apellido: </span>{{$user_data->surname}}</div>
-                <div class="profile-data profile-email"><span>Email: </span>{{$user_data->email}}</div>
-                <div class="profile-data profile-nif"><span>NIF: </span>{{$user_data->nif}}</div>
-                <div class="profile-data profile-phone"><span>Teléfono: </span>{{$user_data->telephone}}</div>
+                <div class="profile-data profile-username"><span>Nombre de usuario: </span>{{$user_data['username']}}</div>
+                <div class="profile-data profile-name"><span>Nombre: </span>{{$user_data['name']}}</div>
+                <div class="profile-data profile-surname"><span>Apellido: </span>{{$user_data['surname']}}</div>
+                <div class="profile-data profile-email"><span>Email: </span>{{$user_data['email']}}</div>
+                <div class="profile-data profile-nif"><span>NIF: </span>{{$user_data['nif']}}</div>
+                <div class="profile-data profile-phone"><span>Teléfono: </span>{{$user_data['telephone']}}</div>
             </div>
 
             <div class="form-container">

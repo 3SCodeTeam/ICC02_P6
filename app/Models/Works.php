@@ -18,7 +18,7 @@ class Works extends DbQueries
     public function getByIdClass($value) {$this->data = parent::getByAttribute('id_class',$value);}
     public function getByIdStudent($value) {$this->data = parent::getByAttribute('id_student',$value);}
     public function getByName($value) {$this->data = parent::getByAttribute('name',$value);}
-    public function getByIdClassAndIdStudent($value1, $value2) {$this->data = parent::getByAttributes('id_class', 'id_student',$value1, $value2, 'and');}
+    public function getByIdClassAndIdStudent($id_class, $id_student) {$this->data = parent::getByAttributes('id_class', 'id_student',$id_class, $id_student, 'and');}
 
     public function updateValue($attribute, $new_value, $col, $val) {
         $this->data = parent::updateValue($attribute, $new_value, $col, $val);

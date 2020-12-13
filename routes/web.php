@@ -66,7 +66,7 @@ Route::match(array('GET', 'POST'),'/signin/{method}', function ($method, Request
 });
 
 //SESION CONTROL FROM THIS POINT
-Route::get('/student/{method}', function ($method, Request $req){
+Route::get('/student/{method}/{id?}', function (Request $req, $method, $id=null){
     switch ($method){
         case 'start': return StudentController::start($req);
         case 'profile': return StudentController::profile($req);
@@ -74,7 +74,8 @@ Route::get('/student/{method}', function ($method, Request $req){
         case 'mSchedule': return StudentController::mSchedule($req);
         case 'wSchedule': return StudentController::wSchedule($req);
         case 'dSchedule': return StudentController::dSchedule($req);
-        case 'record': return StudentController::record();
+        case 'record': return StudentController::record($req);
+        case 'classDetails':return StudentController::recordDetail($id, $req);
     }
     return LogInController::error('Recurso no disponible');
 })->middleware('Session');
@@ -83,7 +84,6 @@ Route::post('/student/{method}', function ($method, Request $request){
     switch ($method){
         case 'enrollmentPost': return StudentController::enrollmentPost($request);
         case 'profilePost': return StudentController::profilePost($request);
-        case 'recordDetail':return StudentController::recordDetail($request);
         //TODO: horario día concreto
         //TODO: horario semana concreta
         //TODO: horario mes concreto
@@ -132,4 +132,5 @@ Route::match(array('get','post'), 'teachers/{method}', function ($method, Reques
         case 'profilePost': return TeacherController::profilePost($req);
         case 'classes': return TeacherController::classes($req);
     }
+    return LogInController::error('Recurso no disponible');
 })->middleware('Session:teacher');

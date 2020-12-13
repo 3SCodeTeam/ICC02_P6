@@ -138,4 +138,13 @@ class DataValidator
     public function checkLen($value, $len){
         return (strlen($value) >= $len);
     }
+    public static function safeUserData($user_data){
+        $data=[];
+        foreach ($user_data as $k => $v){
+            if(!in_array($k, ['pass', 'password'])){
+                $data[$k] = $v;
+            }
+        }
+        return $data;
+    }
 }

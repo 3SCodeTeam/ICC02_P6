@@ -24,7 +24,7 @@
                         {{--CONTENEDOR INFERIOR--}}
                         <div class="courses inputs container description">
                             <label for="description">Descripción</label>
-                            <input class="courses form input description" type="text" name="description" required/><br><br><br>
+                            <textarea class="courses form input description" name="description" required></textarea>
                         </div>
                         <div class="courses inputs container button">
                             <input class="courses form input button" type="submit" value="Añadir"/>

@@ -14,6 +14,9 @@
                 <div class="form container inputs right">
                     <label for="name">Nombre de la asignatura</label>
                     <input type="text" name="name" id="name" required>
+                    <label for="workWeight">Peso de la evaluación continua</label>
+                    <input type="number" name="workWeight" id="work" min="10" max="90" step="5" value="60" required/>
+                    {{--ESTOS DOS PUNTOS LOS PODEMOS ELIMINAR CON UN $request->flash() en el controller--}}
                     <input type="text" id="course" name="course" value="{{$formValues['course']}}" hidden/>
                     <input type="text" id="teacher" name="teacher" value="{{$formValues['teacher']}}" hidden/>
                 </div>

@@ -32,6 +32,12 @@
             @case('enrollment')
                 @include('student/studentEnrollment', ['courses_data'=>$courses_data, 'studentCourses'=>$studentCourses])
             @break
+            @case('record')
+            @include('student/studentRecord', ['course'=>$course, 'classes'=>$classes])
+            @break
+            @case('recordDetails')
+            @include('student/classDetails', ['data'=>$data, 'works'=>$works, 'exams'=>$exams])
+            @break
         @endswitch
     </div>
 

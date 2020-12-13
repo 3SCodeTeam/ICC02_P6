@@ -103,9 +103,15 @@ class JoinQueries
     }
     //DEVUELVE TODAS LAS CLASES + DATOS CURSO + DATOS PROFESOR ORDENADO POR CURSO Y PRFESOR
     public function getAllClassesData(){
-        $stm = 'SELECT c.id_class as id_class, c.id_teacher as id_teacher, c.id_course as id_course, C.name as class_name, C.color, Co.name as course_name, Co.active, T.email, T.name as teacher_name, T.surname
-        FROM class as C INNER JOIN courses as Co ON C.id_course = Co.id_course INNER JOIN teachers AS T ON C.id_teacher = T.id_teacher
-        ORDER BY id_course, id_teacher';
+        $stm = 'SELECT c.id_class, c.id_teacher, c.id_course, C.name as class_name, C.color,
+                Co.name as course_name, Co.active, Co.description, CO.date_start, CO.date_end,
+                T.email, T.name as teacher_name, T.surname,
+                P.continuous_assessment as works, P.exams
+                FROM class as C
+                INNER JOIN courses as Co ON C.id_course = Co.id_course
+                INNER JOIN teachers AS T ON C.id_teacher = T.id_teacher
+                INNER JOIN percentage AS P ON C.id_class = P.id_class
+                ORDER BY id_course, id_teacher';
         try{
             $res = DBAlias::connection('mysql')->select($stm);
             $this->data->len = count($res);
@@ -165,6 +171,52 @@ class JoinQueries
         $stm = 'select C.name as class_name, c.color, c.id_class, c.id_course, CO.name as course_name, CO.active, CO.date_end, CO.date_start, CO.description, count(distinct E.id_student) as students from class as C INNER JOIN courses as CO ON C.id_course = CO.id_course INNER JOIN enrollment AS E ON E.id_course = C.id_course
 WHERE E.status = 1 and C.id_teacher = ?
 GROUP BY C.name, c.color, c.id_class, c.id_course, CO.name, CO.active, CO.date_end, CO.date_start, CO.description';
+        try{
+            $res = DBAlias::connection('mysql')->select($stm, $values);
+            $this->data->len = count($res);
+            $this->data->res = $res;
+            $this->data->status = true;
+
+        }catch(Exception $e){
+            $this->data->err = $e;
+            $this->data->status = false;
+            dd($e->getMessage());
+        } finally {
+            return $this->data;
+        }
+    }
+    public function getClassesByStudent($id_student){
+        $values = [$id_student];
+        $stm = 'select C.id_class, C.name as class_name, C.id_course, C.id_teacher, CO.name as course_name, CO.active, CO.description,
+                T.name as teacher_name, T.surname, T.email, E.status
+                from class AS C INNER JOIN enrollment AS E ON C.id_course = E.id_course INNER JOIN teachers AS T ON T.id_teacher = C.id_teacher
+                INNER JOIN courses as CO ON C.id_course = CO.id_course WHERE  active = 1 and status = 1 and id_student = ?';
+        try{
+            $res = DBAlias::connection('mysql')->select($stm, $values);
+            $this->data->len = count($res);
+            $this->data->res = $res;
+            $this->data->status = true;
+
+        }catch(Exception $e){
+            $this->data->err = $e;
+            $this->data->status = false;
+            dd($e->getMessage());
+        } finally {
+            return $this->data;
+        }
+    }
+    public function getAllClassDatabyId($id_class){
+        $values=[$id_class];
+        $stm = 'SELECT
+C.id_class, C.name as class_name, C.id_course, C.id_teacher, C.color,
+CO.name as course_name, CO.active, CO.description, CO.date_start, CO.date_end,
+T.name as teacher_name, T.surname, T.email,
+P.continuous_assessment as works, P.exams
+FROM class AS C
+INNER JOIN teachers AS T ON T.id_teacher = C.id_teacher
+INNER JOIN courses as CO ON C.id_course = CO.id_course
+INNER JOIN percentage as P ON C.id_class = P.id_class
+WHERE C.id_class = ?';
         try{
             $res = DBAlias::connection('mysql')->select($stm, $values);
             $this->data->len = count($res);

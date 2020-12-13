@@ -8,6 +8,7 @@ use App\Models\Classes;
 use App\Models\Courses;
 
 use App\Models\JoinQueries;
+use App\Models\Percentages;
 use App\Models\Schedules;
 use App\Models\Teachers;
 use App\Models\UsersAdmin;
@@ -184,8 +185,8 @@ class AdminController extends Controller
 
     }
     public static function classesPostSchedule(Request $req){
-        $inputSchedule = $req->except(['_token','color','name','course','teacher']);
-        $inputValues = $req->only(['color','name','course','teacher']);
+        $inputSchedule = $req->except(['_token','color','name','course','teacher', 'workWeight']);
+        $inputValues = $req->only(['color','name','course','teacher','workWeight']);
 
         $classMod = new Classes();
         $classMod -> getByIdCourse($inputValues['course']);
@@ -194,31 +195,45 @@ class AdminController extends Controller
             return self::classesPost($req,'El nombre de la asignatura introducido ya existe en este curso.');
         }
 
+        /*CREAR UNA NUEVA CLASE EN LA TABLA CLASS*/
         $classMod->insertValues($inputValues['teacher'],$inputValues['course'],0,$inputValues['name'],$inputValues['color']);
         if(!$classMod->data->status){
             return self::classesPost($req,'Error insertando los datos.');
         }
-
+        /*OBTENER EL CLASS ID DE LA NUEVA CLASE CREADA*/
         $classMod->getByNameAndCourse($inputValues['name'], $inputValues['course']);
         $classData = $classMod->data->res[0];
 
+        /*OBTENER LOS DATOS DEL CURSO DEL QUE DEPENDE LA CLASE*/
         $courseMod = new Courses();
         $courseMod -> getById($inputValues['course']);
         $courseData = $courseMod->data->res[0];
 
+        /*CONVERTIR LAS FECHAS Y HORAS RECIBIDAS EN EL FORM EN UN ARRAY*/
         $values = self::stringToArray($inputSchedule, ';');
 
+        /*GENERAR UN ARRAY CON LOS DATOS DE LAS HORAS Y DIAS DE LAS CLASES.*/
         $courseClasses = self::getArrayOfClasses($values, $courseData->date_start, $courseData->date_end, $classData->id_class);
 
+        /*INSERTAR LOS DATOS DEL ARRAY CON LAS CLASES EN SCHEDULE*/
         $mod= new JoinQueries();
         if($mod->insertSchedule($courseClasses)){
+            /*ACTUALIZAR EL VALOR id_schedule DE LA TABLA CLASS CON EL VALOR max(id_schedule) DE LA CLASE EN LA TABLA SCHEDULE*/
             $scheduleMod = new Schedules();
             $scheduleMod ->maxByIdClass($classData->id_class);
             $scheduleData = $scheduleMod->data->res[0];
 
+            /*ACTUALIZAR EL PESO DE LA EVALUACIÓN CONTUNUA EN LA TABLA PERCENTAGE*/
+            $workWeight = $inputValues['workWeight']/100;
+            $exmanWeight = 1-$workWeight;
+
+            $pMod = new Percentages();
+            $pMod->insertValues($inputValues['course'], $classData->id_class, $workWeight, $exmanWeight);
+
             $classMod -> updateValueById('id_schedule',$scheduleData->id_schedule,$classData->id_class);
             return self::classes('Asignatura '.$classData->name.' creada.');
         }
+        /*SI ALGO FALLA BORRAMOS LOS INSERT*/
         $classMod->deleteById($classData->id_class);
         return self::classesPost($req,'Error insertando los datos.');
     }
