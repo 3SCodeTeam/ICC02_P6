@@ -14,7 +14,7 @@
 
 @include('header')
 <div class= "nav-bar">
-    @include('teacher.menu',['selectedMenu'=>$selectedMenu])
+    @include('teacher.menu',['selectedMenu'=>$selectedMenu, 'id_class ??'=>$id_class ?? ''])
 </div>
 
 <div id="main-container">
@@ -30,6 +30,15 @@
         {{--INSERTAR VISTA CLASES--}}
         @case('classes')
         @include('teacher.classes',['classes'=>$classes,'user_data'=>$user_data])
+        @break
+        @case('students')
+        @include('teacher.classDetails',['$selectedMenu'=>$selectedMenu, 'students'=>$students,'marks'=>$marks])
+        @break
+        @case('subjects')
+        @include('teacher.classDetails',['$selectedMenu'=>$selectedMenu, 'class_data'=>$class_data, 'subjects'=>$subjects])
+        @break
+        @case('studentDetails')
+        @include('teacher.studentDetails', ['$selectedMenu'=>$selectedMenu, 'user_data'=>$user_data, 'student'=>$student, 'exams'=>$exams, 'works'=>$works])
         @break
     @endswitch
 </div>

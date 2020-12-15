@@ -17,8 +17,9 @@ class DetailsController extends Controller
 {
     public static function studentsDetails($id, Request $req){
         $role = $req->session()->get('user_role');
+
         $mod = new JoinQueries();
-        $students = $mod->getStudentsByCourse($id);
+        $students = $mod->getStudentsDataByCourse($id);
 
         $mod = new Courses();
         $mod->getById($id);
@@ -28,8 +29,9 @@ class DetailsController extends Controller
         return view('details', ['selectedMenu'=>'studentsDetails', 'course'=>$course,'students'=>$students->res]);
     }
     public static function classesDetails($id, Request $req){
-        $role = $req->input('user_role');
+        $role = $req->session()->get('user_role');
         $joinMod = new JoinQueries();
+
         $classes = $joinMod->getClassesAndTeachersByCourse($id);
 
         $course= self::getCourseData($id, $role);
@@ -37,7 +39,7 @@ class DetailsController extends Controller
         return view('details', ['selectedMenu'=>'classesDetails','course'=>$course, 'classes'=>$classes->res]);
     }
     public static function subjectsDetails($id, Request $req){
-        $role = $req->input('user_role');
+        $role = $req->session()->get('user_role');
         $mod = new Exams();
         $mod->getDistinctByIdClass($id);
         $exams = $mod->data->res;
@@ -61,6 +63,7 @@ class DetailsController extends Controller
         $mod = new Courses();
         $mod->getById($courseId);
         $course =$mod->data->res[0];
+
         $course=['role'=>$role, 'id_course'=>$course->id_course, 'name'=>$course->name, 'date_start'=>$course->date_start, 'date_end'=>$course->date_end];
         return $course;
     }

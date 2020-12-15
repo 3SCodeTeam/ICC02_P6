@@ -125,12 +125,17 @@ Route::get('details/{method}/{id}', function ($method, $id, Request $req){
 
 })->middleware('Session:teacher');
 
-Route::match(array('get','post'), 'teachers/{method}', function ($method, Request $req){
+Route::match(array('GET', 'POST'), 'teachers/{method}/{class?}/{student?}', function (Request $req, $method, $class=null,$student=null){
+
     switch ($method){
         case 'start': return TeacherController::start($req);
         case 'profile': return TeacherController::profile($req);
         case 'profilePost': return TeacherController::profilePost($req);
         case 'classes': return TeacherController::classes($req);
+        case 'students': return TeacherController::students($req, $class);
+        case 'subjects': return TeacherController::subjects($req, $class);
+        case 'studentDetails': return  TeacherController::studentDetails($req, $class, $student);
+        case 'subjectsPost': return  TeacherController::subjectsPost($req,$class);
     }
     return LogInController::error('Recurso no disponible');
 })->middleware('Session:teacher');

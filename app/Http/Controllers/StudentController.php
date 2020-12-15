@@ -11,6 +11,7 @@ use App\Models\JoinQueries;
 use App\Models\Percentages;
 use App\Models\Students;
 use App\Models\Works;
+use App\Utils\MarkSTools;
 use App\Utils\ScheduleTools;
 use App\Utils\DataValidator;
 use Illuminate\Http\Request;
@@ -134,8 +135,9 @@ class StudentController extends Controller
         $cMod-> getById($classes->res[0]->id_course);
         $course = $cMod->data->res[0];
 
-        $marks = self::getClassesMarks($classes->res);
-        //dd($marks);
+        $marks = MarkSTools::getClassesMarksByStudent($classes->res, $userId);
+        //$marks = self::getClassesMarks($classes->res, $userId);
+
         return view ('student', ['selectedMenu'=>'record', 'classes'=>$classes->res, 'course' =>$course, 'marks'=>$marks]);
     }
     public static function recordDetail($id_class, Request $req){/*SECCIÓN DETALLES ASIGNATURA*/
@@ -165,13 +167,13 @@ class StudentController extends Controller
 
         return ['exam'=>$eWeight, 'works'=>$wWeight];
     }
-    private static function getClassesMarks($classes){
+    private static function getClassesMarks($classes, $userId){
         $wMod = new Works();
         $eMod = new Exams();
         $marks = [];
 
         foreach ($classes as $c){
-            $wMod->getByIdClass($c->id_class);
+            $wMod->getByIdClassAndIdStudent($c->id_class, $userId);
             $worksMarks = '----';
             foreach ($wMod->data->res as $w){
                 if(!(isset($w->mark))){
@@ -181,7 +183,7 @@ class StudentController extends Controller
                 $worksMarks += $w->mark;
             }
             if(!$worksMarks == '----'){
-                $eMod->getByIdClass($c->id_class);
+                $eMod->getByIdClassAndIdStudent($c->id_class, $userId);
                 $examsMarks = '----';
                 foreach ($eMod->data->res as $e){
                     if(!(isset($e->mark))){

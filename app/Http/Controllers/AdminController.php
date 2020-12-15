@@ -235,6 +235,7 @@ class AdminController extends Controller
         }
         /*SI ALGO FALLA BORRAMOS LOS INSERT*/
         $classMod->deleteById($classData->id_class);
+        //TODO: borrar Percentages.
         return self::classesPost($req,'Error insertando los datos.');
     }
     public static function delete(){}

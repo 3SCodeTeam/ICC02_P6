@@ -20,18 +20,8 @@ class JoinQueries
         $values = [$id, $date];
         $stm = 'SELECT S.id_class, S.day, S.time_start, S.time_end, C.name as class_name, C.color, Co.name as course_name FROM schedule as S inner JOIN class as C ON S.id_class=C.id_class INNER JOIN courses as Co ON C.id_course = Co.id_course
         WHERE Co.id_course IN (SELECT id_course FROM enrollment WHERE id_student = ?) and S.day =? ORDER BY S.day, S.time_start';
-        try{
-            $res = DBAlias::connection('mysql')->select($stm, $values);
-            $this->data->len = count($res);
-            $this->data->res = $res;
-            $this->data->status = true;
-        }catch(Exception $e){
-            $this->data->err = $e->getMessage();
-            $this->data->status = false;
-            dd($e->getMessage());
-        } finally {
-            return $this->data;
-        }
+        $this->data = self::doQuery($stm, $values);
+        return $this->data;
     }
 
     public function getByDOW(){
@@ -64,18 +54,8 @@ class JoinQueries
         INNER JOIN teachers AS T ON C.id_teacher = T.id_teacher
         INNER JOIN schedule AS S ON C.id_schedule = S.id_schedule
         WHERE C.id_teacher = ? and S.day BETWEEN ? and ?';
-        try{
-            $res = DBAlias::connection('mysql')->select($stm,$values);
-            $this->data->len = count($res);
-            $this->data->res = $res;
-            $this->data->status = true;
-        }catch(Exception $e){
-            $this->data->err = $e;
-            $this->data->status = false;
-            dd($e->getMessage());
-        } finally {
-            return $this->data;
-        }
+        $this->data = self::doQuery($stm, $values);
+        return $this->data;
     }
     //Devuelve las horas ocupadas de un profesor y/o curso en un peridodo.
     public function getUsedHoursByTeacherByCourseByDates($id_teacher, $id_course){
@@ -88,18 +68,8 @@ class JoinQueries
         WHERE (C.id_teacher = ? or Co.id_course = ?) and S.day BETWEEN
         (SELECT date_start FROM courses where id_course = ?) and (SELECT date_end FROM courses where id_course = ?)
 		ORDER BY DOW, S.time_start';
-        try{
-            $res = DBAlias::connection('mysql')->select($stm,$values);
-            $this->data->len = count($res);
-            $this->data->res = $res;
-            $this->data->status = true;
-        }catch(Exception $e){
-            $this->data->err = $e;
-            $this->data->status = false;
-            dd($e->getMessage());
-        } finally {
-            return $this->data;
-        }
+        $this->data = self::doQuery($stm, $values);
+        return $this->data;
     }
     //DEVUELVE TODAS LAS CLASES + DATOS CURSO + DATOS PROFESOR ORDENADO POR CURSO Y PRFESOR
     public function getAllClassesData(){
@@ -132,58 +102,32 @@ class JoinQueries
     }
 
     //Detalles de estudiantes de un curso
-    public function getStudentsByCourse($id_course){
+    public function getStudentsDataByCourse($id_course){
         $values=[$id_course];
         $stm= 'SELECT id, name, surname, username, email, nif, telephone, status, id_course, id_enrollment from students as S inner join enrollment as E on S.id = E.id_student where id_course = ?';
-        try{
-            $res = DBAlias::connection('mysql')->select($stm, $values);
-            $this->data->len = count($res);
-            $this->data->res = $res;
-            $this->data->status = true;
-        }catch(Exception $e){
-            $this->data->err = $e;
-            $this->data->status = false;
-            dd($e->getMessage());
-        } finally {
-            return $this->data;
-        }
+        $this->data = self::doQuery($stm, $values);
+        return $this->data;
     }
 
     //Detalles de classes (datos profesor) de un curso
     public function getClassesAndTeachersByCourse($id_course){
        $values=[$id_course];
        $stm = 'SELECT C.id_class, C.id_course, C.id_teacher, C.name as class_name, C.color, Co.name as course_name, Co.description, Co.date_start, Co.date_end, Co.active, T.email, T.name as teacher_name, T.nif, T.surname, T.telephone FROM class as C INNER JOIN courses as Co ON C.id_course = Co.id_course INNER JOIN teachers AS T ON C.id_teacher = T.id_teacher WHERE C.id_course = ?';
-        try{
-            $res = DBAlias::connection('mysql')->select($stm, $values);
-            $this->data->len = count($res);
-            $this->data->res = $res;
-            $this->data->status = true;
-        }catch(Exception $e){
-            $this->data->err = $e;
-            $this->data->status = false;
-            dd($e->getMessage());
-        } finally {
-            return $this->data;
-        }
+        $this->data = self::doQuery($stm, $values);
+        return $this->data;
     }
-    public function getClassesCoursesStudentsByTeacher($id_teacher){
+    public function getClassesCoursesStudentsByTeacher($id_teacher): Data
+    {
         $values = [$id_teacher];
-        $stm = 'select C.name as class_name, c.color, c.id_class, c.id_course, CO.name as course_name, CO.active, CO.date_end, CO.date_start, CO.description, count(distinct E.id_student) as students from class as C INNER JOIN courses as CO ON C.id_course = CO.id_course INNER JOIN enrollment AS E ON E.id_course = C.id_course
-WHERE E.status = 1 and C.id_teacher = ?
-GROUP BY C.name, c.color, c.id_class, c.id_course, CO.name, CO.active, CO.date_end, CO.date_start, CO.description';
-        try{
-            $res = DBAlias::connection('mysql')->select($stm, $values);
-            $this->data->len = count($res);
-            $this->data->res = $res;
-            $this->data->status = true;
-
-        }catch(Exception $e){
-            $this->data->err = $e;
-            $this->data->status = false;
-            dd($e->getMessage());
-        } finally {
-            return $this->data;
-        }
+        $stm = 'select C.name as class_name, c.color, c.id_class, c.id_course,
+                CO.name as course_name, CO.active, CO.date_end, CO.date_start, CO.description, count(distinct E.id_student) as students
+                from class as C
+                INNER JOIN courses as CO ON C.id_course = CO.id_course
+                INNER JOIN enrollment AS E ON E.id_course = C.id_course
+                WHERE E.status = 1 and C.id_teacher = ?
+                GROUP BY C.name, c.color, c.id_class, c.id_course, CO.name, CO.active, CO.date_end, CO.date_start, CO.description';
+        $this->data = self::doQuery($stm, $values);
+        return $this->data;
     }
     public function getClassesByStudent($id_student){
         $values = [$id_student];
@@ -191,44 +135,65 @@ GROUP BY C.name, c.color, c.id_class, c.id_course, CO.name, CO.active, CO.date_e
                 T.name as teacher_name, T.surname, T.email, E.status
                 from class AS C INNER JOIN enrollment AS E ON C.id_course = E.id_course INNER JOIN teachers AS T ON T.id_teacher = C.id_teacher
                 INNER JOIN courses as CO ON C.id_course = CO.id_course WHERE  active = 1 and status = 1 and id_student = ?';
-        try{
-            $res = DBAlias::connection('mysql')->select($stm, $values);
-            $this->data->len = count($res);
-            $this->data->res = $res;
-            $this->data->status = true;
-
-        }catch(Exception $e){
-            $this->data->err = $e;
-            $this->data->status = false;
-            dd($e->getMessage());
-        } finally {
-            return $this->data;
-        }
+        $this->data = self::doQuery($stm, $values);
+        return $this->data;
     }
     public function getAllClassDatabyId($id_class){
         $values=[$id_class];
-        $stm = 'SELECT
-C.id_class, C.name as class_name, C.id_course, C.id_teacher, C.color,
-CO.name as course_name, CO.active, CO.description, CO.date_start, CO.date_end,
-T.name as teacher_name, T.surname, T.email,
-P.continuous_assessment as works, P.exams
-FROM class AS C
-INNER JOIN teachers AS T ON T.id_teacher = C.id_teacher
-INNER JOIN courses as CO ON C.id_course = CO.id_course
-INNER JOIN percentage as P ON C.id_class = P.id_class
-WHERE C.id_class = ?';
+        $stm = 'SELECT C.id_class, C.name as class_name, C.id_course, C.id_teacher, C.color,
+        CO.name as course_name, CO.active, CO.description, CO.date_start, CO.date_end,
+        T.name as teacher_name, T.surname, T.email,
+        P.continuous_assessment as works, P.exams
+        FROM class AS C
+        INNER JOIN teachers AS T ON T.id_teacher = C.id_teacher
+        INNER JOIN courses as CO ON C.id_course = CO.id_course
+        INNER JOIN percentage as P ON C.id_class = P.id_class
+        WHERE C.id_class = ?';
+        $this->data=self::doQuery($stm, $values);
+        return $this->data;
+    }
+    public function getStudentsByClass($id_class){
+        $values = [$id_class];
+        $stm='SELECT C.id_class, C.name as class_name, C.color, C.id_course, C.id_teacher,
+        CO.name as course_name, CO.active, CO.description, CO.date_start, CO.date_end,
+        T.name as teacher_name, T.surname as teacher_surname, T.email as teacher_email, T.telephone as teacher_telephone,
+        S.id as id_student, S.name as student_name, S.surname as student_surname, S.email as student_email, S.telephone as student_telephone,
+        P.continuous_assessment as work, P.exams,
+        E.status
+        FROM class as C
+        INNER JOIN courses as CO ON c.id_course = CO.id_course
+        INNER JOIN teachers as T ON C.id_teacher = T.id_teacher
+        INNER JOIN percentage as P ON C.id_class = P.id_class
+        INNER JOIN enrollment as E ON C.id_course = E.id_course
+        INNER JOIN students as S ON S.id = E.id_student
+        WHERE C.id_class = ?';
+        $this->data = self::doQuery($stm, $values);
+        return $this->data;
+    }
+    //Insert para multiples sentencias
+    public function insertMultiple(array $data, $table){
+        return DBAlias::table($table)->insert($data);
+    }
+
+    private function doQuery($stm, array $values=null){
+        $data = new Data();
+        $data->status = false;
+        $data->res = null;
+        $data->len = 0;
         try{
             $res = DBAlias::connection('mysql')->select($stm, $values);
-            $this->data->len = count($res);
-            $this->data->res = $res;
-            $this->data->status = true;
-
-        }catch(Exception $e){
-            $this->data->err = $e;
-            $this->data->status = false;
+            if(!isset($res)){
+                throw new \Exception('Error getStudentsByClass query');
+            }
+            $data->status = true;
+            $data->res = $res;
+            $data->len = count($res);
+        }catch(\Exception $e){
+            $data->err = $e;
+            $data->status = false;
             dd($e->getMessage());
         } finally {
-            return $this->data;
+            return $data;
         }
     }
 }
