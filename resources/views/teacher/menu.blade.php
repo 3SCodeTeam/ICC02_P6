@@ -7,7 +7,7 @@
     </div>
 </div>
 
-@if(in_array($selectedMenu,['students','subjects','studentDetails']))
+@if(in_array($selectedMenu,['students','subjects','studentDetails','subjectsCreate']))
     <div id="schedule-menu" class="menu-items-cont submenu">
         <div class="item {{($selectedMenu == 'students') ? 'selected':''}}">
             <a {{(!($selectedMenu == 'students')) ? 'href='.asset('/teachers/students/'.$id_class).'':''}}>Estudiantes</a>

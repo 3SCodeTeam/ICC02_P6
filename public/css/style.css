@@ -1,18 +1,18 @@
 
 /* ESTOS ESTILOS SE APLICAN A TODAS LAS PLANTILLAS*/
 
-header a{    
+header a{
     color: red;
-    font-size: xx-large;    
+    font-size: xx-large;
     font-family: 'Times New Roman', Times, serif;
-    text-decoration: none;    
+    text-decoration: none;
     text-align: center;
 }
-header div{    
+header div{
     display: block;
-    margin-top: 0.5em;    
+    margin-top: 0.5em;
     position: relative;
-    top:0;    
+    top:0;
     padding: 1em;
     border-bottom: red solid thin;
 }
@@ -49,9 +49,48 @@ body{
     font-size: xx-large;
 }
 h1{
-    font-size: 2em;    
+    font-size: 2em;
     margin-bottom: 5px;
 }
 a{
     color:red;
+}
+
+/*Genenral tablas*/
+
+table{
+    border-collapse: collapse;
+    width: 75%;
+    margin: auto;
+    border: 1px solid;
+    box-shadow: 5px 10px #888888;
+    padding: 0;
+}
+thead{
+    background-color: tomato;
+    color: white;
+    font-size: medium;
+}
+thead p{
+    margin: 5px;
+}
+tbody td{
+    font-size: small;
+    text-align: left;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+tbody tr{
+    border: solid thin;
+}
+tbody td p{
+    padding: 0;
+    margin: 0;
+    padding-left: 15px;
+}
+tbody a{
+    text-decoration: none;
+    color: black;
 }

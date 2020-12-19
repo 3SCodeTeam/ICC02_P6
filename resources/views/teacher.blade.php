@@ -32,13 +32,16 @@
         @include('teacher.classes',['classes'=>$classes,'user_data'=>$user_data])
         @break
         @case('students')
-        @include('teacher.classDetails',['$selectedMenu'=>$selectedMenu, 'students'=>$students,'marks'=>$marks])
+        @include('teacher.classDetails',['selectedMenu'=>$selectedMenu, 'students'=>$students,'marks'=>$marks])
         @break
         @case('subjects')
-        @include('teacher.classDetails',['$selectedMenu'=>$selectedMenu, 'class_data'=>$class_data, 'subjects'=>$subjects])
+        @include('teacher.classDetails',['selectedMenu'=>$selectedMenu, 'class_data'=>$class_data, 'subjects'=>$subjects])
         @break
         @case('studentDetails')
-        @include('teacher.studentDetails', ['$selectedMenu'=>$selectedMenu, 'user_data'=>$user_data, 'student'=>$student, 'exams'=>$exams, 'works'=>$works])
+        @include('teacher.studentDetails', ['selectedMenu'=>$selectedMenu, 'user_data'=>$user_data, 'student'=>$student, 'exams'=>$exams, 'works'=>$works])
+        @break
+        @case('subjectsCreate')
+        @include('subjects.create', ['$selectedMenu'=>$selectedMenu, 'user_data'=>$user_data, 'class_data'=>$class_data])
         @break
     @endswitch
 </div>

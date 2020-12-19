@@ -6,6 +6,7 @@ use App\Http\Controllers\LogInController;
 use App\Http\Controllers\SignInController;
 use App\Http\Controllers\StudentController;
 
+use App\Http\Controllers\Subjects;
 use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -138,4 +139,11 @@ Route::match(array('GET', 'POST'), 'teachers/{method}/{class?}/{student?}', func
         case 'subjectsPost': return  TeacherController::subjectsPost($req,$class);
     }
     return LogInController::error('Recurso no disponible');
+})->middleware('Session:teacher');
+
+Route::match(array('GET', 'POST'),'/subjects/{method}/{class?}/{student?}', function (Request $req, $method, $class=null,$student=null) {
+    switch ($method) {
+        case 'create': return Subjects::create($req, $class);
+        case 'subjectsPost': return  Subjects::subjectsPost($req,$class);
+    }
 })->middleware('Session:teacher');
