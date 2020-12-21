@@ -4,7 +4,8 @@
 namespace App\Models;
 
 
-use http\Exception;
+
+use Exception;
 use Illuminate\Support\Facades\DB as DBAlias;
 use App\Entities\Data;
 
@@ -16,7 +17,8 @@ class JoinQueries
         $this->data = new Data();
     }
 
-    public function getClassesOfDay($id, $date){
+    public function getClassesOfDay($id, $date): Data
+    {
         $values = [$id, $date];
         $stm = 'SELECT S.id_class, S.day, S.time_start, S.time_end, C.name as class_name, C.color, Co.name as course_name FROM schedule as S inner JOIN class as C ON S.id_class=C.id_class INNER JOIN courses as Co ON C.id_course = Co.id_course
         WHERE Co.id_course IN (SELECT id_course FROM enrollment WHERE id_student = ?) and S.day =? ORDER BY S.day, S.time_start';
@@ -24,29 +26,21 @@ class JoinQueries
         return $this->data;
     }
 
-    public function getByDOW(){
+    public function getByDOW(): Data
+    {
         $stm='SELECT DAYOFWEEK(S.day) as DOW, S.time_start, S.time_end, C.name as class_name, C.color, Co.name as course_name, T.email, T.name as Tname, T.surname
         FROM class as C
         INNER JOIN courses as Co ON C.id_course = Co.id_course
         INNER JOIN teachers AS T ON C.id_teacher = T.id_teacher
         INNER JOIN schedule AS S ON C.id_schedule = S.id_schedule
         ORDER BY DOW';
-        try{
-            $res = DBAlias::connection('mysql')->select($stm);
-            $this->data->len = count($res);
-            $this->data->res = $res;
-            $this->data->status = true;
-        }catch(Exception $e){
-            $this->data->err = $e;
-            $this->data->status = false;
-            dd($e->getMessage());
-        } finally {
-            return $this->data;
-        }
+        $this->data = self::doQuery($stm);
+        return $this->data;
     }
 
     //Devuelve las horas ocupadas de un profesor en un periodo por días de la semana.
-    public function getScheduleByTeacherAndDate($id_teacher, $start_date, $end_date){
+    public function getScheduleByTeacherAndDate($id_teacher, $start_date, $end_date): Data
+    {
         $values = [$id_teacher, $start_date, $end_date];
         $stm='SELECT DAYOFWEEK(S.day) as DOW, S.time_start, S.time_end, C.name as class_name, C.color, Co.name as course_name, T.email, T.name as teacher_name, T.surname
         FROM class as C
@@ -58,7 +52,8 @@ class JoinQueries
         return $this->data;
     }
     //Devuelve las horas ocupadas de un profesor y/o curso en un peridodo.
-    public function getUsedHoursByTeacherByCourseByDates($id_teacher, $id_course){
+    public function getUsedHoursByTeacherByCourseByDates($id_teacher, $id_course): Data
+    {
         $values = [$id_teacher, $id_course, $id_course, $id_course];
         $stm='SELECT distinct DAYOFWEEK(S.day) as DOW, S.time_start, S.time_end, C.name as class_name, C.color, Co.name as course_name, Co.active, T.email, T.name as teacher_name, T.surname
         FROM class as C
@@ -72,7 +67,8 @@ class JoinQueries
         return $this->data;
     }
     //DEVUELVE TODAS LAS CLASES + DATOS CURSO + DATOS PROFESOR ORDENADO POR CURSO Y PRFESOR
-    public function getAllClassesData(){
+    public function getAllClassesData(): Data
+    {
         $stm = 'SELECT c.id_class, c.id_teacher, c.id_course, C.name as class_name, C.color,
                 Co.name as course_name, Co.active, Co.description, CO.date_start, CO.date_end,
                 T.email, T.name as teacher_name, T.surname,
@@ -82,27 +78,18 @@ class JoinQueries
                 INNER JOIN teachers AS T ON C.id_teacher = T.id_teacher
                 INNER JOIN percentage AS P ON C.id_class = P.id_class
                 ORDER BY id_course, id_teacher';
-        try{
-            $res = DBAlias::connection('mysql')->select($stm);
-            $this->data->len = count($res);
-            $this->data->res = $res;
-            $this->data->status = true;
-        }catch(Exception $e){
-            $this->data->err = $e;
-            $this->data->status = false;
-            dd($e->getMessage());
-        } finally {
-            return $this->data;
-        }
-
+        $this->data = self::doQuery($stm);
+        return $this->data;
     }
     //Insert para multiples sentencias SCHEDULE TABLE
-    public function insertSchedule(array $data){
+    public function insertSchedule(array $data): bool
+    {
         return DBAlias::table('schedule')->insert($data);
     }
 
     //Detalles de estudiantes de un curso
-    public function getStudentsDataByCourse($id_course){
+    public function getStudentsDataByCourse($id_course): Data
+    {
         $values=[$id_course];
         $stm= 'SELECT id, name, surname, username, email, nif, telephone, status, id_course, id_enrollment from students as S inner join enrollment as E on S.id = E.id_student where id_course = ?';
         $this->data = self::doQuery($stm, $values);
@@ -110,7 +97,8 @@ class JoinQueries
     }
 
     //Detalles de classes (datos profesor) de un curso
-    public function getClassesAndTeachersByCourse($id_course){
+    public function getClassesAndTeachersByCourse($id_course): Data
+    {
        $values=[$id_course];
        $stm = 'SELECT C.id_class, C.id_course, C.id_teacher, C.name as class_name, C.color, Co.name as course_name, Co.description, Co.date_start, Co.date_end, Co.active, T.email, T.name as teacher_name, T.nif, T.surname, T.telephone FROM class as C INNER JOIN courses as Co ON C.id_course = Co.id_course INNER JOIN teachers AS T ON C.id_teacher = T.id_teacher WHERE C.id_course = ?';
         $this->data = self::doQuery($stm, $values);
@@ -129,7 +117,8 @@ class JoinQueries
         $this->data = self::doQuery($stm, $values);
         return $this->data;
     }
-    public function getClassesByStudent($id_student){
+    public function getClassesByStudent($id_student): Data
+    {
         $values = [$id_student];
         $stm = 'select C.id_class, C.name as class_name, C.id_course, C.id_teacher, CO.name as course_name, CO.active, CO.description,
                 T.name as teacher_name, T.surname, T.email, E.status
@@ -138,7 +127,7 @@ class JoinQueries
         $this->data = self::doQuery($stm, $values);
         return $this->data;
     }
-    public function getAllClassDatabyId($id_class){
+    public function getAllClassDatabyId($id_class):Data{
         $values=[$id_class];
         $stm = 'SELECT C.id_class, C.name as class_name, C.id_course, C.id_teacher, C.color,
         CO.name as course_name, CO.active, CO.description, CO.date_start, CO.date_end,
@@ -152,7 +141,7 @@ class JoinQueries
         $this->data=self::doQuery($stm, $values);
         return $this->data;
     }
-    public function getStudentsByClass($id_class){
+    public function getStudentsByClass($id_class):Data{
         $values = [$id_class];
         $stm='SELECT C.id_class, C.name as class_name, C.color, C.id_course, C.id_teacher,
         CO.name as course_name, CO.active, CO.description, CO.date_start, CO.date_end,
@@ -171,24 +160,27 @@ class JoinQueries
         return $this->data;
     }
     //Insert para multiples sentencias
-    public function insertMultiple(array $data, $table){
+    public function insertMultiple(array $data, $table): bool
+    {
         return DBAlias::table($table)->insert($data);
     }
 
-    private function doQuery($stm, array $values=null){
+    private function doQuery($stm, array $values=[]): Data
+    {
         $data = new Data();
         $data->status = false;
-        $data->res = null;
+        $data->res = [];
         $data->len = 0;
         try{
             $res = DBAlias::connection('mysql')->select($stm, $values);
             if(!isset($res)){
-                throw new \Exception('Error getStudentsByClass query');
+                throw new Exception('Error getStudentsByClass query');
+            }else{
+                $data->status = true;
+                $data->res = $res;
+                $data->len = count($res);
             }
-            $data->status = true;
-            $data->res = $res;
-            $data->len = count($res);
-        }catch(\Exception $e){
+        }catch(Exception $e){
             $data->err = $e;
             $data->status = false;
             dd($e->getMessage());

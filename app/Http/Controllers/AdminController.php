@@ -159,7 +159,6 @@ class AdminController extends Controller
         $courses = $cmod->data->res;
         $classes = $jmod->data->res;
 
-
         return view('admin',['selectedMenu'=>'classes', 'teachers'=>$teachers, 'courses'=>$courses, 'classes'=>$classes, 'msg'=>$msg]);
 
     }
