@@ -7,7 +7,7 @@
                         {{--CONTENEDOR IZQUIERDO--}}
                         <div class="courses inputs container left">
                             <label for="name">Nombre</label>
-                            <input class="courses form input" type="text" name="name" placeholder="Nombre del curso" required/><br>
+                            <input class="courses form input" type="text" name="name" placeholder="Nombre del curso" required/>
                             <label for="date_start">Inicio</label>
                             <input class="courses form input" type="date" name="date_start" placeholder="Fecha de inicio del curso" required/>
                         </div>

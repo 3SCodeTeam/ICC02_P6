@@ -101,7 +101,9 @@
 /*TEACHER ENDS*/
 
 /*COURSES*/
+/*COURSES*/
 .courses.form.inputs.container{
+    vertical-align: top;
     display: inline-block;
     width: 1200px;
     border: 1px solid;
@@ -114,11 +116,13 @@
     text-align: left;
 }
 .courses.inputs.container.left{
+    vertical-align: top;
     display: inline-block;
     width: 250px;
     padding: 10px;
 }
 .courses.inputs.container.right{
+    vertical-align: top;
     display: inline-block;
     width: 250px;
     padding: 10px;
@@ -139,7 +143,7 @@
 }
 .courses.inputs.container label{
     display: block;
-    background-color: lightcoral;
+    background-color: tomato;
     width: 100%;
 }
 .courses.inputs.container input{
