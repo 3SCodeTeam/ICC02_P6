@@ -16,7 +16,7 @@
             <div class="student classDetails work">
                 <span>{{$w->name}}</span>
                 @if(isset($w->mark))
-                <span>{{$w->mark}}</span>
+                <span>{{($w->mark!=-1) ? $w->mark : '---'}}</span>
                 @else
                     <span>----</span>
                 @endif
@@ -30,7 +30,7 @@
             <div class="student classDetails exam">
                 <span>{{$e->name}}</span>
                 @if(isset($e->mark))
-                    <span>{{$e->mark}}</span>
+                    <span>{{($e->mark!=-1) ? $e->mark : '---'}}</span>
                 @else
                     <span>----</span>
                 @endif

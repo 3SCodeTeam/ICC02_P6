@@ -103,6 +103,10 @@
                 @endif
             </div>
         </form>
+        @else
+            <div class="teachers classDetails subjects newSubject">
+                <a href="{{asset('/subjects/create/'.$id_class)}}"><button type="button">Crear nuevo</button></a>
+            </div>
         @endif
     @endif
 </div>

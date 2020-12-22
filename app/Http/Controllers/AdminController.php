@@ -237,7 +237,9 @@ class AdminController extends Controller
         //TODO: borrar Percentages.
         return self::classesPost($req,'Error insertando los datos.');
     }
-    public static function delete(){}
+    public static function delete(){
+        //TODO
+        }
 
     //AUX FUNCTIONS
     private static function getArrayOfClasses($values, $date_start, $date_end, $id_class): array
