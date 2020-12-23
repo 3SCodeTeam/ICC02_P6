@@ -38,7 +38,7 @@ class MarkSTools
         $eWeight = $pMod->data->res[0]->exams;
         $wWeight = $pMod->data->res[0]->continuous_assessment;
 
-        return ['exam'=>$eWeight, 'works'=>$wWeight];
+        return ['exams'=>$eWeight, 'works'=>$wWeight];
     }
     public static function getClassesMarksByStudent($classes, $id_Student){
         $wMod = new Works();
@@ -64,16 +64,16 @@ class MarkSTools
         return $marks;
     }
     private static function getMarks($mod){
-        $marks = '----';
+        $marks = 0;
         foreach ($mod->data->res as $w){
-            if($w->mark<0){
+            if($w->mark < 0){
                 $marks = '----';
                 break;
             }
             $marks += $w->mark;
         }
-        if(!$marks == '----'){
-            return  $marks / $mod->data->len;
+        if(!($marks == '----')){
+            return  ($marks / $mod->data->len);
         }
         return $marks;
     }

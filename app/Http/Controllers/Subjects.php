@@ -26,7 +26,7 @@ class Subjects extends Controller
 
             return view('teacher', ['selectedMenu'=>'subjectsCreate', 'id_class'=>$id_class, 'user_data'=>$user_data, 'class_data'=>$class_data->res[0], 'msg'=>$msg]);
         }else{
-            //LOGICA PARA ADMIN
+            //TODO: LOGICA PARA ADMIN
         }
     }
 
@@ -48,6 +48,33 @@ class Subjects extends Controller
         $msg = 'Actividad creada.';
 
         return self::create($req, $id_class, $msg);
+    }
+
+    //ACTUALIZAR NOTAS
+    public static function  subjectMarks(Request $req, $id_class, $id_student){
+        $values = $req->except(['_token','submit']);
+
+        if(count($values)<1){
+            $msg = 'No se ha establecido ninguna nota.';
+            return TeacherController::studentDetails($req, $id_class, $id_student, $msg);
+        }
+        $emod = new Exams();
+        $wmod = new Works();
+        foreach ($values as $k=>$v){
+            $keys = explode(';', $k);
+            $type = $keys[0];
+            $id = $keys[1];
+            switch ($type){
+                case 'exam':
+                    $emod->updateValueById('mark', $v, $id);
+                    break;
+                case 'work':
+                    $wmod->updateValueById('mark', $v, $id);
+                    break;
+            }
+        }
+        $msg = 'Notas actualizadas.';
+        return TeacherController::studentDetails($req, $id_class, $id_student, $msg);
     }
 
     //FUNCIONES AUXILIARES

@@ -74,8 +74,7 @@ class TeacherController extends Controller
 
         return view('teacher', ['selectedMenu'=>'subjects', 'id_class'=>$id_class, 'class_data'=>$class_data->res[0] ,'user_data'=>$user_data, 'msg'=>$msg, 'subjects'=>$subjects]);
     }
-    public static function studentDetails(Request $req, $id_class, $id_student){
-        $msg=null;
+    public static function studentDetails(Request $req, $id_class, $id_student, $msg=null){
         $teacherId = $req->session()->get('sql_user_id');
         $user_data = self::getTeacherData($teacherId);
 
@@ -87,7 +86,7 @@ class TeacherController extends Controller
         $sMod = new Students();
         $sMod->getById($id_student);
 
-        return view('teacher',['selectedMenu'=>'studentDetails', 'id_class'=>$id_class, 'user_data'=>$user_data, 'msg'=>$msg ,'works'=>$wMod->data->res, 'exams'=>$eMod->data->res, 'student'=>$sMod->data->res]);
+        return view('teacher',['selectedMenu'=>'studentDetails', 'id_class'=>$id_class, 'user_data'=>$user_data, 'msg'=>$msg ,'works'=>$wMod->data->res, 'exams'=>$eMod->data->res, 'student'=>$sMod->data->res[0]]);
     }
     private static function getTeacherData($id){
         $mod = new Teachers();
