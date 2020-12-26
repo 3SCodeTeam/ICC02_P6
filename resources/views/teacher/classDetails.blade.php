@@ -37,7 +37,7 @@
     @endif
     @if($selectedMenu =='subjects')
         @if(count($subjects['works'])>0 || count($subjects['exams'])>0)
-        <form action="{{asset('/teachers/subjectsPost/'.$id_class)}}" name="subjects" id="subjects" method="post">
+        <form action="{{asset('/subjects/update/'.$id_class)}}" name="subjects" id="subjects" method="post">
             <div class="teachers classDetails subjects submit">
                 {{--<label for="action">Acción:</label>--}}
                 <select name="action" id="action">
@@ -67,7 +67,7 @@
                         <tbody>
                             @foreach($subjects['exams'] as $e)
                                 <tr class="row data">
-                                    <td class="col selector"><div class="cell checkbox"><input type="checkbox" value='exam' name="{{$e->name}}" id="{{$e->name}}"></div></td>
+                                    <td class="col selector"><div class="cell checkbox"><input type="checkbox" value='exam' name="{{'exam;'.$e->name}}" id="{{$e->name}}"></div></td>
                                     <td class="col name"><label for="{{$e->name}}"><div class="cell">{{$e->name}}</div></label></td>
                                     <td class="col date"><div class="cell">{{$e->deadline}}</div></td>
                                     <td class="col description"><div class="cell">{{$e->description}}</div></td>
@@ -92,7 +92,7 @@
                     <tbody>
                     @foreach($subjects['works'] as $w)
                         <tr class="row data">
-                            <td class="col selector"><div class="cell checkbox"> <input type="checkbox" value='work' name="{{$w->name}}" id="{{$w->name}}"></div></td>
+                            <td class="col selector"><div class="cell checkbox"> <input type="checkbox" value='work' name="{{'work;'.$w->name}}" id="{{$w->name}}"></div></td>
                             <td class="col name"><label for="{{$w->name}}"><div class="cell">{{$w->name}}</div></label></td>
                             <td class="col date"><div class="cell">{{$w->deadline}}</div></td>
                             <td class="col description"><div class="cell">{{$w->description}}</div></td>

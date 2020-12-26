@@ -13,6 +13,7 @@
 <body>
 
 @include('header')
+
 <div class= "nav-bar">
     @include('teacher.menu',['selectedMenu'=>$selectedMenu, 'id_class ??'=>$id_class ?? ''])
 </div>
@@ -21,7 +22,6 @@
 
     <H3>Profesor: {{$user_data['name'].' '.$user_data['surname']}}</H3>
 
-    <div id="main-container">
     @switch($selectedMenu)
         {{--INSERTAR VISTA PERFIL--}}
         @case('profile')
@@ -43,15 +43,18 @@
         @case('subjectsCreate')
         @include('subjects.create', ['$selectedMenu'=>$selectedMenu, 'user_data'=>$user_data, 'class_data'=>$class_data])
         @break
+        @case('subjectsUpdate')
+        @include('subjects.update', ['$selectedMenu'=>$selectedMenu, 'user_data'=>$user_data, 'class_data'=>$class_data, 'selectedSubjects'=>$selectedSubjects])
+        @break
     @endswitch
 </div>
 
 {{--TODO: CSS alert-msg--}}
-    <div class="alert-msg">
-        @isset($msg)
-            <div class="msg">{{$msg}}</div>
-        @endisset
-    </div>
+<div class="alert-msg">
+    @isset($msg)
+        <div class="msg">{{$msg}}</div>
+    @endisset
+</div>
 
 @include('footer')
 

@@ -42,7 +42,7 @@ body{
 }
 
 /*AJUSTES COMUNES*/
-.errmsg{
+.alert-msg{
     margin-top: 55px;
     color:red;
     font-family: Arial, Helvetica, sans-serif;

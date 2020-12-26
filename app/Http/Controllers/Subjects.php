@@ -10,6 +10,7 @@ use App\Models\Teachers;
 use App\Models\Works;
 use App\Utils\MiscTools;
 use Illuminate\Http\Request;
+use SebastianBergmann\CodeCoverage\Driver\WriteOperationFailedException;
 
 class Subjects extends Controller
 {
@@ -76,8 +77,76 @@ class Subjects extends Controller
         $msg = 'Notas actualizadas.';
         return TeacherController::studentDetails($req, $id_class, $id_student, $msg);
     }
+    //UPDATE SUBJECTS
+    public static function update(Request $req, $id_class, $msg=null){
+        $values = $req->except(['_token', 'action']);
+        $action = $req->get('action'); //ACTION ES LA ACCIÓN SOLICITADA UPDATE O DELETE
+        $teacherId = $req->session()->get('sql_user_id');
+        $user_data = self::getTeacherData($teacherId); //NECEISTAMOS EL USER DATA PARA LA VISTA TEACHER
+        $class_data = self::getClassData($id_class); //NECESITAMOS LOS DATOS DE LA CALSE EN ESTA VISTA
+
+        if(count($values)<1){
+            return TeacherController::subjects($req, $id_class, $msg="No se ha seleccionado ningún elemento.");
+
+        }
+
+        switch($action){
+            case 'delete':
+                foreach ($values as $name=>$type){
+                    $name = self::getSubjectName($name);
+                    self::deleteSubject($id_class, $name, $type);
+                }
+                return TeacherController::subjects($req, $id_class, $msg="Se han eliminado los elementos seleccionados.");
+            case 'update':
+            default:
+                //Get data from the from the exams and works selected.
+                $subjects = self::getSubjectsRequested($values, $id_class);
+                return view('teacher', ['selectedMenu'=>'subjectsUpdate', 'user_data'=>$user_data, 'class_data' => $class_data, 'id_class'=>$id_class, 'selectedSubjects' => $subjects]);
+        }
+    }
 
     //FUNCIONES AUXILIARES
+    private static function getSubjectName($name){
+        $name = explode(';', $name);
+        $name = $name[1];
+        $name = str_replace("_", " ", $name); //Remplazar los '_' que introduce el request por ' '.
+        return $name;
+    }
+    private static function deleteSubject($id_class, $name, $type){
+        switch ($type){
+            case 'exam':
+                $mod = new Exams();
+                break;
+            case 'work':
+            default:
+                $mod = new Works();
+        }
+        $mod->deleteByIdClassName($id_class,$name);
+        return $mod->data;
+    }
+    //DEVUELVE UN OBJETO CON EL NOMBRE Y LA DESCRIPCIÓN DE LOS TRABAJOS O EXAMENES DE UNA CLASE
+    private static function getSubjectData($id_class, $name, $type){
+        $name = self::getSubjectName($name);
+        switch ($type){
+            case 'exam': $mod = new Exams();break;
+            case 'work':
+            default:$mod = new Works();
+        }
+        $mod -> getDistinctByIdClassName($id_class, $name);
+        return $mod->data->res[0];
+    }
+    //DEVUELVE UN ARRAY CON LOS DATOS DE LOS SUBJECTS PASADO POR $VALUES
+    private static function getSubjectsRequested($values, $id_class){
+        $subjects = [];
+        foreach ($values as $k=>$v){
+            $data = self::getSubjectData($id_class, $k, $v);
+            $date = date_create($data->deadline);
+            $time = date_format($date,"h:m");
+            $date = date_format($date,'Y-m-d');
+            $subjects[] = ['name' => $data->name, 'date'=>$date, 'time'=>$time, 'description'=>$data->description, 'type'=>$v];
+        }
+        return $subjects;
+    }
     //DEVUELVE UN ARRAY DE TRABAJOS Y EXÁMENES POR CLASE.
     private static function getArrayOfSubjects($id_class, $values){
         $data = [];
@@ -113,5 +182,11 @@ class Subjects extends Controller
         $mod -> getById($id);
 
         return MiscTools::safeUserData($mod->data->res[0]);
+    }
+    //OBTIENE LOS DATOS DE UNA CLASE
+    private static function getClassData($id){
+        $mod = new JoinQueries();
+        $mod->getAllClassDatabyId($id);
+        return $mod->data->res[0];
     }
 }

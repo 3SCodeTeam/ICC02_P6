@@ -174,7 +174,7 @@ class JoinQueries
         try{
             $res = DBAlias::connection('mysql')->select($stm, $values);
             if(!isset($res)){
-                throw new Exception('Error getStudentsByClass query');
+                throw new Exception('Error JoinQueries');
             }else{
                 $data->status = true;
                 $data->res = $res;

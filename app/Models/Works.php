@@ -57,10 +57,28 @@ class Works extends DbQueries
         $this->data->status = true;
         $this->data->affected_rows = $res;
     }
+    public function deleteByIdClassName($id_class, $name){
+        $values = [$id_class, $name];
+        $stm = 'DELETE FROM works WHERE id_class = ? and name = ?';
+        try {
+            $res = DB::connection('mysql')->delete($stm, $values);
+        } catch (Exception $e) {
+            $this->data->err = $e;
+            $this->data->status = false;
+            dd($e->getMessage());
+        }
+        $this->data->status = true;
+        $this->data->affected_rows = $res;
+    }
     public function getDistinctByIdClass($id_class){
         $values=[$id_class];
         $stm = 'SELECT DISTINCT name, deadline, description, id_class FROM works WHERE id_class = ?';
         $this->data = self::doQuery($stm,$values);
+    }
+    public function getDistinctByIdClassName($id_class, $name){
+        $values=[$id_class, $name];
+        $stm = 'SELECT DISTINCT name, deadline, description, id_class FROM works WHERE id_class = ? and name = ?';
+        $this->data = self::doQuery($stm, $values);
     }
     private function doQuery($stm, array $values=null){
         $data = new Data();
@@ -70,8 +88,9 @@ class Works extends DbQueries
         try{
             $res = DBAlias::connection('mysql')->select($stm, $values);
             if(!isset($res)){
-                throw new Exception('Error getStudentsByClass query');
+                throw new Exception('Error Works query');
             }
+            //dd($stm.' '.$values[0].' '.$values[1]);
             $data->status = true;
             $data->res = $res;
             $data->len = count($res);
