@@ -3,7 +3,7 @@
 
 namespace App\Models;
 
-
+use Exception;
 use App\Entities\Data;
 use Illuminate\Support\Facades\DB;
 

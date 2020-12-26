@@ -21,7 +21,7 @@ class JoinQueries
     {
         $values = [$id, $date];
         $stm = 'SELECT S.id_class, S.day, S.time_start, S.time_end, C.name as class_name, C.color, Co.name as course_name FROM schedule as S inner JOIN class as C ON S.id_class=C.id_class INNER JOIN courses as Co ON C.id_course = Co.id_course
-        WHERE Co.id_course IN (SELECT id_course FROM enrollment WHERE id_student = ?) and S.day =? ORDER BY S.day, S.time_start';
+        WHERE Co.id_course IN (SELECT id_course FROM enrollment WHERE id_student = ? and status = 1) and S.day =? ORDER BY S.day, S.time_start';
         $this->data = self::doQuery($stm, $values);
         return $this->data;
     }
@@ -159,6 +159,38 @@ class JoinQueries
         $this->data = self::doQuery($stm, $values);
         return $this->data;
     }
+
+    //Subjects
+    public function getAllWorksByCourse($id_course):Data{
+        $values = [$id_course];
+        $stm = 'SELECT DISTINCT name, deadline, description, id_class FROM works
+                WHERE id_class IN (SELECT DISTINCT id_class FROM class where id_course = ?)';
+        $this->data = self::doQuery($stm, $values);
+        return $this->data;
+    }
+    public function getAllWorksByCourseStudent($id_course, $id_student):Data{
+        $values = [$id_course, $id_student];
+        $stm = 'SELECT name, deadline, description, id_class FROM works
+                WHERE id_class IN (SELECT DISTINCT id_class FROM class where id_course = ?) and id_student = ?';
+        $this->data = self::doQuery($stm, $values);
+        return $this->data;
+    }
+    public function getAllExamsByCourse($id_course):Data{
+        $values = [$id_course];
+        $stm = 'SELECT DISTINCT name, deadline, description, id_class FROM exams
+                WHERE id_class IN (SELECT DISTINCT id_class FROM class where id_course = ?)';
+        $this->data = self::doQuery($stm, $values);
+        return $this->data;
+    }
+    public function getAllExamsByCourseStudent($id_course, $id_student):Data{
+        $values = [$id_course, $id_student];
+        $stm = 'SELECT name, deadline, description, id_class FROM exams
+                WHERE id_class IN (SELECT DISTINCT id_class FROM class where id_course = ?) and id_student = ?';
+        $this->data = self::doQuery($stm, $values);
+        return $this->data;
+    }
+
+
     //Insert para multiples sentencias
     public function insertMultiple(array $data, $table): bool
     {

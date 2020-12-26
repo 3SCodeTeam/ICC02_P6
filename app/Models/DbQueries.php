@@ -3,9 +3,10 @@
 
 namespace App\Models;
 
-
+use Exception;
 use App\Entities\Data;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB as DBAlias;
 
 class DbQueries
 {
@@ -37,35 +38,15 @@ class DbQueries
         $this->data = new Data();
         $values = [$val];
         $stm = "SELECT * FROM ".$this->table." WHERE ".$col." = ?";
-        try{
-            $res = DB::connection('mysql')->select($stm, $values);
-            $this->data->len = count($res);
-            $this->data->res = $res;
-            $this->data->status = true;
-        }catch(Exception $e){
-            $this->data->err = $e;
-            $this->data->status = false;
-            dd($e->getMessage());
-        } finally {
-            return $this->data;
-        }
+        $this->data = self::doQuery($stm, $values);
+        return $this->data;
     }
     protected function getByAttributes($col1, $col2, $val1, $val2, string $operator = 'and') {
         $this->data = new Data();
         $values = [$val1, $val2];
         $stm = "SELECT *  FROM ". $this->table ." WHERE ". $col1 .' = ? '.$operator.' '.$col2.' = ?';
-        try{
-            $res = DB::connection('mysql')->select($stm, $values);
-            $this->data->len = count($res);
-            $this->data->res = $res;
-            $this->data->status = true;
-        }catch(Exception $e){
-            $this->data->err = $e;
-            $this->data->status = false;
-            dd($e->getMessage());
-        } finally {
-            return $this->data;
-        }
+        $this->data = self::doQuery($stm, $values);
+        return $this->data;
     }
 
     //UPDATE METHOD
@@ -73,16 +54,30 @@ class DbQueries
         $this->data = new Data();
         $values = [$new_value, $val];
         $stm = "UPDATE ".$this->table." SET ".$attribute." = ? WHERE ".$col." = ?";
+        $this->data = self::doQuery($stm, $values);
+        return $this->data;
+    }
+    private function doQuery($stm, array $values=[]): Data
+    {
+        $data = new Data();
+        $data->status = false;
+        $data->res = [];
+        $data->len = 0;
         try{
-            $res = DB::connection('mysql')->update($stm, $values);
-            $this->data->status = true;
-            $this->data->affected_rows = $res;
+            $res = DBAlias::connection('mysql')->select($stm, $values);
+            if(!isset($res)){
+                throw new Exception('Error JoinQueries');
+            }else{
+                $data->status = true;
+                $data->res = $res;
+                $data->len = count($res);
+            }
         }catch(Exception $e){
-            $this->data->err = $e;
-            $this->data->status = false;
+            $data->err = $e;
+            $data->status = false;
             dd($e->getMessage());
         } finally {
-            return $this->data;
+            return $data;
         }
     }
 

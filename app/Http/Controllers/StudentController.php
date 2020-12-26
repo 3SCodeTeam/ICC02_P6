@@ -71,7 +71,6 @@ class StudentController extends Controller
         $course_mod = new Courses();
         $enroll_mod = new Enrollments();
 
-
         /*Comprobar si ya está matriculado de este curso.
             SI: determinar estado del curso y cambiarlo al contrio.
             No: Comprobar si está matriculado de otro curso activo.
@@ -80,18 +79,21 @@ class StudentController extends Controller
 
         Devolver los cursos activos, los cursos del estudiante, mensaje respuesta a la acción.
         */
-
         //ACTIVAR-DESACTIVAR MATRICULA CURSO
         $enroll_mod ->getByCourseIdAndStudentId($id_course, $userId);
+
         if($enroll_mod->data->len > 0){
-            $value = 1;
             $course_mod->getById($id_course);
-            $msg = $course_mod->data->res[0]->name.' activado';
+            $id_enrollment = $enroll_mod->data->res[0]->id_enrollment;
             if($enroll_mod->data->res[0]->status > 0){
                 $value = 0;
                 $msg = $course_mod->data->res[0]->name.' desactivado';
+            }else{
+                $enroll_mod->updateValue('status', '0', 'id_student', $userId);
+                $value = 1;
+                $msg = $course_mod->data->res[0]->name.' activado';
             }
-            $enroll_mod->updateValueById('status', $value, $enroll_mod->data->res[0]->id_enrollment);
+            $enroll_mod->updateValueById('status', $value, $id_enrollment);
 
             $studentCourses = self::coursesArrayByStatus($userId);
             $course_mod->getByStatus('1');
@@ -100,6 +102,7 @@ class StudentController extends Controller
 
         //NUEVA MATRICULA
         $enroll_mod->getByStudentIdAndStatus($userId,'1');
+
         if($enroll_mod->data->len > 0){
             $enroll_mod->updateValueById('status', '0', $enroll_mod->data->res[0]->id_enrollment);
         }
@@ -107,6 +110,16 @@ class StudentController extends Controller
         $msg = 'Matricula realizada.';
         $course_mod->getByStatus('1');
         $studentCourses = self::coursesArrayByStatus($userId);
+
+        /*
+         * Verificar si existen trabajos y exámenes para ese curso.
+         * Si exísten -> verificar si el estudiante está inscrito.
+         *  Si: no hacer nada.
+         *  No: actualizar trabajos y exámenes para el estudiante.
+         * */
+        self::newStudentCheckExams($id_course, $userId);
+        self::newStudentCheckWorks($id_course, $userId);
+
         return view('student',['selectedMenu'=>'enrollment', 'courses_data'=>$course_mod->data->res, 'studentCourses'=>$studentCourses, 'msg'=>$msg]);
     }
     public static function mSchedule(Request $req){/*SECCIÓN HOARIO PRIMERA CARGA DESDE EL MENÚ*/
@@ -236,5 +249,34 @@ class StudentController extends Controller
             }
         }
         return ['active'=>$active, 'inactive'=>$inactive];
+    }
+
+    private static function newStudentCheckExams($id_course, $userId){
+        $joinQ_mod = new JoinQueries();
+        $exams = $joinQ_mod -> getAllExamsByCourse($id_course);
+        if($exams->len > 0){
+            $studentExams = $joinQ_mod->getAllExamsByCourseStudent($id_course, $userId);
+            if($studentExams->len < 1){
+                $subject=[];
+                foreach ($exams->res as $r){
+                    $subject = ['id_class'=>$r->id_class, 'id_student'=>$userId, 'name'=>$r->name, 'deadline'=>$r->deadline, 'description'=>$r->description, 'mark'=>-1];
+                }
+                $joinQ_mod->insertMultiple($subject, 'exams');
+            }
+        }
+    }
+    private static function newStudentCheckWorks($id_course, $userId){
+        $joinQ_mod = new JoinQueries();
+        $works = $joinQ_mod -> getAllWorksByCourse($id_course);
+        if($works->len > 0){
+            $studentWorks = $joinQ_mod ->getAllWorksByCourseStudent($id_course, $userId);
+            if($studentWorks->len < 1){
+                $subject=[];
+                foreach ($works->res as $r){
+                    $subject = ['id_class'=>$r->id_class, 'id_student'=>$userId, 'name'=>$r->name, 'deadline'=>$r->deadline, 'description'=>$r->description, 'mark'=>-1];
+                }
+                $joinQ_mod->insertMultiple($subject, 'works');
+            }
+        }
     }
 }
