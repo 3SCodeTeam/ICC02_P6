@@ -26,7 +26,7 @@ class SessionControl
                 return $next($request);
             };
             break;
-            case 'student': if($role==='student'){
+            case 'student': if($role === 'student'){
                 return $next($request);
             }
         }

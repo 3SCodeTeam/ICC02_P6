@@ -8,9 +8,11 @@
     <div class="item {{(in_array($selectedMenu,['mSchedule','wSchedule','dSchedule'])) ? 'selected':''}}">
         <a {{(!(in_array($selectedMenu,['mSchedule','wSchedule','dSchedule']))) ? 'href='.asset('/student/mSchedule').'':''}}>Horario</a>
     </div>
+    @if($existClasses)
     <div class="item {{($selectedMenu == 'record') ? 'selected':''}}">
         <a {{(!($selectedMenu == 'record')) ? 'href='.asset('/student/record').'':''}}>Expediente</a>
     </div>
+    @endif
 </div>
 
 @if(in_array($selectedMenu,['mSchedule','wSchedule','dSchedule']))

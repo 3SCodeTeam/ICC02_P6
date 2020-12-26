@@ -26,6 +26,19 @@ class Notifications extends DbQueries
     public function updateValueByIdStudent($attribute, $new_value, $value){
         $this->data = parent::updateValue($attribute, $new_value, 'id_student', $value);
     }
+    public function updateAllValuesByIdStudent($work, $exam, $continuous_assessment, $final, $id_student){
+        $values = [$work, $exam, $continuous_assessment, $final, $id_student];
+        $stm = 'UPDATE notifications SET work = ?, exam = ?, continuous_assessment = ?, final_note = ? WHERE id_student = ?';
+        try{
+            $res = DB::connection('mysql')->update($stm, $values);
+        }catch(Exception $e){
+            $this->data->err = $e;
+            $this->data->status = false;
+            dd($e->getMessage());
+        }
+        $this->data->status = true;
+        $this->data->affected_rows = $res;
+    }
 
     public function insertValues($id_student, $work, $exam, $continuous_assessment, $final_note) {
         $values = [$id_student, $work, $exam, $continuous_assessment, $final_note];

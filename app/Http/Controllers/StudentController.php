@@ -8,6 +8,7 @@ use App\Models\Courses;
 use App\Models\Enrollments;
 use App\Models\Exams;
 use App\Models\JoinQueries;
+use App\Models\Notifications;
 use App\Models\Percentages;
 use App\Models\Students;
 use App\Models\Works;
@@ -17,7 +18,6 @@ use App\Utils\DataValidator;
 use Illuminate\Http\Request;
 
 
-
 class StudentController extends Controller
 {
     /*MAIN FUNCTIONS*/
@@ -25,17 +25,35 @@ class StudentController extends Controller
         //Lo enviamos al perfil.
         return self::profile($req);
     }
-    public static function profile(Request $req){/*SECCION PROFILE*/
+    public static function profile(Request $req, $msg=null){/*SECCION PROFILE*/
+        $id_student = $req->session()->get('sql_user_id');
+        $existClasses = self::existClasses($id_student);
         $mod = new Students();
-        $mod->getById($req->session()->get('sql_user_id'));
+        $mod->getById($id_student);
+
+        //Obtener los datos del usuario.
         $user_data = $mod->data->res[0];
         $user_data =DataValidator::safeUserData($user_data);
-        return view('student',['selectedMenu'=>'profile', 'user_data'=>$user_data]);
+
+        //Obtener los datos de las notificaciones para el usuario
+        $mod = new Notifications();
+        $mod->getByIdStudent($id_student);
+        $notifications = $mod->data->res[0];
+
+        return view('student',['selectedMenu'=>'profile', 'user_data'=>$user_data, 'notifications'=>$notifications, 'msg'=>$msg, 'existClasses'=>$existClasses]);
     }
     public static function profilePost(Request $req){/*ACTUALIZACIÓN DATOS PROFILE*/
         $userId = $req->session()->get('sql_user_id');
         $option = $req->input('user_data_option');
         $value = $req->input('value');
+        $notifications = $req->only('work', 'exam', 'continuous_assessment', 'final');
+        $notifications = self::setNotificationsData($notifications);
+        if($option === 'notifications'){
+            //Actualizar notificaciones
+            $nmod = new Notifications();
+            $nmod -> updateAllValuesByIdStudent($notifications['work'], $notifications['exam'], $notifications['continuous_assessment'], $notifications['final'], $userId);
+            return  self::profile($req, 'Notificaciones actualizadas');
+        }
 
         $mod = new Students();
         $mod->getById(intval($userId));
@@ -44,26 +62,35 @@ class StudentController extends Controller
         $checker = new DataValidator();
         $res = $checker->verifyData($value,$option,$user_data);
         if(!$res['status']){
-            return view('student',['selectedMenu'=>'profile','user_data'=>$user_data, 'msg'=>$res['msg']]);
+            return  self::profile($req, $res['msg']);
+            //return view('student',['selectedMenu'=>'profile','user_data'=>$user_data, 'msg'=>$res['msg']]);
         }
-        //TODO: db data check for username, email, nif,
+        //TODO: db data check for username, email, nif => V2.3 control realizado con patttern en html.
         $res = self::updateDB($value,$option,$userId);
         if(!$res['status']){
-            $user_data =DataValidator::safeUserData($user_data);
-            return view('student',['selectedMenu'=>'profile','user_data'=>$user_data, 'msg'=>$res['msg']]);
+            return  self::profile($req, $res['msg']);
+            //$user_data =DataValidator::safeUserData($user_data);
+            //return view('student',['selectedMenu'=>'profile','user_data'=>$user_data, 'msg'=>$res['msg']]);
         }
 
+        //Actualizar notificaciones
+        $nmod = new Notifications();
+        $nmod -> updateAllValuesByIdStudent($notifications['work'], $notifications['exam'], $notifications['continuous_assessment'], $notifications['final'], $userId);
+
         $mod->getById($userId);
-        $user_data =DataValidator::safeUserData($mod->data->res[0]);
-        return view('student',['selectedMenu'=>'profile', 'user_data'=>$user_data, 'msg'=>$res['msg']]);
+        return  self::profile($req, $res['msg']);
+        //$user_data =DataValidator::safeUserData($mod->data->res[0]);
+        //return view('student',['selectedMenu'=>'profile', 'user_data'=>$user_data, 'msg'=>$res['msg']]);
     }
-    public static function enrollment(Request $req){/*SECCION ENROLLMENT*/
+    public static function enrollment(Request $req, $msg=null){/*SECCION ENROLLMENT*/
+        $id_student = $req->session()->get('sql_user_id');
+        $existClasses = self::existClasses($id_student);
         $mod = new Courses();
         $mod->getByStatus(1);
         $activeCourses = $mod->data->res;
 
         $studentCourses= self::coursesArrayByStatus($req->session()->get('sql_user_id'));
-        return view('student',['selectedMenu'=>'enrollment', 'courses_data'=>$activeCourses, 'studentCourses'=>$studentCourses]);
+        return view('student',['selectedMenu'=>'enrollment', 'existClasses'=>$existClasses, 'msg'=>$msg, 'courses_data'=>$activeCourses, 'studentCourses'=>$studentCourses]);
     }
     public static function enrollmentPost(Request $req){/*DATOS DEL FORMULARIO DE MATRICULACIÓN*/
         $id_course = $req->get('courses');
@@ -97,7 +124,8 @@ class StudentController extends Controller
 
             $studentCourses = self::coursesArrayByStatus($userId);
             $course_mod->getByStatus('1');
-            return view('student',['selectedMenu'=>'enrollment', 'courses_data'=>$course_mod->data->res, 'studentCourses'=>$studentCourses, 'msg'=>$msg]);
+            return self::enrollment($req, $msg);
+            //return view('student',['selectedMenu'=>'enrollment', 'courses_data'=>$course_mod->data->res, 'studentCourses'=>$studentCourses, 'msg'=>$msg]);
         }
 
         //NUEVA MATRICULA
@@ -120,55 +148,63 @@ class StudentController extends Controller
         self::newStudentCheckExams($id_course, $userId);
         self::newStudentCheckWorks($id_course, $userId);
 
-        return view('student',['selectedMenu'=>'enrollment', 'courses_data'=>$course_mod->data->res, 'studentCourses'=>$studentCourses, 'msg'=>$msg]);
+        return self::enrollment($req, $msg);
+        //return view('student',['selectedMenu'=>'enrollment', 'courses_data'=>$course_mod->data->res, 'studentCourses'=>$studentCourses, 'msg'=>$msg]);
     }
     public static function mSchedule(Request $req){/*SECCIÓN HOARIO PRIMERA CARGA DESDE EL MENÚ*/
-        $userId = $req->session()->get('sql_user_id');
-        $schedule_data = ScheduleTools::buildMonthSchedule($userId);
-        return view('student', ['selectedMenu'=>'mSchedule', 'schedule_data' => $schedule_data]);
+        $id_student = $req->session()->get('sql_user_id');
+        $existClasses = self::existClasses($id_student);
+        $schedule_data = ScheduleTools::buildMonthSchedule($id_student);
+        return view('student', ['selectedMenu'=>'mSchedule', 'existClasses'=>$existClasses, 'schedule_data' => $schedule_data,]);
     }
     public static function wSchedule(Request $req){/*SECCIÓN HORARIO SEMANAL CARGA DESDE EL MENÚ*/
-        $userId = $req->session()->get('sql_user_id');
-        $schedule_data = ScheduleTools::buildWeekSchedule($userId);
+        $id_student = $req->session()->get('sql_user_id');
+        $existClasses = self::existClasses($id_student);
+        $schedule_data = ScheduleTools::buildWeekSchedule($id_student);
 
-        return view('student', ['selectedMenu'=>'wSchedule', 'schedule_data'=>$schedule_data]);
+        return view('student', ['selectedMenu'=>'wSchedule', 'existClasses'=>$existClasses, 'schedule_data'=>$schedule_data]);
     }
     public static function dSchedule(Request $req){/*SECCIÓN HORARIO DIARIO CARGA DESDE EL MENÚ*/
-        $userId = $req->session()->get('sql_user_id');
-        $schedule_data = ScheduleTools::buildDaySchedule($userId);
+        $id_student = $req->session()->get('sql_user_id');
+        $existClasses = self::existClasses($id_student);
+        $schedule_data = ScheduleTools::buildDaySchedule($id_student);
 
-        return view('student', ['selectedMenu'=>'dSchedule', 'schedule_data'=>$schedule_data]);
+        return view('student', ['selectedMenu'=>'dSchedule', 'existClasses'=>$existClasses, 'schedule_data'=>$schedule_data]);
     }
     public static function record(Request $req){/*SECCIÓN RECORD CARGA DESDE EL MENÚ*/
-        $userId = $req->session()->get('sql_user_id');
+        $id_student = $req->session()->get('sql_user_id');
+        $existClasses = self::existClasses($id_student);
         $jMod = new JoinQueries();
-        $classes = $jMod->getClassesByStudent($userId);
+        $classes = $jMod->getClassesByStudent($id_student);
 
         $cMod = new Courses();
         $cMod-> getById($classes->res[0]->id_course);
         $course = $cMod->data->res[0];
 
-        $marks = MarkSTools::getClassesMarksByStudent($classes->res, $userId);
+        $marks = MarkSTools::getClassesMarksByStudent($classes->res, $id_student);
         //$marks = self::getClassesMarks($classes->res, $userId);
 
-        return view ('student', ['selectedMenu'=>'record', 'classes'=>$classes->res, 'course' =>$course, 'marks'=>$marks]);
+        $courseMarks = MarkSTools::getCourseMarks($marks);
+
+        return view ('student', ['selectedMenu'=>'record', 'existClasses'=>$existClasses, 'classes'=>$classes->res, 'course' =>$course, 'marks'=>$marks, 'courseMarks' =>$courseMarks]);
     }
     public static function recordDetail($id_class, Request $req){/*SECCIÓN DETALLES ASIGNATURA*/
-        $userId = $req->session()->get('sql_user_id');
+        $id_student = $req->session()->get('sql_user_id');
+        $existClasses = self::existClasses($id_student);
         $wMod = new Works();
         $eMod = new Exams();
         $jMod = new JoinQueries();
 
-        $wMod->getByIdClassAndIdStudent($id_class, $userId);
+        $wMod->getByIdClassAndIdStudent($id_class, $id_student);
         $works = $wMod->data->res;
 
-        $eMod->getByIdClassAndIdStudent($id_class, $userId);
+        $eMod->getByIdClassAndIdStudent($id_class, $id_student);
         $exams = $eMod->data->res;
 
         $jMod -> getAllClassDatabyId($id_class);
         $data = $jMod->data->res[0];
 
-        return view('student', ['selectedMenu'=>'recordDetails', 'exams'=>$exams, 'works'=>$works, 'data'=>$data]);
+        return view('student', ['selectedMenu'=>'recordDetails', 'existClasses'=>$existClasses, 'exams'=>$exams, 'works'=>$works, 'data'=>$data]);
     }
 
     /*AUX FUNCTIONS*/
@@ -278,5 +314,20 @@ class StudentController extends Controller
                 $joinQ_mod->insertMultiple($subject, 'works');
             }
         }
+    }
+    private static function setNotificationsData(array $selectedNotifications){
+        $notifications = ['work'=>0, 'exam'=>0, 'continuous_assessment'=>0, 'final'=>0];
+        foreach ($selectedNotifications as $k=>$v){
+            $notifications[$k] = $v;
+        }
+        return $notifications;
+    }
+    private static function existClasses($id_student){
+        $jMod = new JoinQueries();
+        $classes = $jMod->getClassesByStudent($id_student);
+        if($classes->len>0){
+            return true;
+        }
+        return false;
     }
 }

@@ -63,9 +63,41 @@ class MarkSTools
         }
         return $marks;
     }
+    public static function getCourseMarks($classesMarks){
+        $courseMarks = ['exam'=>0, 'work'=>0, 'global'=>0];
+        $numMarks = ['exam'=>0, 'work'=>0, 'global'=>0];
+        foreach ($classesMarks as $m){
+            foreach ($m as $k => $v){
+                if($k === 'exam' || $k === 'work'){
+                    if(!($v === '----')){
+                        $numMarks[$k] += 1;
+                        $courseMarks[$k] = ($courseMarks[$k] += $v)/$numMarks[$k];
+                    }
+                }else{
+
+                    if(!($k === 'weights') && !($courseMarks[$k] === '----')){
+                        if(!($v === '----')){
+                            $numMarks[$k] += 1;
+                            $courseMarks[$k] = ($courseMarks[$k] += $v)/$numMarks[$k];
+                        }else{
+                            $courseMarks[$k] = '----';
+                        }
+                    }
+                }
+            }
+        }
+        //dd($courseMarks);
+        return $courseMarks;
+    }
     private static function getMarks($mod){
         $marks = 0;
-        foreach ($mod->data->res as $w){
+        $data = $mod->data->res;
+
+        if($mod->data->len < 1){ //Si no hay trabajos y exámenes definifidos todavía para la clase.
+            $marks = '----';
+        }
+        foreach ($data as $w){
+            $value[] = $w->mark;
             if($w->mark < 0){
                 $marks = '----';
                 break;

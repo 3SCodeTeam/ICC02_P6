@@ -20,7 +20,7 @@
         @switch($selectedMenu)
             {{--INSERTAR VISTA PERFIL--}}
             @case('profile')
-                @include('student/studentProfile', ['user_data'=>$user_data, 'selectedMenu'=>$selectedMenu])
+                @include('student/studentProfile', ['user_data'=>$user_data, 'selectedMenu'=>$selectedMenu, 'notifications'=>$notifications])
             @break
             {{--INSERTAR VISTA HORARIO--}}
             @case('mSchedule')
@@ -33,7 +33,7 @@
                 @include('student/studentEnrollment', ['courses_data'=>$courses_data, 'studentCourses'=>$studentCourses])
             @break
             @case('record')
-            @include('student/studentRecord', ['course'=>$course, 'classes'=>$classes])
+            @include('student/studentRecord', ['course'=>$course]){{--Acabo de descubrir que no hace falta pasarle a la vista el objeto--}}
             @break
             @case('recordDetails')
             @include('student/classDetails', ['data'=>$data, 'works'=>$works, 'exams'=>$exams])

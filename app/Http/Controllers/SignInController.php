@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 
 
+use App\Models\Notifications;
 use App\Models\Students;
 use DateTime;
 use Illuminate\Http\Request;
@@ -26,7 +27,7 @@ class SignInController extends Controller
         //REGISTRO
         $date = new DateTime();
         $date = $date->format('Y-m-d h:m:s');
-//$stm = 'INSERT INTO students (date_registered, email, name, nif, pass, surname, telephone, username) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+        //$stm = 'INSERT INTO students (date_registered, email, name, nif, pass, surname, telephone, username) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
         $module = new Students();
         $module->insertValues($date, $request->input('email'), $request->input('name'),
         $request->input('nif'), Hash::make($request->input('password')), $request->input('surname'),
@@ -35,6 +36,14 @@ class SignInController extends Controller
         if($res < 1){
             self::error('Error al escribir en la base de datos.');
         }
+        $module->getByUsername($request->input('username'));
+        $id_student = $module->data->res[0]->id;
+
+        /*NOTIFICACIONES MODIFICACIÓN INTRODUCIDA Version 2.3*/
+        $notifications = $request->only('work', 'exam', 'continuous assessment', 'final');
+        $notifications = self::setNotificationsData($notifications);
+        $nMod = new Notifications();
+        $nMod->insertValues($id_student, $notifications['work'], $notifications['exam'], $notifications['continuous assessment'], $notifications['final']);
 
         //FIN
         return view('login',['msg'=>'Bienvenido '.$request->input('name').'. Ya puedes inicar sesión.']);
@@ -92,5 +101,12 @@ class SignInController extends Controller
             return true;
         }
         return false;
+    }
+    private static function setNotificationsData(array $selectedNotifications){
+        $notifications = ['work'=>0, 'exam'=>0, 'continuous_assessment'=>0, 'final'=>0];
+        foreach ($selectedNotifications as $k=>$v){
+            $notifications[$k] = $v;
+        }
+        return $notifications;
     }
 }

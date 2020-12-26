@@ -79,7 +79,7 @@ Route::get('/student/{method}/{id?}', function (Request $req, $method, $id=null)
         case 'classDetails':return StudentController::recordDetail($id, $req);
     }
     return LogInController::error('Recurso no disponible');
-})->middleware('Session');
+})->middleware('Session')->name('student');
 
 Route::post('/student/{method}', function ($method, Request $request){
     switch ($method){

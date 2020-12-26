@@ -121,3 +121,26 @@ td{
 }
 
 /*MATRICULA END*/
+
+/*Records fail color*/
+.fail{
+    color: red;
+    font-weight: bold;
+}
+.mark.cell{
+    font-size: 50px;
+    text-align: center;
+    padding: 0 10px 0 10px;
+}
+.student.finalRecord{
+    margin: 3%;
+}
+.student.finalRecord table{
+    width: 55%;
+}
+.student.record.data.description{
+    text-align: justify;
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+}

@@ -49,12 +49,13 @@ class LogInController extends Controller
             case 'student':
                 $req->session()->put('sql_user_id', $user_data['id']);
                 $req->session()->put('user_role', 'student');
-                return view('student',['selectedMenu'=>'profile', 'user_data'=> $user_data]);
+                //return view('student',['selectedMenu'=>'profile', 'user_data'=> $user_data]);
+                return redirect()->route('student', ['start']);
             case 'admin':
                 $req->session()->put('sql_user_id', $user_data['id_user_admin']);
                 $req->session()->put('user_role', 'admin');
                 //return view('admin',['selectedMenu'=>'profile', 'user_data'=> $user_data]);
-                return redirect()->route('admin',['start']);
+                return redirect()->route('admin', ['start']);
             case 'teacher':
                 $req->session()->put('sql_user_id', $user_data['id_teacher']);
                 $req->session()->put('user_role', 'teacher');
