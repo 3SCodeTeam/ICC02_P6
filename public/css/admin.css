@@ -12,6 +12,9 @@
 .alert-msg{
     margin: 3%;
 }
+.nav-bar{
+    margin-bottom: 65px;
+}
 
 /*PROFILE ADMIN*/
 
@@ -369,5 +372,41 @@ div.form.table.container{
 
 /*CLASSSES END*/
 
-
+/*Student subject*/
+.subjectsOfStudent.form{
+    display: inline-block;
+    margin: 1%;
+    vertical-align: top;
+    width: 40%;
+}
+.record.submit{
+    margin: 1%;
+}
+.subject.data, .subjects.head{
+    vertical-align: bottom;
+    display: block;
+    text-align: left;
+    margin: 5px;
+    border-bottom: thin solid;
+}
+.subject .col.name{
+    display: inline-block;
+    width:79%;
+}
+.subject .col.mark{
+    text-align: right;
+    display: inline-block;
+    margin-left: 4.5%;
+    width: 15%
+}
+.subject .col.mark input{
+    text-decoration: none;
+    border: none;
+    width: 35%
+}
+.subjects.head .col{
+    font-size: larger;
+    margin: 0;
+    padding-left: 15px;
+}
 

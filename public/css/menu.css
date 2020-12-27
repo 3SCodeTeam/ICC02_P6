@@ -1,8 +1,8 @@
-.item a{    
+.item a{
     color: white;
-    font-size: xx-large;    
+    font-size: xx-large;
     font-family: 'Times New Roman', Times, serif;
-    text-decoration: none;    
+    text-decoration: none;
     text-align: center;
 }
 .menu-items-cont{
@@ -26,12 +26,12 @@
 .item:hover{
     text-shadow: black;
     border-top: white solid;
-    border-bottom: white solid;    
+    border-bottom: white solid;
 }
 .item.selected:hover{
     border: none;
 }
 .item.selected a{
     color: black;
- 
+
 }

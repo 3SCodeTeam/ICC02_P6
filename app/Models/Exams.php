@@ -18,7 +18,7 @@ class Exams extends DbQueries
     }
     public function getAll(): Data
     {return $this->data = parent::getAll();}
-    public function getById(int $value) { $this->data = parent::getByAttribute('id_exam',$value);}
+    public function getById($value) { $this->data = parent::getByAttribute('id_exam',$value);}
     public function getByIdClass($value) {$this->data = parent::getByAttribute('id_class',$value);}
     public function getByIdStudent($value) {$this->data = parent::getByAttribute('id_student',$value);}
     public function getByName($value) {$this->data = parent::getByAttribute('name',$value);}

@@ -100,7 +100,13 @@ class JoinQueries
     public function getClassesAndTeachersByCourse($id_course): Data
     {
        $values=[$id_course];
-       $stm = 'SELECT C.id_class, C.id_course, C.id_teacher, C.name as class_name, C.color, Co.name as course_name, Co.description, Co.date_start, Co.date_end, Co.active, T.email, T.name as teacher_name, T.nif, T.surname, T.telephone FROM class as C INNER JOIN courses as Co ON C.id_course = Co.id_course INNER JOIN teachers AS T ON C.id_teacher = T.id_teacher WHERE C.id_course = ?';
+       $stm = 'SELECT C.id_class, C.id_course, C.id_teacher, C.name as class_name, C.color, Co.name as course_name, Co.description, Co.date_start, Co.date_end,
+                Co.active, T.email, T.name as teacher_name, T.nif, T.surname, T.telephone, P.exams, P.continuous_assessment
+                FROM class as C
+                INNER JOIN courses as Co ON C.id_course = Co.id_course
+                INNER JOIN teachers AS T ON C.id_teacher = T.id_teacher
+                INNER JOIN percentage AS P ON P.id_class = C.id_class
+                WHERE C.id_course = ?';
         $this->data = self::doQuery($stm, $values);
         return $this->data;
     }
@@ -189,7 +195,38 @@ class JoinQueries
         $this->data = self::doQuery($stm, $values);
         return $this->data;
     }
-
+    public function getAllWorksByCourseStudentExtended($id_course, $id_student):Data{
+        $values=[$id_course, $id_student];
+        $stm = 'SELECT W.id_work, W.name as subject_name, deadline as subject_deadline, W.description as subject_description, W.mark, W.id_class, c.name as class_name,
+                color as class_color, T.id_teacher, T.name as teacher_name, T.surname as teacher_surname, T.email as teacher_email, Co.id_course, Co.name as course_name,
+                Co.date_start as course_date_start, Co.date_end as course_date_end, Co.description as course_description, p.continuous_assessment, p.exams, "work" as type,
+                S.id as id_student, S.name as student_name, S.surname as student_surname, S.email as student_email, S.telephone as student_telephone
+                FROM works as W
+                INNER JOIN class as C ON W.id_class = C.id_class
+                INNER JOIN teachers AS T ON C.id_teacher = T.id_teacher
+                INNER JOIN courses AS Co ON C.id_course = Co.id_course
+                INNER JOIN percentage as P ON P.id_class = C.id_class
+                INNER JOIN students as S ON S.id = W.id_student
+                WHERE C.id_course = ? and id_student = ?';
+        $this->data = self::doQuery($stm, $values);
+        return $this->data;
+    }
+    public function getAllExamsByCourseStudentExtended($id_course, $id_student):Data{
+        $values=[$id_course, $id_student];
+        $stm = 'SELECT W.id_exam, W.name as subject_name, deadline as subject_deadline, W.description as subject_description, W.mark, W.id_class, c.name as class_name,
+                color as class_color, T.id_teacher, T.name as teacher_name, T.surname as teacher_surname, T.email as teacher_email, Co.id_course, Co.name as course_name,
+                Co.date_start as course_date_start, Co.date_end as course_date_end, Co.description as course_description, p.continuous_assessment, p.exams, "exam" as type,
+                S.id as id_student, S.name as student_name, S.surname as student_surname, S.email as student_email, S.telephone as student_telephone
+                FROM exams as W
+                INNER JOIN class as C ON W.id_class = C.id_class
+                INNER JOIN teachers AS T ON C.id_teacher = T.id_teacher
+                INNER JOIN courses AS Co ON C.id_course = Co.id_course
+                INNER JOIN percentage as P ON P.id_class = C.id_class
+                INNER JOIN students as S ON S.id = W.id_student
+                WHERE C.id_course = ? and id_student = ?';
+        $this->data = self::doQuery($stm, $values);
+        return $this->data;
+    }
 
     //Insert para multiples sentencias
     public function insertMultiple(array $data, $table): bool

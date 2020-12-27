@@ -42,6 +42,24 @@
         @case('delete')
         @include('admin/adminDelete',['delete_data'=>$teachers_data])
         @break
+
+        {{--DETALLES EN ADMIN--}}
+        {{--ESTUDIANTES--}}
+        @case('studentsDetails')
+        @include('details/studentsDetails', ['course'=>$course, 'students'=>$students])
+        @break
+        @case('subjectsOfStudent')
+        @include('details/subjectsOfStudent', ['course'=>$course, 'subjects'=>$subjects, 'subject?'=>$subjects])
+        @break
+
+        {{--CLASES--}}
+        @case('classesDetails')
+        @include('details/classesDetails',['course'=>$course,'classes'=>$classes])
+        @break
+        {{--DETALLES ASIGNATURA--}}
+        @case('subjectDetails')
+        @include('details/subjectDetails',['classes'=>$classes, 'exams'=>$exams, 'works'=>$works, 'percentage'=>$percentage])
+        @break
     @endswitch
 </div>
 

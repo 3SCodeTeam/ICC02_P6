@@ -116,15 +116,19 @@ Route::post('/admin/{method}', [function ($method, Request $req){
     return LogInController::error('Recurso no disponible');
 }])->middleware('Session:admin')->name('admin');
 
-Route::get('details/{method}/{id}', function ($method, $id, Request $req){
+Route::match(array('GET', 'POST'),'details/{method}/{id?}/{param2?}', function (Request $req, $method, $param1=null, $param2=null){
     switch ($method){
-        case 'students': return DetailsController::studentsDetails($id,$req);
-        case 'classes': return DetailsController::classesDetails($id,$req);
-        case 'subjects': return DetailsController::subjectsDetails($id,$req);
+        case 'students': return DetailsController::studentsDetails($param1,$req);
+        case 'classes': return DetailsController::classesDetails($param1,$req);
+        case 'subjects': return DetailsController::subjectsDetails($param1,$req);
+        case 'subjectsOfStudent': return DetailsController::subjectsOfStudent($param1, $param2);
+        case 'records': return DetailsController::record($param1, $param2);
+        case 'recordPost': return DetailsController::recordPost($req);
     }
     return LogInController::error('Recurso no disponible');
 
-})->middleware('Session:teacher');
+
+})->middleware('Session:admin');
 
 Route::match(array('GET', 'POST'), 'teachers/{method}/{class?}/{student?}', function (Request $req, $method, $class=null,$student=null){
 
@@ -141,7 +145,7 @@ Route::match(array('GET', 'POST'), 'teachers/{method}/{class?}/{student?}', func
     return LogInController::error('Recurso no disponible');
 })->middleware('Session:teacher');
 
-Route::match(array('GET', 'POST'),'/subjects/{method}/{class?}/{student?}', function (Request $req, $method, $class=null,$student=null) {
+Route::match(array('GET', 'POST'),'subjects/{method}/{class?}/{student?}', function (Request $req, $method, $class=null,$student=null) {
     switch ($method) {
         case 'create': return Subjects::create($req, $class);
         case 'subjectsPost': return  Subjects::subjectsPost($req, $class);
