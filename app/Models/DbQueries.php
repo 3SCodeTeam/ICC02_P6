@@ -50,12 +50,15 @@ class DbQueries
     }
 
     //UPDATE METHOD
-    public function updateValue($attribute, $new_value, $col, $val) {
+    protected function updateValue($attribute, $new_value, $col, $val) {
         $this->data = new Data();
         $values = [$new_value, $val];
         $stm = "UPDATE ".$this->table." SET ".$attribute." = ? WHERE ".$col." = ?";
         $this->data = self::doQuery($stm, $values);
         return $this->data;
+    }
+    protected function updateMultiple(string $table, array $data, $id_name, $id_value){
+        return DBAlias::table($table)->where($id_name,$id_value)->update($data);
     }
     private function doQuery($stm, array $values=[]): Data
     {

@@ -132,7 +132,6 @@ Route::match(array('GET', 'POST'),'details/{method}/{param1?}/{param2?}', functi
 })->middleware('Session:admin');
 
 Route::match(array('GET', 'POST'), 'teachers/{method}/{class?}/{student?}', function (Request $req, $method, $class=null,$student=null){
-
     switch ($method){
         case 'start': return TeacherController::start($req);
         case 'profile': return TeacherController::profile($req);

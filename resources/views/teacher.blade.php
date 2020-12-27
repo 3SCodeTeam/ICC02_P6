@@ -50,7 +50,6 @@
     @endswitch
 </div>
 
-{{--TODO: CSS alert-msg--}}
 <div class="alert-msg">
     @isset($msg)
         <div class="msg">{{$msg}}</div>

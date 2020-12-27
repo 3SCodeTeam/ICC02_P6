@@ -105,4 +105,13 @@ class MiscTools
         }
         return false;
     }
+    public static function postNullRemove(array $post){
+        $values = [];
+        foreach ($post as $k => $v){
+            if(isset($v)){
+                $values[$k] = $v;
+            }
+        }
+        return $values;
+    }
 }

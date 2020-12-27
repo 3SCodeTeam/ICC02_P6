@@ -98,13 +98,8 @@ class Subjects extends Controller
     public static function  subjectMarks(Request $req, $id_class, $id_student){
         $post = $req->except(['_token','submit']);
 
-        //Determinar que notas no traen valor null.
-        $values = [];
-        foreach ($post as $k => $v){
-            if(isset($v)){
-                $values[$k] = $v;
-            }
-        }
+        //Determinar que notas traen valor null.
+        $values = MiscTools::postNullRemove($post);
 
         if(count($values)<1){
             $msg = 'No se ha establecido ninguna nota.';

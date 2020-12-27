@@ -17,12 +17,16 @@ class Teachers extends DbQueries
     public function getAll(){$this->data = parent::getAll();}
     public function getById(int $id) { $this->data = parent::getByAttribute('id_teacher',$id);}
     public function getByEmail($email) {$this->data = parent::getByAttribute('email',$email);}
-    //public function getByUsername(string $username) {$this->data = parent::getByAttribute('username',$username);}
+    public function getByNIF(string $nif) {$this->data = parent::getByAttribute('nif',$nif);}
     public function updateValue($attribute, $new_value, $col, $val) {
         $this->data = parent::updateValue($attribute, $new_value, $col, $val);
     }
     public function updateValueById($attribute, $new_value, $val){
         $this->data = parent::updateValue($attribute, $new_value, 'id_teacher', $val);
+    }
+    public function updateMultipleValuesById(array $data, $id_teacher)
+    {
+        return parent::updateMultiple('teachers', $data, 'id_teacher', $id_teacher);
     }
 
     public function insertValues($name, $surname, $telephone, $nif, $email, $pass) {

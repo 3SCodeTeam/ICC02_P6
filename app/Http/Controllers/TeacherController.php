@@ -11,6 +11,7 @@ use App\Models\Works;
 use App\Utils\MarkSTools;
 use App\Utils\MiscTools;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class TeacherController extends Controller
 {
@@ -18,12 +19,49 @@ class TeacherController extends Controller
         $teacherId = $req->session()->get('sql_user_id');
         $user_data = self::getTeacherData($teacherId);
     }
-    public static function profile(Request $req){
+    public static function profile(Request $req, $msg=null){
         $teacherId = $req->session()->get('sql_user_id');
         $user_data = self::getTeacherData($teacherId);
-        return view('teacher', ['selectedMenu'=>'profile','user_data'=>$user_data]);
+        return view('teacher', ['selectedMenu'=>'profile','user_data'=>$user_data, 'msg'=>$msg]);
     }
+    public static function profilePost(Request $req){
+        $id_teacher = $req->session()->get('sql_user_id');
+        $post = MiscTools::postNullRemove($req->except(['_token','submit']));
+        $teacher_data= MiscTools::getTeacherData($id_teacher);
 
+        $mod = new Teachers();
+        foreach($post as $k=>$v){
+
+            switch ($k){
+                case 'email':
+                    $mod -> getByEmail($v);
+                    if($mod->data->len > 0){
+                        return self::profile($req, 'El email introducido ya está registrado');
+                    }
+                    $teacher_data[$k] = $v;
+                    break;
+                case 'nif':
+                    $mod ->getByNIF($v);
+                    if($mod->data->len > 0){
+                        return self::profile($req, 'El NIF introducido ya está registrado');
+                    }
+                    $teacher_data[$k] = $v;
+                    break;
+                case 'password':
+                    if(!isset($post['password_confirmation']) || !($post[$k] === $post['password_confirmation'])){
+                        return self::profile($req, 'Las contraseñas no coinciden.');
+                    }
+                    $teacher_data['pass'] = Hash::make($v); //En la tabla Teachers el campo es "pass".
+                    break;
+                case 'password_confirmation':
+                    break;
+                default:
+                    $teacher_data[$k] = $v;
+            }
+        }
+        $mod -> updateMultipleValuesById($teacher_data, $id_teacher);
+        return self::profile($req, 'Datos actualizados');
+    }
     public static function classes(Request $req){
         $msg=null;
         $teacherId = $req->session()->get('sql_user_id');
