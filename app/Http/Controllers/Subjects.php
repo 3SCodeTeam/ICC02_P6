@@ -10,6 +10,7 @@ use App\Models\Teachers;
 use App\Models\Works;
 use App\Utils\MiscTools;
 use Illuminate\Http\Request;
+use phpDocumentor\Reflection\Types\Object_;
 use phpDocumentor\Reflection\Types\Self_;
 use SebastianBergmann\CodeCoverage\Driver\WriteOperationFailedException;
 
@@ -95,7 +96,15 @@ class Subjects extends Controller
 
     //Actualizar las notas de un estudiante. Solo teacher, admin lo hace en details.
     public static function  subjectMarks(Request $req, $id_class, $id_student){
-        $values = $req->except(['_token','submit']);
+        $post = $req->except(['_token','submit']);
+
+        //Determinar que notas no traen valor null.
+        $values = [];
+        foreach ($post as $k => $v){
+            if(isset($v)){
+                $values[$k] = $v;
+            }
+        }
 
         if(count($values)<1){
             $msg = 'No se ha establecido ninguna nota.';
