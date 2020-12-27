@@ -144,3 +144,14 @@ td{
     margin-left: auto;
     margin-right: auto;
 }
+
+/*Marks background colors*/
+.student .row.class.notFinished{
+    background-color: aliceblue;
+}
+.student .row.class.finished{
+    background-color: #e1f3cf;
+}
+.student .row.class.fail{
+    background-color: #f4d6cc;
+}

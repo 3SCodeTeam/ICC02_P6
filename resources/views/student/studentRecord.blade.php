@@ -28,13 +28,19 @@
             {{--$marks[$c->id_class] = ['exam'=>$examsMarks, 'work'=>$worksMarks, 'global'=>$global, 'weights'=>$weights]--}}
             {{--['exam'=>$eWeight, 'works'=>$wWeight]--}}
             @foreach($classes as $c)
-                <tr class="row class {{!($marks[$c->id_class]['global']==='----') ? 'finished' : 'notFinished'}}">
+                <tr class="row class {{($marks[$c->id_class]['global']==='----') ? 'notFinished' : (($marks[$c->id_class]['global'] < 5 ) ? 'fail' : 'finished')}}">
                     <td class="col subject"><a href="{{asset('student/classDetails/'.$c->id_class)}}" ><p>{{$c->class_name}}</p></a></td>
                     <td class="col teacher"><p>{{$c->teacher_name.' '.$c->surname}} <span>(<a href="mailto:{{$c->email}}">{{$c->email}}</a>)</span></p></td>
                     <td class="col workWeight"><p>{{$marks[$c->id_class]['weights']['works']*100}}%</p></td>
-                    <td class="col work"><p class="{{($marks[$c->id_class]['work'] < 5 && !($marks[$c->id_class]['work'] === '----')) ? 'fail' : '' }}">{{$marks[$c->id_class]['work']}}</p></td>
-                    <td class="col exam"><p class="{{($marks[$c->id_class]['exam'] < 5 && !($marks[$c->id_class]['work'] === '----')) ? 'fail' : '' }}">{{$marks[$c->id_class]['exam']}}</p></td>
-                    <td class="col global"><p class="{{($marks[$c->id_class]['global'] < 5 && !($marks[$c->id_class]['work'] === '----')) ? 'fail' : '' }}">{{$marks[$c->id_class]['global']}}</p></td>
+                    <td class="col work">
+                        <p class="{{($marks[$c->id_class]['work'] < 5 && !($marks[$c->id_class]['work'] === '----')) ? 'fail' : '' }}">{{($marks[$c->id_class]['work'] === '----') ? '' : number_format($marks[$c->id_class]['work'],2,',','')}}</p>
+                    </td>
+                    <td class="col exam">
+                        <p class="{{($marks[$c->id_class]['exam'] < 5 && !($marks[$c->id_class]['exam'] === '----')) ? 'fail' : '' }}">{{($marks[$c->id_class]['exam'] === '----') ? '' : number_format($marks[$c->id_class]['exam'],2,',','')}}</p>
+                    </td>
+                    <td class="col global">
+                        <p class="{{($marks[$c->id_class]['global'] < 5 && !($marks[$c->id_class]['global'] === '----')) ? 'fail' : '' }}">{{($marks[$c->id_class]['global'] === '----') ? '' : number_format($marks[$c->id_class]['global'],2,',','')}}</p>
+                    </td>
                 </tr>
             @endforeach
             </tbody>
@@ -52,9 +58,9 @@
             </thead>
             <tbody>
             <tr>
-                <td class="continuous_assessment"><div class="mark cell {{($courseMarks['work'] < 5) ? 'fail':'' }}">{{$courseMarks['work']}}</div></td>
-                <td class="exams"><div class="mark cell {{($courseMarks['exam'] < 5) ? 'fail':'' }}">{{$courseMarks['exam']}}</div></td>
-                <td class="global"><div class="mark cell global {{($courseMarks['global'] < 5) ? 'fail':'' }}">{{($courseMarks['global'] === '----') ? '':$courseMarks['global']}}</div></td>
+                <td class="continuous_assessment"><div class="mark cell {{($courseMarks['work'] < 5) ? 'fail':'' }}">{{number_format($courseMarks['work'],2,',','')}}</div></td>
+                <td class="exams"><div class="mark cell {{($courseMarks['exam'] < 5) ? 'fail':'' }}">{{number_format($courseMarks['exam'],2,',','')}}</div></td>
+                <td class="global"><div class="mark cell global {{($courseMarks['global'] < 5) ? 'fail':'' }}">{{($courseMarks['global'] === '----') ? '':number_format($courseMarks['global'],2,',','')}}</div></td>
             </tr>
             </tbody>
         </table>

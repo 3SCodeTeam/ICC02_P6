@@ -74,7 +74,6 @@ class MarkSTools
                         $courseMarks[$k] = ($courseMarks[$k] += $v)/$numMarks[$k];
                     }
                 }else{
-
                     if(!($k === 'weights') && !($courseMarks[$k] === '----')){
                         if(!($v === '----')){
                             $numMarks[$k] += 1;
