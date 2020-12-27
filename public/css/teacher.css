@@ -165,6 +165,11 @@
     border-radius: 5px;
     margin: 25px 0 0 0;
 }
+.teachers .col.work, .teachers .col.exam, .teachers .col.global{
+    text-align: right;
+    padding-right: 10px;
+    width: 15%;
+}
 /*Student subject*/
 .teacher.studentDetails.subject.form{
     display: inline-block;

@@ -17,13 +17,13 @@
             @foreach($exams as $e)
                 <div class="subject data">
                 <div class="col name">{{$e->name}} (examen)</div>
-                <div class="col mark"><input type="number" min="0" max="10" step="0.5" name="{{'exam;'.$e->id_exam}}" id="{{'exam;'.$e->id_exam}}" placeholder="{{($e->mark < 0) ? '' : $e->mark}}"/></div>
+                <div class="col mark"><input type="number" min="0" max="10" step="0.5" name="{{'exam;'.$e->id_exam}}" id="{{'exam;'.$e->id_exam}}" placeholder="{{($e->mark < 0) ? '' : number_format($e->mark,1,',','')}}"/></div>
                 </div>
             @endforeach
             @foreach($works as $w)
                 <div class="subject data">
                 <div class="col name">{{$w->name}} (trabajo)</div>
-                <div class="col mark"><input type="number" min="0" max="10" step="0.5" name={{'work;'.$w->id_work}} id="{{'work;'.$w->id_work}}" placeholder="{{($w->mark < 0) ? '' : $w->mark}}"/></div>
+                <div class="col mark"><input type="number" min="0" max="10" step="0.5" name={{'work;'.$w->id_work}} id="{{'work;'.$w->id_work}}" placeholder="{{($w->mark < 0) ? '' : number_format($w->mark,1,',','')}}"/></div>
                 </div>
             @endforeach
         </div>
