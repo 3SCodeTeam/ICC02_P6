@@ -38,7 +38,7 @@
                 </tr>
                 @foreach($classes as $c)
                     <tr>
-                        <td class="col name"><p><a href="{{asset('/details/subjects/'.$c->id_class)}}">{{$c->class_name}}</a></p></td>
+                        <td class="col name"><p><a href="{{asset('/subjects/subjects/'.$c->id_class)}}">{{$c->class_name}}</a></p></td>
                         <td class="col course"><p><a href="{{asset('/details/classes/'.$c->id_course)}}">{{$c->course_name}}</a></p></td>
                         <td class="col teacher"><p><a href="{{asset('/details/teachers/'.$c->id_teacher)}}">{{$c->surname.', '.$c->teacher_name}}</a><a href="mailto:{{$c->email}}">{{' ('.$c->email.')'}}</a></p></td>
                         <td class="col color" style="background-color: {{$c->color}}"></td>

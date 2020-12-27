@@ -14,7 +14,7 @@
     <div class="item {{($selectedMenu == 'delete') ? 'selected':''}}">
         <a {{(!($selectedMenu == 'delete')) ? 'href='.asset('/admin/delete').'':''}}>Eliminar</a>
     </div>
-    @if(in_array($selectedMenu,['studentsDetails','classesDetails','subjectDetails','subjectsOfStudent','record']))
+    @if(in_array($selectedMenu,['studentsDetails','classesDetails','subjectDetails','subjectsOfStudent','record', 'subjects', 'subjectsCreate','subjectsUpdate']))
         <div id="courseAdmin-menu" class="menu-items-cont submenu">
             <div class="item {{($selectedMenu == 'studentsDetails') ? 'selected':''}}">
                 <a {{(!($selectedMenu == 'studentsDetails')) ? 'href='.asset('details/students/'.$course['id_course']).'':''}}>Estudiantes</a>

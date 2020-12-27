@@ -1,4 +1,4 @@
-.description{
+.courses .description{
     display: block;
     width: 80%;
     text-align: justify;
@@ -168,30 +168,30 @@
     padding: 5px;
     border-collapse: collapse;
 }
-.row.header th{
+.courses .row.header th{
     font-size: large;
     background-color: #a0aec0;
     text-align: center;
     padding:5px;
 }
-.row.courses td{
+.courses .row.courses td{
     padding:5px;
     font-size: medium;
     border-collapse: collapse;
     border: solid thin;
 }
-.row.courses a{
+.courses .row.courses a{
     text-decoration: none;
     color: black;
 }
-.row.courses a:hover{
+.courses .row.courses a:hover{
     color: #a0aec0;
 }
-.inactive td{
+.courses .inactive td{
     background-color: #4a5568;
     color: #e2e8f0;
 }
-.col.description{
+.courses .col.description{
     width: 600px;
 }
 

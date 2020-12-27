@@ -1,4 +1,8 @@
 <div class="subjects create main container">
+    @if(isset($admin))
+        <h2>{{$course['name']}}</h2>
+        <h3>{{$class_data->class_name}} (<a href="mailto:{{$user_data['email']}}">{{$user_data['email']}}</a>)</h3>
+    @endif
     <div class="subjects create form container">
         <form action="{{asset('/subjects/subjectsPost/'.$id_class)}}" method="post" id="newSubject" >
             @csrf

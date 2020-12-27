@@ -44,3 +44,66 @@ form label{
     margin: 10px;
     padding-left: 3px;
 }
+/*Subjects list*/
+.subjects.classDetails.subjects{
+    display: inline-block;
+    width: 900px;
+    vertical-align: top;
+    margin-top: 0;
+}
+.cell{
+    font-size: small;
+    margin:0;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+    padding-left: 15px;
+}
+.col label{
+    padding: 0;
+    margin: 0;
+}
+.subjects.classDetails.subjects.table thead p{
+    font-size: medium;
+    margin: 0;
+}
+.subjects.classDetails.subjects.table tbody td{
+    vertical-align: top;
+    border: solid thin;
+    border-collapse: collapse;
+    max-height: 15px;
+}
+.subjects.classDetails.subjects.table .col.name{
+    border-left: hidden;
+}
+.subjects.classDetails.subjects.table .col.description{
+    width: 60%;
+}
+.subjects.classDetails.subjects.table .col.selector{
+    width: 1%;
+}
+.subjects.classDetails.subjects.table .col.description .cell{
+    max-height: 15px;
+    overflow:hidden;
+}
+.subjects.classDetails.subjects.submit{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.subjects.classDetails.subjects.submit div{
+    display: inline-block;
+}
+.subjects.classDetails.subjects.submit input, .subjects.classDetails.subjects.submit option{
+
+    width: 100px;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 1%;
+}
+.subjects.classDetails button{
+    width: 200px;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 25px 0 0 0;
+}

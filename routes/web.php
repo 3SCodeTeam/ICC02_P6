@@ -116,10 +116,11 @@ Route::post('/admin/{method}', [function ($method, Request $req){
     return LogInController::error('Recurso no disponible');
 }])->middleware('Session:admin')->name('admin');
 
-Route::match(array('GET', 'POST'),'details/{method}/{id?}/{param2?}', function (Request $req, $method, $param1=null, $param2=null){
+Route::match(array('GET', 'POST'),'details/{method}/{param1?}/{param2?}', function (Request $req, $method, $param1=null, $param2=null){
     switch ($method){
         case 'students': return DetailsController::studentsDetails($param1,$req);
-        case 'classes': return DetailsController::classesDetails($param1,$req);
+        case 'classes': return DetailsController::classesDetails($param1);
+        case 'classesSubject': return DetailsController::classesSubjects($param1);
         case 'subjects': return DetailsController::subjectsDetails($param1,$req);
         case 'subjectsOfStudent': return DetailsController::subjectsOfStudent($param1, $param2);
         case 'records': return DetailsController::record($param1, $param2);
@@ -138,7 +139,7 @@ Route::match(array('GET', 'POST'), 'teachers/{method}/{class?}/{student?}', func
         case 'profilePost': return TeacherController::profilePost($req);
         case 'classes': return TeacherController::classes($req);
         case 'students': return TeacherController::students($req, $class);
-        case 'subjects': return TeacherController::subjects($req, $class);
+        //case 'subjects': return TeacherController::subjects($req, $class);
         case 'studentDetails': return  TeacherController::studentDetails($req, $class, $student);
         case 'subjectsPost': return  TeacherController::subjectsPost($req,$class);
     }
@@ -151,5 +152,6 @@ Route::match(array('GET', 'POST'),'subjects/{method}/{class?}/{student?}', funct
         case 'subjectsPost': return  Subjects::subjectsPost($req, $class);
         case 'subjectsMarks': return Subjects::subjectMarks($req, $class, $student);
         case 'update': return Subjects::update($req, $class);
+        case 'subjects': return Subjects::subjects($req, $class);
     }
 })->middleware('Session:teacher');

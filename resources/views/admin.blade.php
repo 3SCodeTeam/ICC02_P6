@@ -9,12 +9,14 @@
     <link rel="stylesheet" href="{{asset('css/style.css')}}">
     <link rel="stylesheet" href="{{asset('css/menu.css')}}">
     <link rel="stylesheet" href="{{asset('css/admin.css')}}">
+    <link rel="stylesheet" href="{{asset('css/subjects.css')}}">
+
 </head>
 <body>
 
 @include('header')
 <div class= "nav-bar">
-    @include('admin/adminMenu',['selectedMenu'=>$selectedMenu])
+    @include('admin/adminMenu',['selectedMenu'=>$selectedMenu]) {{--Este menú necesita un objeto courses--}}
 </div>
 
 <div id="main-container">
@@ -53,9 +55,21 @@
         @break
 
         {{--CLASES--}}
+        @case('subjects')
+        @include('subjects.subjects',['selectedMenu'=>$selectedMenu, 'admin'=>true, 'class_data'=>$class_data, 'user_data'=>$user_data, 'subjects'=>$subjects])
+        @break
+        @case('subjectsCreate')
+        @include('subjects.create', ['$selectedMenu'=>$selectedMenu, 'admin'=>true, 'user_data'=>$user_data, 'class_data'=>$class_data])
+        @break
+        @case('subjectsUpdate')
+        @include('subjects.update', ['$selectedMenu'=>$selectedMenu, 'admin'=>true, 'user_data'=>$user_data, 'class_data'=>$class_data, 'selectedSubjects'=>$selectedSubjects])
+        @break
+
+        {{--¿¿¿SIN USO???--}}
         @case('classesDetails')
         @include('details/classesDetails',['course'=>$course,'classes'=>$classes])
         @break
+
         {{--DETALLES ASIGNATURA--}}
         @case('subjectDetails')
         @include('details/subjectDetails',['classes'=>$classes, 'exams'=>$exams, 'works'=>$works, 'percentage'=>$percentage])

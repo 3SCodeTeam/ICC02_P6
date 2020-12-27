@@ -1,4 +1,8 @@
 <div class="updateSubjects main container">
+    @if(isset($admin))
+        <h2>{{$course['name']}}</h2>
+        <h3>{{$class_data->class_name}} (<a href="mailto:{{$user_data['email']}}">{{$user_data['email']}}</a>)</h3>
+    @endif
     <div class="updateSubjects form container">
             <table class="updateSubjects table">
                 <thead>

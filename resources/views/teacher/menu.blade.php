@@ -13,7 +13,7 @@
             <a {{(!($selectedMenu == 'students')) ? 'href='.asset('/teachers/students/'.$id_class).'':''}}>Estudiantes</a>
         </div>
         <div class="item {{($selectedMenu == 'subjects') ? 'selected':''}}">
-            <a {{(!($selectedMenu == 'subjects')) ? 'href='.asset('/teachers/subjects/'.$id_class).'':''}}>Trabajos y exámenes</a>
+            <a {{(!($selectedMenu == 'subjects')) ? 'href='.asset('/subjects/subjects/'.$id_class).'':''}}>Trabajos y exámenes</a>
         </div>
     </div>
 @endif

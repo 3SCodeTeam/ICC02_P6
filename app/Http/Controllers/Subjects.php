@@ -10,12 +10,19 @@ use App\Models\Teachers;
 use App\Models\Works;
 use App\Utils\MiscTools;
 use Illuminate\Http\Request;
+use phpDocumentor\Reflection\Types\Self_;
 use SebastianBergmann\CodeCoverage\Driver\WriteOperationFailedException;
 
 class Subjects extends Controller
 {
+    /*Todos estos métodos se pueden llamar desde Teacher y Admin
+    * Necesitan incluir un control teacher/admin.
+    */
+
+    //Creación de un trabajo/examen de una clase
     public static function create(Request $req, $id_class, $msg = null){
         $role = $req->session()->get('user_role');
+        $values = MiscTools::getClassRelatedIds($id_class, 'class');
 
         //Datos de la clase.
         $jMod = new JoinQueries();
@@ -23,20 +30,55 @@ class Subjects extends Controller
 
         if($role === 'teacher'){
             $teacherId = $req->session()->get('sql_user_id');
-            $user_data = self::getTeacherData($teacherId);
-
+            $user_data = MiscTools::getTeacherData($teacherId);
             return view('teacher', ['selectedMenu'=>'subjectsCreate', 'id_class'=>$id_class, 'user_data'=>$user_data, 'class_data'=>$class_data->res[0], 'msg'=>$msg]);
         }else{
-            //TODO: LOGICA PARA ADMIN
+            $user_data = MiscTools::getTeacherData($values['id_teacher']);
+            $course = MiscTools::getCourseDataByIdClass($id_class);
+            return view('admin', ['selectedMenu'=>'subjectsCreate', 'id_class'=>$id_class, 'course'=>$course, 'user_data'=>$user_data, 'class_data'=>$class_data->res[0], 'msg'=>$msg]);
         }
     }
 
-    //CREA UN TRABAJO O EXAMEN NUEVO.
+    //Listado de trabajos y exámenes de una clase
+    public static function subjects(Request $req, $id_class, $msg=null){
+        $id_values = MiscTools::getClassRelatedIds($id_class, 'class');
+        $role = $req->session()->get('user_role');
+
+        $jMod = new JoinQueries();
+        $class_data = $jMod ->getAllClassDatabyId($id_class);
+
+        $wMod=new Works();
+        $eMod = new Exams();
+        $wMod->getDistinctByIdClass($id_class);
+        $eMod->getDistinctByIdClass($id_class);
+
+        $subjects = ['works'=>[], 'exams'=>[]];
+        if($wMod->data->len > 0){
+            $subjects['works'] = $wMod->data->res;
+        }
+        if($eMod->data->len > 0){
+            $subjects['exams'] = $eMod->data->res;
+        }
+        switch ($role){
+            case 'admin':
+                $course = MiscTools::getCourseDataByIdClass($id_class);
+                $user_data = MiscTools::getTeacherData($id_values['id_teacher']);
+                return view ('admin', ['selectedMenu'=>'subjects', 'id_class'=>$id_class, 'course'=>$course,'class_data'=>$class_data->res[0] ,'user_data'=>$user_data, 'msg'=>$msg, 'subjects'=>$subjects]);
+            case 'teacher':
+            default:
+                $teacherId = $req->session()->get('sql_user_id');
+                $user_data = MiscTools::getTeacherData($teacherId);
+                return view('teacher', ['selectedMenu'=>'subjects', 'id_class'=>$id_class, 'class_data'=>$class_data->res[0] ,'user_data'=>$user_data, 'msg'=>$msg, 'subjects'=>$subjects]);
+        }
+
+    }
+
+    //Gestiona el post de la creación de un trabajo o exámen nuevo.
     public static function subjectsPost(Request $req, $id_class){
         $values = $req->only('name', 'date', 'time', 'type', 'description');
         $msg=null;
         $teacherId = $req->session()->get('sql_user_id');
-        $user_data = self::getTeacherData($teacherId);
+        $user_data = MiscTools::getTeacherData($teacherId);
 
         if(self::nameExist($values['name'],$values['type'],$id_class)){
             $msg = 'Este nombre ya se ha usado.';
@@ -51,7 +93,7 @@ class Subjects extends Controller
         return self::create($req, $id_class, $msg);
     }
 
-    //ACTUALIZAR NOTAS
+    //Actualizar las notas de un estudiante. Solo teacher, admin lo hace en details.
     public static function  subjectMarks(Request $req, $id_class, $id_student){
         $values = $req->except(['_token','submit']);
 
@@ -77,17 +119,18 @@ class Subjects extends Controller
         $msg = 'Notas actualizadas.';
         return TeacherController::studentDetails($req, $id_class, $id_student, $msg);
     }
-    //UPDATE SUBJECTS
+
+    //Actualizar/borrar los trabajos y exámenes.
     public static function update(Request $req, $id_class, $msg=null){
+        $role = $req->session()->get('user_role');
         $values = $req->except(['_token', 'action']);
-        $action = $req->get('action'); //ACTION ES LA ACCIÓN SOLICITADA UPDATE O DELETE
-        $teacherId = $req->session()->get('sql_user_id');
-        $user_data = self::getTeacherData($teacherId); //NECEISTAMOS EL USER DATA PARA LA VISTA TEACHER
-        $class_data = self::getClassData($id_class); //NECESITAMOS LOS DATOS DE LA CALSE EN ESTA VISTA
+        $action = $req->get('action');
 
-        if(count($values)<1){
-            return TeacherController::subjects($req, $id_class, $msg="No se ha seleccionado ningún elemento.");
+        $class_data = MiscTools::getClassData($id_class); //NECESITAMOS LOS DATOS DE LA CALSE EN ESTA VISTA TEACHER Y ADMIN
+        $id_values = MiscTools::getClassRelatedIds($id_class, 'class');
 
+        if(count($values)<1){//Si el post viene vaccío.
+            return self::subjects($req, $id_class, $msg="No se ha seleccionado ningún elemento.");
         }
 
         switch($action){
@@ -96,16 +139,25 @@ class Subjects extends Controller
                     $name = self::getSubjectName($name);
                     self::deleteSubject($id_class, $name, $type);
                 }
-                return TeacherController::subjects($req, $id_class, $msg="Se han eliminado los elementos seleccionados.");
+                $msg="Se han eliminado los elementos seleccionados.";
+                return self::subjects($req, $id_class, $msg);
             case 'update':
             default:
                 //Get data from the from the exams and works selected.
                 $subjects = self::getSubjectsRequested($values, $id_class);
-                return view('teacher', ['selectedMenu'=>'subjectsUpdate', 'user_data'=>$user_data, 'class_data' => $class_data, 'id_class'=>$id_class, 'selectedSubjects' => $subjects]);
+                if($role === 'teacher'){
+                    $teacherId = $req->session()->get('sql_user_id'); //SOLO COMO TEACHER
+                    $user_data = MiscTools::getTeacherData($teacherId); //NECEISTAMOS EL USER DATA PARA LA VISTA TEACHER
+                    return view('teacher', ['selectedMenu'=>'subjectsUpdate', 'user_data'=>$user_data, 'class_data' => $class_data, 'id_class'=>$id_class, 'selectedSubjects' => $subjects]);
+                }else{
+                    $course = MiscTools::getCourseDataByIdClass($id_class); //NECESARIO PARA LA VISTA ADMIN
+                    $user_data = MiscTools::getTeacherData($id_values['id_teacher']);
+                    return view('admin', ['selectedMenu'=>'subjectsUpdate', 'course'=>$course,'user_data'=>$user_data, 'class_data' => $class_data, 'id_class'=>$id_class, 'selectedSubjects' => $subjects]);
+                }
         }
     }
 
-    //FUNCIONES AUXILIARES
+    /*FUNCIONES AUXILIARES*/
     private static function getSubjectName($name){
         $name = explode(';', $name);
         $name = $name[1];
@@ -176,17 +228,6 @@ class Subjects extends Controller
         }
         return false;
     }
-    //OBTIENE LOS DATOS DEL PROFESOR DE UNA CLASE.
-    private static function getTeacherData($id){
-        $mod = new Teachers();
-        $mod -> getById($id);
-
-        return MiscTools::safeUserData($mod->data->res[0]);
-    }
-    //OBTIENE LOS DATOS DE UNA CLASE
-    private static function getClassData($id){
-        $mod = new JoinQueries();
-        $mod->getAllClassDatabyId($id);
-        return $mod->data->res[0];
-    }
+    //OBTIENE LOS DATOS DEL PROFESOR DE UNA CLASE. MOVER A MISCTOOLS
+    //OBTIENE LOS DATOS DE UNA CLASE. MOVER A MISCTOOLS
 }

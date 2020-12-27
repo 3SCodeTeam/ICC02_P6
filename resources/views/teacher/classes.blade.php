@@ -16,8 +16,8 @@
              CO.date_end, CO.date_start, CO.description, count(distinct E.id_student)--}}
             <tr>
                 <td class="col color"><div style="background-color: {{$c->color}}">&nbsp;</div></td>
-                <td class="col name"><a href="{{'/teachers/students/'.$c->id_class}}"><p>{{$c->class_name}}</p></a></td>
-                <td class="col course"><a href="{{'/teachers/subjects/'.$c->id_class}}"><p>{{$c->course_name}}</p></a></td>
+                <td class="col name"><a href="{{'/subjects/subjects/'.$c->id_class}}"><p>{{$c->class_name}}</p></a></td>
+                <td class="col course"><a href="{{'/teachers/students/'.$c->id_class}}"><p>{{$c->course_name}}</p></a></td>
                 <td class="col status"><p>{{($c->active==1) ? 'Activo' : 'Inactivo'}}</p></td>
                 <td class="col students"><p>{{$c->students}}</p></td>
             </tr>

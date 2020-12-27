@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{{asset('css/style.css')}}">
     <link rel="stylesheet" href="{{asset('css/menu.css')}}">
     <link rel="stylesheet" href="{{asset('css/teacher.css')}}">
+    <link rel="stylesheet" href="{{asset('css/subjects.css')}}">
 </head>
 <body>
 
@@ -35,7 +36,7 @@
         @include('teacher.classDetails',['selectedMenu'=>$selectedMenu, 'students'=>$students,'marks'=>$marks])
         @break
         @case('subjects')
-        @include('teacher.classDetails',['selectedMenu'=>$selectedMenu, 'class_data'=>$class_data, 'subjects'=>$subjects])
+        @include('subjects.subjects',['selectedMenu'=>$selectedMenu, 'class_data'=>$class_data, 'subjects'=>$subjects])
         @break
         @case('studentDetails')
         @include('teacher.studentDetails', ['selectedMenu'=>$selectedMenu, 'user_data'=>$user_data, 'student'=>$student, 'exams'=>$exams, 'works'=>$works])
