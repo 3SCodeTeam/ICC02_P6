@@ -97,4 +97,12 @@ class MiscTools
         $mod->getAllClassDatabyId($id);
         return $mod->data->res[0];
     }
+    public static function inArray(string $value, array $data, string $field):bool{
+        foreach ($data as $d){
+            if($d[$field] === $value){
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -149,7 +149,9 @@ class ScheduleTools
        $mod->getClassesOfDay($id, $date);
        if($mod->data->len >0){
            foreach($mod->data->res as $item){
-               $dayData[]=['color'=>$item->color, 'name'=>$item->class_name, 'course'=>$item->course_name,'id'=>$item->id_class];
+               if(!MiscTools::inArray($item->class_name, $dayData,'name')){
+                   $dayData[]=['color'=>$item->color, 'name'=>$item->class_name, 'course'=>$item->course_name,'id'=>$item->id_class];
+               }
             }
         }
         return $dayData;
