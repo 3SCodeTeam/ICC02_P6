@@ -40,10 +40,10 @@ class SignInController extends Controller
         $id_student = $module->data->res[0]->id;
 
         /*NOTIFICACIONES MODIFICACIÓN INTRODUCIDA Version 2.3*/
-        $notifications = $request->only('work', 'exam', 'continuous assessment', 'final');
+        $notifications = $request->only('work', 'exam', 'continuous_assessment', 'final');
         $notifications = self::setNotificationsData($notifications);
         $nMod = new Notifications();
-        $nMod->insertValues($id_student, $notifications['work'], $notifications['exam'], $notifications['continuous assessment'], $notifications['final']);
+        $nMod->insertValues($id_student, $notifications['work'], $notifications['exam'], $notifications['continuous_assessment'], $notifications['final']);
 
         //FIN
         return view('login',['msg'=>'Bienvenido '.$request->input('name').'. Ya puedes inicar sesión.']);
@@ -54,7 +54,7 @@ class SignInController extends Controller
 
 
     private static function  checkNifForm($nif){
-        if(strlen($nif)>9){
+        if(strlen($nif)>10){
             return true;
         }
         if(!ctype_alpha(substr($nif,-1))){
