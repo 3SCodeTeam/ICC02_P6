@@ -1,4 +1,4 @@
-<div class="main container">
+<div class="schedule main container">
     @if($selectedMenu == 'mSchedule')
         <table class="monthly schedule"><tbody>
         @foreach($schedule_data as $week)
@@ -14,7 +14,7 @@
                         @if($d['col'] == "SEMANA")
                             <td class="col {{$d['col']}}"><span>{{$d['value']}}</span></td>
                         @else
-                            <td class="col {{$d['col']}}">
+                            <td class="col classes {{$d['col']}}">
                                 @foreach($d['value'] as $v)
                                     <div class="subject"><a style="color: {{$v['color']}}" href="{{asset('/student/record/'.$v['id'])}}">{{$v['name']}}</a></div>
                                 @endforeach
@@ -41,7 +41,7 @@
                             @if($d['col']=='HORA')
                                 <td class="col {{$d['col']}}"><span>{{$d['value']}}</span></td>
                             @else
-                                <td class="col {{$d['col']}}">
+                                <td class="col classes {{$d['col']}}">
                                     @foreach($d['value'] as $v)
                                         <span><a style="color:{{$v['color']}}" href="{{asset('student/record/'.$v['id'])}}">{{$v['name']}}</a></span>
                                     @endforeach
@@ -54,7 +54,7 @@
         </tbody></table>
     @endif
     @if($selectedMenu == 'dSchedule')
-            <table class="weekly schedule"><tbody>
+            <table class="daily schedule"><tbody>
                 @foreach($schedule_data as $row)
                     @if($loop->first)
                         <tr class="row header">

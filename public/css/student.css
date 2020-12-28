@@ -5,73 +5,94 @@
     margin-bottom: 100px;
     margin-top: 50px;
 }
-table{
+.schedule table{
+    background-color: #f0f8f7;
     display:inline-table;
-    border: thick black solid;
-    width: 95%;
-    border-radius: 15px;
+    border: none;
+    width: 90%;
     padding: 0.5%;
 }
-table th{
+.schedule .row.header{
+    background-color: #f7dede;
+    color: #030303;
+}
+.schedule table th{
     border: thin black solid;
     border-radius: 5px;
 }
-td{
+.schedule td{
     border: thin black solid;
     border-radius: 5px;
 }
-.col.HORA td{
+.schedule .col.HORA td{
     width: 1%;
 }
-.row.header th{
+.schedule .row.header th{
     height: 50px;
 }
 
 /*Row high for monthly schedule*/
-.row.week td{
+.schedule .row.week td{
     height: 75px;
+}
+.schedule .col.SEMANA, .schedule .col.HORA{
+    text-align: center;
+    font-size: larger;
+}
+.schedule .col.classes{
+    padding-left: 20px;
 }
 
 /*Row high for daily and weekly schedule*/
-.row.week.hour td{
+.schedule .row.week.hour td{
     height: 35px;
 }
 
-.week.col.SEMANA{
+.schedule .week.col.SEMANA{
     width: 6%;
 }
+.schedule .daily .col.HORA{
+    width: 20%;
+}
+.schedule .daily {
+    width: 50%;
+}
+.schedule .daily .col.date{
+    font-size: larger;
+    text-align: center;
+}
 
-.col.DOMINGO{
+.schedule .col.DOMINGO{
     background-color: rgba(243, 241, 241, 0.849);
     width: 5%;
 }
-.col.SÁBADO{
+.schedule .col.SÁBADO{
     background-color: rgba(243, 241, 241, 0.849);
     width: 5%;
 }
 /*HORARIO END*/
 
 /*EDICIÓN DATOS PERFIL*/
-.profile-data-container{
+.student .profile-data-container{
     font-family: Arial, Helvetica, sans-serif;
     columns: 2;
     margin: 3%;
     align-self: baseline;
 }
-.profile-data{
+.student .profile-data{
     margin: 2%;
     background-color: pink;
 
 }
-.profile-data span{
+.student .profile-data span{
     padding: 1%
 }
 
-.selector-container select{
+.student .selector-container select{
     border: none;
     border-bottom: thin black solid;
 }
-.form-container{
+.student .form-container{
     border: solid thin black;
     padding: 1%;
     margin-bottom: 100px;
@@ -87,33 +108,40 @@ td{
 /*EDICIÓN ASIGNATURAS END*/
 
 /*MATRICULA*/
-.row.courses-title th{
+
+.student-enrollment table td{
+    border: thin solid black;
+}
+.student-enrollment .row.courses-title{
     height: 50px;
     font-size: larger;
+    border: solid thin black;
+    color: white;
+    background-color: tomato;
 }
-.row.courses-data td{
+.student-enrollment .row.courses-data td{
     font-size: small;
-    height: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
-
 .student-enrollment.course-table{
-    border: hidden;
     border-collapse: collapse;
     width: 85%;
     margin-bottom: 3%;
 }
-.student-enrollment.course-table th{
-    border: hidden;
+.student-enrollment .col.course-description{
+    text-align: justify;
 }
 
-.col-course-name{
+.student-enrollment .col-course-name{
     text-align: left;
+    width: 20%;
 }
-.col-course-name span{
+.student-enrollment .col-course-name span{
     padding-left: 20px;
 }
 
-.button{
+.student-enrollment .button{
     font-size: x-large;
     width: auto;
     height: auto;
@@ -123,10 +151,7 @@ td{
 /*MATRICULA END*/
 
 /*Records fail color*/
-.fail{
-    color: red;
-    font-weight: bold;
-}
+
 .mark.cell{
     font-size: 50px;
     text-align: center;
@@ -144,6 +169,10 @@ td{
     margin-left: auto;
     margin-right: auto;
 }
+.student .col.work, .student .col.exam, .student .col.global, .student .col.workWeight {
+    text-align: right;
+    padding-right: 15px;
+}
 
 /*Marks background colors*/
 .student .row.class.notFinished{
@@ -151,7 +180,10 @@ td{
 }
 .student .row.class.finished{
     background-color: #e1f3cf;
+    font-weight: bold;
 }
 .student .row.class.fail{
     background-color: #f4d6cc;
+    font-weight: bold;
 }
+

@@ -1,4 +1,4 @@
-<div class="admin-profile-container">
+<div class="student profile main container">
     <H2>Datos del usuario</H2>
             <div class="profile-data-container">
                 <div class="profile-data profile-username"><span>Nombre de usuario: </span>{{$user_data['username']}}</div>
