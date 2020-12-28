@@ -142,7 +142,7 @@ class AdminController extends Controller
         if($mod->data->affected_rows > 0){
             $mod->getAll();
             $courses_data=$mod->data->res;
-            return view('admin', ['selectedMenu'=>'courses', 'courses_data'=>$courses_data, 'msg'=>'¡Curso añadido!.']);
+            return view('admin', ['selectedMenu'=>'courses', 'courses_data'=>$courses_data, 'msg'=>'Curso añadido.']);
         } //Comprobar que se han insertado los datos.
         return view('admin', ['selectedMenu'=>'courses', 'courses_data'=>$courses_data, 'msg'=>'Error de acceso a la base de datos.']);
 
