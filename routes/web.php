@@ -151,6 +151,7 @@ Route::match(array('GET', 'POST'),'subjects/{method}/{class?}/{student?}', funct
         case 'subjectsPost': return  Subjects::subjectsPost($req, $class);
         case 'subjectsMarks': return Subjects::subjectMarks($req, $class, $student);
         case 'update': return Subjects::update($req, $class);
+        case 'updatePost': return Subjects::updatePost($req, $class);
         case 'subjects': return Subjects::subjects($req, $class);
     }
 })->middleware('Session:teacher');

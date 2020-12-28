@@ -127,15 +127,23 @@ class Subjects extends Controller
     //Actualizar/borrar los trabajos y exámenes.
     public static function update(Request $req, $id_class, $msg=null){
         $role = $req->session()->get('user_role');
-        $values = $req->except(['_token', 'action']);
-        $action = $req->get('action');
+        //dd($req);
+        if(!isset($msg)){
+            $values = $req->except(['_token', 'action']);
+            $action = $req->get('action');
+            if(count($values)<1){//Si el post viene vaccío.
+                return self::subjects($req, $id_class, $msg="No se ha seleccionado ningún elemento.");
+            }
+            $req->flashExcept(['_token']);
+        }else{
+            $action = $req->old('action');
+            $values = $req->old();
+            unset($values['action']);
+            $req->session()->reflash();
+        }
 
         $class_data = MiscTools::getClassData($id_class); //NECESITAMOS LOS DATOS DE LA CALSE EN ESTA VISTA TEACHER Y ADMIN
         $id_values = MiscTools::getClassRelatedIds($id_class, 'class');
-
-        if(count($values)<1){//Si el post viene vaccío.
-            return self::subjects($req, $id_class, $msg="No se ha seleccionado ningún elemento.");
-        }
 
         switch($action){
             case 'delete':
@@ -147,18 +155,58 @@ class Subjects extends Controller
                 return self::subjects($req, $id_class, $msg);
             case 'update':
             default:
-                //Get data from the from the exams and works selected.
                 $subjects = self::getSubjectsRequested($values, $id_class);
+                //$req->session()->put('dataPosted',['action'=>$action, 'values'=>$values]);
                 if($role === 'teacher'){
-                    $teacherId = $req->session()->get('sql_user_id'); //SOLO COMO TEACHER
-                    $user_data = MiscTools::getTeacherData($teacherId); //NECEISTAMOS EL USER DATA PARA LA VISTA TEACHER
-                    return view('teacher', ['selectedMenu'=>'subjectsUpdate', 'user_data'=>$user_data, 'class_data' => $class_data, 'id_class'=>$id_class, 'selectedSubjects' => $subjects]);
+                    $teacherId = $req->session()->get('sql_user_id');
+                    $user_data = MiscTools::getTeacherData($teacherId); //Se necesita el user_data para la vista teacher
+                    return view('teacher', ['selectedMenu'=>'subjectsUpdate', 'user_data'=>$user_data, 'class_data' => $class_data, 'id_class'=>$id_class, 'selectedSubjects' => $subjects, 'msg'=>$msg]);
                 }else{
-                    $course = MiscTools::getCourseDataByIdClass($id_class); //NECESARIO PARA LA VISTA ADMIN
+                    $course = MiscTools::getCourseDataByIdClass($id_class); //Necesario para la vista admin.
                     $user_data = MiscTools::getTeacherData($id_values['id_teacher']);
-                    return view('admin', ['selectedMenu'=>'subjectsUpdate', 'course'=>$course,'user_data'=>$user_data, 'class_data' => $class_data, 'id_class'=>$id_class, 'selectedSubjects' => $subjects]);
+                    return view('admin', ['selectedMenu'=>'subjectsUpdate', 'course'=>$course,'user_data'=>$user_data, 'class_data' => $class_data, 'id_class'=>$id_class, 'selectedSubjects' => $subjects, 'msg'=>$msg]);
                 }
         }
+    }
+    public static function updatePost(Request $req, $id_class){
+        $req->session()->reflash();
+        $post = MiscTools::postNullRemove($req->except(['_token', 'type', 'subject_name']));
+        $type = $req->only('type');
+        $type=$type['type'];
+
+        $subject_name = $req->only('subject_name');
+
+        switch($type){
+            case 'exam':
+                $mod = new Exams();
+                break;
+            case 'work':
+            default:
+                $mod = new Works();
+        }
+
+        $data = [];
+        foreach ($post as $k=>$v){
+            switch($k){
+                case 'name':
+                    $mod->getDistinctByIdClassName($id_class, $v);
+                    if ($mod->data->len > 0) {
+                        return self::update($req, $id_class, 'Ya existe una tarea con ese nombre.');
+                    }
+                    $data[$k] = $v;
+                    break;
+                case 'date':break;
+                case 'time':
+                    $data['deadline'] = $post['date'].' '.$post['time'];
+                    break;
+                default:
+                    $data[$k] = $v;
+            }
+        }
+        if($mod -> updateMultipleValuesByName($data, ['name'=>$subject_name, 'id_class'=>$id_class])<1){
+            return self::update($req, $id_class, 'No hay datos que actualizar.');
+        };
+        return self::update($req, $id_class, 'Datos actualizados.');
     }
 
     /*FUNCIONES AUXILIARES*/

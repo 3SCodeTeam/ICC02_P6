@@ -30,6 +30,10 @@ class Exams extends DbQueries
     public function updateValueById($attribute, $new_value, $value){
         $this->data = parent::updateValue($attribute, $new_value, 'id_exam', $value);
     }
+    public function updateMultipleValuesByName(array $data, $atrib)
+    {
+        return parent::updateMultiple('exams', $data, $atrib);
+    }
 
     public function insertValues($id_class, $id_student, $name, $mark) {
         $values = [$id_class, $id_student, $name, $mark];

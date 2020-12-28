@@ -19,14 +19,16 @@
                     @foreach($selectedSubjects as $s)
                         <form action="{{asset('/subjects/updatePost/'.$class_data->id_class)}}" method="post" id="updateSubject" name="{{$s['type'].';'.$s['name']}}">
                         <tr>
-                            <td class="name"><div class="updateSubject form div">{{$s['type']}}</div></td>
-                            <td class="name"><div class="updateSubject form input"><input name="name" type="text" placeholder="{{$s['name']}}" value="{{$s['name']}}" required/></div></td>
-                            <td class="name"><div class="updateSubject form input"><input name="date" type="date" min="{{date('Y-m-d')}}" max="{{$class_data->date_end}}" placeholder="{{$s['date']}}" value="{{$s['date']}}" required/></div></td>
-                            <td class="name"><div class="updateSubject form input"><input name="time" type="time" placeholder="{{$s['time']}}" value="{{$s['time']}}" required/></div></td>
-                            <td class="name"><div class="updateSubject form input"><textarea name="description" type="text" placeholder="{{$s['description']}}" value="{{$s['description']}}"></textarea></div></td>
-                            <td class="name"><div class="updateSubject form input"><input type="submit" value="Actualizar"/></div></td>
+                            <td class="col type"><div class="updateSubject form div">{{$s['type']}}</div></td>
+                            <td class="col name"><div class="updateSubject form input"><input name="name" type="text" placeholder="{{$s['name']}}"/></div></td>
+                            <td class="col date"><div class="updateSubject form input"><input name="date" type="date" min="{{date('Y-m-d')}}" max="{{$class_data->date_end}}" placeholder="{{$s['date']}}" value="{{$s['date']}}"/></div></td>
+                            <td class="col time"><div class="updateSubject form input"><input name="time" type="time" placeholder="{{$s['time']}}" value="{{$s['time']}}"/></div></td>
+                            <td class="col description"><div class="updateSubject form input"><textarea name="description" type="text" placeholder="{{$s['description']}}"></textarea></div></td>
+                            <td class="col submit"><div class="updateSubject form input"><input type="submit" value="Actualizar"/></div></td>
                         </tr>
                             @csrf
+                            <input hidden value="{{$s['name']}}" name="subject_name">
+                            <input hidden value="{{$s['type']}}" name="type"/>
                         </form>
                     @endforeach
                 </tbody>

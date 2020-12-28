@@ -234,8 +234,8 @@ class JoinQueries
         return DBAlias::table($table)->insert($data);
     }
     //Update para multiples tablas
-    public function updateMultiple(string $table, array $data, $id_name, $id_value){
-        return DBAlias::table($table)->where($id_name,$id_value)->update($data);
+    public function updateMultiple(string $table, array $data, array $attributes){
+        return DBAlias::table($table)->where($attributes)->update($data);
     }
 
     private function doQuery($stm, array $values=[]): Data
