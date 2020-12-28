@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Entities\Data;
 use Illuminate\Support\Facades\DB;
+use Exception;
 
 class Students extends DbQueries
 {
@@ -22,6 +23,9 @@ class Students extends DbQueries
     public function getByEmail($value) {$this->data = parent::getByAttribute('email',$value);}
     public function getByUsername(string $value) {$this->data = parent::getByAttribute('username',$value);}
     public function getByNif($value) {$this->data = parent::getByAttribute('nif',$value);}
+
+    public function getByUsernameEmail($username, $email){$this->data = parent::getByAttributes('username', 'email', $username,$email);}
+
     public function updateValue($attribute, $new_value, $col, $val) {
         $this->data = parent::updateValue($attribute, $new_value, $col, $val);
     }

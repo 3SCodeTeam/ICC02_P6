@@ -19,9 +19,10 @@
             <span>o <a href="{{asset('/signin')}}">Registrate</a></span>
         </div>
         <div class="form-container">
+            @csrf
             <div class="selector-container">
                 <label for="rol">Perfil:</label>
-                <select name="rol_option" id="rol" form="login" required>
+                <select name="type" id="rol" form="login" required>
                     <option value="student">Estudiante</option>
                     <option value="teacher">Profesor</option>
                     <option value="admin">Administrador</option>

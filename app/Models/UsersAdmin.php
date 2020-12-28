@@ -19,6 +19,9 @@ class UsersAdmin extends DbQueries
     public function getById(int $id) { $this->data = parent::getByAttribute('id_user_admin',$id);}
     public function getByEmail($email) {$this->data = parent::getByAttribute('email',$email);}
     public function getByUsername(string $username) {$this->data = parent::getByAttribute('username',$username);}
+
+    public function getByUsernameEmail($username, $email){$this->data = parent::getByAttributes('username', 'email', $username,$email);}
+
     public function updateValue($attribute, $new_value, $col, $val) {
         $this->data = parent::updateValue($attribute, $new_value, $col, $val);
     }

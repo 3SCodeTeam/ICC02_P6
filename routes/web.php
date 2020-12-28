@@ -10,7 +10,6 @@ use App\Http\Controllers\Subjects;
 use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-use function session as sessionAlias;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,7 +39,6 @@ Route::get('/no-auth',function (){
 })->name('login');
 
 Route::get('/', function (){
-    sessionAlias()->flush();
     return view('login');
 });
 
@@ -116,7 +114,7 @@ Route::post('/admin/{method}', [function ($method, Request $req){
         case 'deletePost': return AdminController::deletePost();
     }
     return LogInController::error('Recurso no disponible');
-}])->middleware('Session:admin')->name('admin');
+}])->middleware('Session:admin');//->name('admin');
 
 Route::match(array('GET', 'POST'),'details/{method}/{param1?}/{param2?}', function (Request $req, $method, $param1=null, $param2=null){
     switch ($method){
@@ -145,7 +143,7 @@ Route::match(array('GET', 'POST'), 'teachers/{method}/{class?}/{student?}', func
         case 'subjectsPost': return  TeacherController::subjectsPost($req,$class);
     }
     return LogInController::error('Recurso no disponible');
-})->middleware('Session:teacher');
+})->middleware('Session:teacher')->name('teacher');
 
 Route::match(array('GET', 'POST'),'subjects/{method}/{class?}/{student?}', function (Request $req, $method, $class=null,$student=null) {
     switch ($method) {

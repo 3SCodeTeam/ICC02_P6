@@ -16,12 +16,11 @@ use Illuminate\Support\Facades\Hash;
 class TeacherController extends Controller
 {
     public static function start(Request $req){
-        $teacherId = $req->session()->get('sql_user_id');
-        $user_data = self::getTeacherData($teacherId);
+        return self::profile($req);
     }
     public static function profile(Request $req, $msg=null){
         $teacherId = $req->session()->get('sql_user_id');
-        $user_data = self::getTeacherData($teacherId);
+        $user_data = MiscTools::getTeacherData($teacherId);
         return view('teacher', ['selectedMenu'=>'profile','user_data'=>$user_data, 'msg'=>$msg]);
     }
     public static function profilePost(Request $req){
@@ -65,7 +64,7 @@ class TeacherController extends Controller
     public static function classes(Request $req){
         $msg=null;
         $teacherId = $req->session()->get('sql_user_id');
-        $user_data = self::getTeacherData($teacherId);
+        $user_data = MiscTools::getTeacherData($teacherId);
 
         $jmod = new JoinQueries();
         $data = $jmod->getClassesCoursesStudentsByTeacher($teacherId);
@@ -78,7 +77,7 @@ class TeacherController extends Controller
     public static function students(Request $req, $id_class){//Devolver un listado de estudiantes por asignatura
         $msg=null;
         $teacherId = $req->session()->get('sql_user_id');
-        $user_data = self::getTeacherData($teacherId);
+        $user_data = MiscTools::getTeacherData($teacherId);
 
         $jMod = new JoinQueries();
         $students=$jMod->getStudentsByClass($id_class);
@@ -92,7 +91,7 @@ class TeacherController extends Controller
     //Listado de asignaturas de una clase desde el menu Teacher.
     public static function subjects(Request $req, $id_class, $msg=null){
         $teacherId = $req->session()->get('sql_user_id');
-        $user_data = self::getTeacherData($teacherId);
+        $user_data = MiscTools::getTeacherData($teacherId);
 
         $jMod = new JoinQueries();
         $class_data = $jMod ->getAllClassDatabyId($id_class);
@@ -114,7 +113,7 @@ class TeacherController extends Controller
     }
     public static function studentDetails(Request $req, $id_class, $id_student, $msg=null){
         $teacherId = $req->session()->get('sql_user_id');
-        $user_data = self::getTeacherData($teacherId);
+        $user_data = MiscTools::getTeacherData($teacherId);
 
         $eMod = new Exams();
         $wMod = new Works();
@@ -125,11 +124,5 @@ class TeacherController extends Controller
         $sMod->getById($id_student);
 
         return view('teacher',['selectedMenu'=>'studentDetails', 'id_class'=>$id_class, 'user_data'=>$user_data, 'msg'=>$msg ,'works'=>$wMod->data->res, 'exams'=>$eMod->data->res, 'student'=>$sMod->data->res[0]]);
-    }
-    private static function getTeacherData($id){
-        $mod = new Teachers();
-        $mod -> getById($id);
-
-        return MiscTools::safeUserData($mod->data->res[0]);
     }
 }
