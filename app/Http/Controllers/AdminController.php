@@ -224,10 +224,10 @@ class AdminController extends Controller
 
             /*ACTUALIZAR EL PESO DE LA EVALUACIÓN CONTUNUA EN LA TABLA PERCENTAGE*/
             $workWeight = $inputValues['workWeight']/100;
-            $exmanWeight = 1-$workWeight;
+            $examWeight = 1-$workWeight;
 
             $pMod = new Percentages();
-            $pMod->insertValues($inputValues['course'], $classData->id_class, $workWeight, $exmanWeight);
+            $pMod->insertValues($inputValues['course'], $classData->id_class, $workWeight, $examWeight);
 
             $classMod -> updateValueById('id_schedule',$scheduleData->id_schedule,$classData->id_class);
             return self::classes('Asignatura '.$classData->name.' creada.');

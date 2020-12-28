@@ -58,7 +58,7 @@ class TeacherController extends Controller
                     $teacher_data[$k] = $v;
             }
         }
-        $mod -> updateMultipleValuesById($teacher_data, $id_teacher);
+        $mod -> updateMultipleValuesById($teacher_data, ['id_teacher'=>$id_teacher]);
         return self::profile($req, 'Datos actualizados');
     }
     public static function classes(Request $req){

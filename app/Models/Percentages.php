@@ -27,6 +27,10 @@ class Percentages extends DbQueries
     public function updateValueByIdClass($attribute, $new_value, $val){
         $this->data = parent::updateValue($attribute, $new_value, 'id_class', $val);
     }
+    public function updateMultipleValuesById(array $data, array $attributes)
+    {
+        return parent::updateMultiple('percentage', $data, $attributes);
+    }
 
     public function insertValues($id_course, $id_class, $continuous_assessment, $exams) {
         $values = [$id_course, $id_class, $continuous_assessment, $exams];

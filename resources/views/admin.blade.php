@@ -35,7 +35,7 @@
         @break
         {{--INSERTAR VISTA CLASES--}}
         @case('classes')
-        @include('admin/adminClasses',['classes'=>$classes, 'teachers'=>$teachers, 'courses'=>$courses])
+        @include('admin/adminClasses',['classes'=>$classes, 'teachers'=>$teachers, 'courses'=>$courses,])
         @break
         @case('classesSchedule')
         @include('admin/adminClassesSchedule',['freeHoursOfWeek'=>$freeHoursOfWeek, 'formValues'=>$formValues])
@@ -51,7 +51,7 @@
         @include('details/studentsDetails', ['course'=>$course, 'students'=>$students])
         @break
         @case('subjectsOfStudent')
-        @include('details/subjectsOfStudent', ['course'=>$course, 'subjects'=>$subjects, 'subject?'=>$subjects])
+        @include('details/subjectsOfStudent', ['course'=>$course, 'subjects'=>$subjects, 'subject?'=>$subjects,'percent?'=>$percent])
         @break
 
         {{--CLASES--}}

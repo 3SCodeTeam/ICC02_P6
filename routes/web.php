@@ -119,8 +119,8 @@ Route::post('/admin/{method}', [function ($method, Request $req){
 Route::match(array('GET', 'POST'),'details/{method}/{param1?}/{param2?}', function (Request $req, $method, $param1=null, $param2=null){
     switch ($method){
         case 'students': return DetailsController::studentsDetails($param1,$req);
-        case 'classes': return DetailsController::classesDetails($param1);
-        case 'classesSubject': return DetailsController::classesSubjects($param1);
+        case 'classes': return DetailsController::classesDetails($param1, $param2);
+        case 'percentPost': return DetailsController::percentPost($req);
         case 'subjects': return DetailsController::subjectsDetails($param1,$req);
         case 'subjectsOfStudent': return DetailsController::subjectsOfStudent($param1, $param2);
         case 'records': return DetailsController::record($param1, $param2);

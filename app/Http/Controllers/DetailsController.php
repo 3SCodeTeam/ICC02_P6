@@ -30,19 +30,23 @@ class DetailsController extends Controller
 
         return view('admin', ['selectedMenu'=>'studentsDetails', 'course'=>$course,'students'=>$students->res]);
     }
-    public static function classesDetails($id_course){
+    public static function classesDetails($id_course,$id_class=null, $msg=null){
         $joinMod = new JoinQueries();
-
         $classes = $joinMod->getClassesAndTeachersByCourse($id_course);
-
         $course= MiscTools::getCourseData($id_course);
 
-        return view('admin', ['selectedMenu'=>'classesDetails','course'=>$course, 'classes'=>$classes->res]);
+        $percent=$id_class;
+        return view('admin', ['selectedMenu'=>'classesDetails','course'=>$course, 'classes'=>$classes->res, 'percent'=>$percent, 'msg'=>$msg]);
     }
-    public static function classesSubjects($id_class){
-        $course = MiscTools::getCourseDataByIdClass($id_class);
-
-
+    public static function percentPost(Request $req){
+        $post = $req->except('_token');
+        $course = MiscTools::getCourseDataByIdClass($post['id_class']);
+        $mod = new Percentages();
+        $data = self::getPercents($post[$post['type']], $post['type']);
+        if($mod ->updateMultipleValuesById($data,['id_class'=>$post['id_class']])<1){
+            return self::classesDetails($course['id_course'],null, 'No se ha actualizado el dato.');
+        };
+        return self::classesDetails($course['id_course'],null, 'Dato actualizado.');
     }
     public static function subjectsDetails($id, Request $req){
         $role = $req->session()->get('user_role');
@@ -117,6 +121,19 @@ class DetailsController extends Controller
 
 
     /*AUX FUNCTIONS*/
+    private static function getPercents($value, $type='continuous_assessment'): array
+    {
+        $data = ['exams'=>0, 'continuous_assessment'=>0];
+        foreach ($data as $k => $v){
+            if($k === $type){
+                $data[$k] = $value / 100;
+            }else{
+                $data[$k] = 1 - ($value/100);
+            }
+        }
+        return $data;
+    }
+
     private static function getSubjectsArray($id_course, $id_student){
         $subjects = [];
         $mod = new JoinQueries();

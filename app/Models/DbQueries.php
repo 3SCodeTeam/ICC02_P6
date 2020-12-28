@@ -57,9 +57,9 @@ class DbQueries
         $this->data = self::doQuery($stm, $values);
         return $this->data;
     }
-    protected function updateMultiple(string $table, array $data, array $atributes){
+    protected function updateMultiple(string $table, array $data, array $attributes){
         try{
-            $res = DBAlias::table($table)->where($atributes)->update($data);
+            $res = DBAlias::table($table)->where($attributes)->update($data);
         }catch (Exception $e){
             dd($e->getMessage());
         }

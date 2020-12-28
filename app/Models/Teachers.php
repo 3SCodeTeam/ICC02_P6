@@ -24,9 +24,9 @@ class Teachers extends DbQueries
     public function updateValueById($attribute, $new_value, $val){
         $this->data = parent::updateValue($attribute, $new_value, 'id_teacher', $val);
     }
-    public function updateMultipleValuesById(array $data, $id_teacher)
+    public function updateMultipleValuesById(array $data, array $attributes)
     {
-        return parent::updateMultiple('teachers', $data, 'id_teacher', $id_teacher);
+        return parent::updateMultiple('teachers', $data, $attributes);
     }
 
     public function insertValues($name, $surname, $telephone, $nif, $email, $pass) {
