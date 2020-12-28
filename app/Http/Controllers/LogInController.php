@@ -9,12 +9,13 @@ use App\Models\Teachers;
 use App\Models\UsersAdmin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use function session as sessionAlias;
 
 class LogInController extends Controller
 {
     public static function end(){
-        @session_destroy();
-        return view('login',['errorMsg'=>'Se ha cerrado la sesión.']);
+        sessionAlias()->flush();
+        return view('login',['msg'=>'Se ha cerrado la sesión.']);
     }
 
     public static function new(string $msg=null){

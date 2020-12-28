@@ -48,9 +48,11 @@
             </div>
         </form>
     </div>
+<div class="alert-msg">
     @if (isset($msg))
         <div class="msg">{{$msg}}</div>
     @endif
+</div>
     @include('footer')
 </body>
 </html>

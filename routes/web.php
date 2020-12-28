@@ -10,6 +10,7 @@ use App\Http\Controllers\Subjects;
 use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use function session as sessionAlias;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +40,7 @@ Route::get('/no-auth',function (){
 })->name('login');
 
 Route::get('/', function (){
+    sessionAlias()->flush();
     return view('login');
 });
 

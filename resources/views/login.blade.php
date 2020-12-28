@@ -35,9 +35,11 @@
                 <div><input type="submit" value="Enviar"></div>
             </form>
         </div>
+        <div class="alert-msg">
         @if (isset($msg))
             <div class="msg">{{$msg}}</div>
         @endif
+        </div>
     </div>
     @include('footer')
     </body>
