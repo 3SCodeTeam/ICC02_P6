@@ -104,143 +104,160 @@
 /*TEACHER ENDS*/
 
 /*COURSES*/
-/*COURSES*/
-.courses.form.inputs.container{
+.courses .container{
+    margin: 10px;
+}
+.courses .inputs.container{
     vertical-align: top;
     display: inline-block;
-    width: 1200px;
+    width: 60%;
     border: 1px solid;
     padding: 10px;
     box-shadow: 5px 10px #888888;
     text-align: center;
     font-size: large;
 }
-.courses.form.inputs.container label{
+.courses .input{
+    margin-left: auto;
+    margin-right: auto;
     text-align: left;
-}
-.courses.inputs.container.left{
-    vertical-align: top;
     display: inline-block;
-    width: 250px;
-    padding: 10px;
+    width: 25%;
+    padding: 5px
 }
-.courses.inputs.container.right{
-    vertical-align: top;
-    display: inline-block;
-    width: 250px;
-    padding: 10px;
+.courses .input.state{
+    width: 20%;
 }
-.courses.inputs.container.description{
-    display: inline-block;
-    width: 600px;
-    padding: 10px;
-}
-.courses.inputs.container.button{
-    display: block;
-}
-.courses.form.input.button{
+.courses .input.button{
+    width: 200px;
     text-align: center;
-    width: 100px;
-    height: 25px;
-    font-size: large;
-}
-.courses.inputs.container label{
     display: block;
-    background-color: tomato;
-    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
 }
-.courses.inputs.container input{
-    display: block;
-    width: 100%;
-}
-.courses.inputs.container select{
-    display: block;
-    width: 100%;
-}
-.courses.table.container{
-    display: inline-block;
-    width: 1200px;
-    margin-top: 3%;
-}
-.courses.table.container table{
-    width: 100%;
+.courses .input.description{
     text-align: justify;
-    padding: 5px;
-    border-collapse: collapse;
+    display: block;
+    width: 96%;
+    margin: 5px;
 }
-.courses .row.header th{
-    font-size: large;
-    background-color: #a0aec0;
+.courses label{
+    margin: 1px;
+    padding: 3px;
+    display: block;
+}
+.courses .input input{
+    width: 90%;
+}
+.courses .state select{
+    width: 180px;
+    height: 26px;
+}
+.courses tbody{
+    overflow-y: scroll;
+}
+.courses th div{
     text-align: center;
-    padding:5px;
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
-.courses .row.courses td{
-    padding:5px;
-    font-size: medium;
-    border-collapse: collapse;
-    border: solid thin;
+.courses .col{
+    width: 10%;
 }
-.courses .row.courses a{
-    text-decoration: none;
-    color: black;
+.courses .col.action{
+    width: 1%;
 }
-.courses .row.courses a:hover{
-    color: #a0aec0;
+.courses .col.action button{
+    width: 25px;
+    font-size: 8px;
+    margin: 0;
+    padding: 0;
 }
-.courses .inactive td{
-    background-color: #4a5568;
-    color: #e2e8f0;
+.course .col.action{
+    width: 5%;
+}
+.course .col.action button{
+    width: 10px;
+    font-size: 8px;
+    margin: 0;
+    padding: 0;
+}
+.course .col.date_start, .course .col.date_end{
+    text-align: center;
 }
 .courses .col.description{
-    width: 600px;
+    width: 98%
 }
+.courses .col.name{
+    width: 24%;
+}
+.courses .col.name:hover{
+    background-color: tomato;
+    color: white;
+}
+.courses a{
+    background-color: inherit;
+    color: inherit;
+}
+.courses .col div{
+    padding: 0;
+    padding-left: 5px;
+    width: 99%
+}
+.courses td .cell.description {
+    font-size: 11px;
+}
+.courses table{
+    width: 85%;
+}
+.courses .inactive{
+    background-color: lavenderblush;
+}
+
 
 /*COURSES ENDS*/
 
 /*CLASSES*/
-div.form.text.container{
-    margin-top: 3%;
-    padding: 2%;
+.classSchedule div.form.text.container{
     display: inline-block;
     border: 1px solid;
     box-shadow: 5px 10px #888888;
-    width: 45%;
+    width: 55%;
 }
-.form.input.submit input{
+.classSchedule .form.input.submit input{
     margin: 1%;
     width: 25%;
     font-size: large;
 }
-.form.container.inputs{
-    display: inline-block;
-    padding: 1%;
-    text-align: left;
-}
-.form.container.inputs.right{
-    width: 60%;
-
-    padding: 10px;
-}
-.form.container.inputs.left{
-    width: 35%;
-}
-.form.container.inputs input{
-    border: solid thin;
-    width: 100%;
-    padding-left: 5px;
-    margin: 10px;
-}
-.form.container.inputs label{
-    padding: 2px;
+.classSchedule .form.container.inputs{
+    margin: 5px;
     display: block;
+}
+.classesSchedule #name{
+    width: 100%;
+    font-size: larger;
+}
+.classesSchedule #work{
+    text-align: center;
+    font-size: larger;
+    width: 100%;
+}
+.classesSchedule #color{
+    width: 100%;
+}
+.classSchedule .form.container.inputs label{
+    width: 25%;
+    display: inline-block;
     font-size: large;
 }
-div.form.table.container{
+.classSchedule div.form.table.container{
     display: inline-block;
     width: 100%;
     margin-top: 2%;
 }
-.form.table.container table{
+.classSchedule .form.table.container table{
     margin-right: auto;
     margin-left: auto;
     width: 65%;
@@ -248,106 +265,105 @@ div.form.table.container{
     border: 1px solid;
     box-shadow: 5px 10px #888888;
 }
-.form.table.container thead th{
+.classSchedule .form.table.container thead th{
     color: white;
     background-color: tomato;
     font-size: medium;
     padding: 0;
     margin: 0;
 }
-.form.table.container tbody{
+.classSchedule .form.table.container tbody{
     font-size: small;
 }
-.form.table.container td{
+.classSchedule .form.table.container td{
     border: solid thin;
     height: 15px;
     width: 10px;
 }
-.col.SÁBADO{
+.classSchedule .col.SÁBADO{
     background-color: tomato;
 }
-.col.DOMINGO{
+.classSchedule .col.DOMINGO{
     background-color: tomato;
 }
 
-.row.hour input{
+.classSchedule .row.hour input{
     padding: 1px;
     margin: 1px;
     width: 10px;
 }
 
-.row.hour:hover{
+.classSchedule .row.hour:hover{
     background-color: lightgray;
 }
-.readonly{
+.classSchedule .readonly{
     font-size: larger;
     border: none;
     display: block;
 }
+.classSchedule .list.class.container p{
+    text-align: left;
+    margin: 0
+}
 
-.list.class.container table{
+
+
+/*CLASS LIST CLASSES*/
+.classes .color.container{
+    margin-left: auto;
+    margin-right: auto;
+    padding: 5px;
+    width: 75%;
+}
+.classes .container table{
     margin-top: 25px;
     margin-left: auto;
     margin-right: auto;
     width: 75%;
     border: 1px solid;
-    padding: 10px;
-    box-shadow: 5px 10px #888888;
-}
-.list.class.container p{
-    text-align: left;
-    margin: 0
-}
-/*CLASS LIST CLASSES*/
-.list.class.container table{
-    margin-top: 25px;
-    margin-left: auto;
-    margin-right: auto;
-    width: 45%;
-    border: 1px solid;
     box-shadow: 5px 10px #888888;
     border-collapse: collapse;
 }
-.list.class.container td{
+.classes .list td{
     border: solid thin;
 }
-.list.class.container p{
+.classes .list p{
     text-align: left;
     padding-left: 10px;
     margin: 0;
 }
-.list.class.container a{
+.classes .list a{
     color: black;
     text-decoration: none;
 }
-.list.class.container .col.name:hover a{
+.classes .col.name:hover a{
     color: white;
 }
-.list.class.container .col.name:hover{
+.classes .col.name:hover{
     background-color: tomato;
 }
-.list.class.container .col.course:hover a{
+.classes .col.course:hover a{
     color: white;
 }
-.list.class.container .col.course:hover{
+.classes .col.course:hover{
     background-color: tomato;
 }
-.list.class.container .col.teacher:hover a{
+.classes .col.teacher:hover a{
     color: white;
 }
-.list.class.container .col.teacher:hover{
+.classes .col.teacher:hover{
     background-color: tomato;
 }
-.list.class.container .header p{
+.classes .header p{
     font-size: medium;
     padding: 1px;
 }
-.list.class.container th{
+.classes .container th{
     background-color: tomato;
     color: white;
 }
 
-.form.class.container{
+.classes .form{
     margin-top: 15px;
     display: inline-block;
     width: 35%;
@@ -355,16 +371,16 @@ div.form.table.container{
     box-shadow: 5px 10px #888888;
     border-collapse: collapse;
 }
-.form.class.container .left, .right{
+.classes .form.left, .classes .form.right{
     margin: 15px;
     display: inline-block;
     width: auto;
     text-align: left;
 }
-.form.class.container select{
+.classes .container select{
     width: 250px;
 }
-.form.class.container .input.button{
+.classes .form .input.button{
     width: auto;
     margin: 10px;
     font-size: large;

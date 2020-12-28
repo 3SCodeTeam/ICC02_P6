@@ -4,8 +4,9 @@
 namespace App\Models;
 
 
+use App\Entities\Data;
 use Illuminate\Support\Facades\DB;
-
+use Exception;
 class Courses extends DbQueries
 {
     public $data;
@@ -27,20 +28,23 @@ class Courses extends DbQueries
     }
 
     public function insertValues($name, $description, $date_start, $date_end, $active) {
+        $this->data =  new Data();
         $values=[$name, $description, $date_start, $date_end, $active];
         $stm = 'INSERT INTO courses (name, description, date_start, date_end, active) VALUES (?,?,?,?,?)';
         try{
-            $res = DB::connection('mysql')->insert($stm, $values);
+            $this->data->affected_rows = DB::connection('mysql')->insert($stm, $values);
+            $this->data->status = true;
         }catch(Exception $e){
             $this->data->err = $e;
             $this->data->status = false;
-            dd($e->getMessage());
+        } finally {
+            $this -> data -> affected_rows = 0;
+            return $this->data;
         }
-        $this->data->status = true;
-        $this->data->affected_rows = $res;
     }
 
     public function deleteById($id) {
+        $this->data =  new Data();
         $values = [$id];
         $stm = 'DELETE FROM courses WHERE id_course = ?';
         try{

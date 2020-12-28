@@ -1,8 +1,8 @@
-<div class="main classes container">
+<div class="classes main container">
 
     {{--FORMULARIO PARA LA CREACIÓN DE UNA ASIGNATURA--}}
 
-    <div class="form class container">
+    <div class="classes form container">
         <h2>Nueva asignatura</h2>
         <form action="{{asset('admin/classesPost')}}" method="Post" id="form_classes1" name="form_classes1">
             <div class="form left container">
@@ -28,7 +28,7 @@
 
     {{--LISTADO DE ASIGNATURAS CREADAS--}}
     @if(count($classes)>0)
-        <div class="list class container">
+        <div class="classes list container">
             <table><tbody>
                 <tr class="row header">
                     <th class="col name"><p>Asignatura</p></th>
@@ -41,7 +41,7 @@
                         <td class="col name"><p><a href="{{asset('/subjects/subjects/'.$c->id_class)}}">{{$c->class_name}}</a></p></td>
                         <td class="col course"><p><a href="{{asset('/details/classes/'.$c->id_course)}}">{{$c->course_name}}</a></p></td>
                         <td class="col teacher"><p><a href="{{asset('/details/teachers/'.$c->id_teacher)}}">{{$c->surname.', '.$c->teacher_name}}</a><a href="mailto:{{$c->email}}">{{' ('.$c->email.')'}}</a></p></td>
-                        <td class="col color" style="background-color: {{$c->color}}"></td>
+                        <td class="col color"><div class="color container" style="background-color: {{$c->color}}"> </div></td>
                     </tr>
                 @endforeach
             </tbody></table>

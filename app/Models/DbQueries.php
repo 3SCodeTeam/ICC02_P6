@@ -54,8 +54,15 @@ class DbQueries
         $this->data = new Data();
         $values = [$new_value, $val];
         $stm = "UPDATE ".$this->table." SET ".$attribute." = ? WHERE ".$col." = ?";
-        $this->data = self::doQuery($stm, $values);
-        return $this->data;
+        try{
+            $this->data->affected_rows = DBAlias::connection('mysql')->update($stm,$values);
+            $this->data->status = true;
+        }catch (Exception $e){
+            $this->data->err = $e->getMessage();
+            $this->data->status = false;
+        } finally {
+            return $this->data;
+        }
     }
     protected function updateMultiple(string $table, array $data, array $attributes){
         try{

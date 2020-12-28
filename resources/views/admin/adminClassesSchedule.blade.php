@@ -7,15 +7,17 @@
                     <h3>{{$formValues['course_name']}}</h3>
                     <h3>{{$formValues['teacher_email']}}</h3>
                 </div>
-                <div class="form container inputs left">
-                    <label for="color">Color:</label>
+                <div class="form container inputs">
+                    <label for="color">Color:<br>
                     <input type="color" id="color" name="color" value="#FF0000" required/>
-                </div>
-                <div class="form container inputs right">
-                    <label for="name">Nombre de la asignatura</label>
-                    <input type="text" name="name" id="name" required>
-                    <label for="workWeight">Peso de la evaluación continua</label>
+                    </label>
+                    <label for="workWeight">Peso de la evaluación continua<br>
                     <input type="number" name="workWeight" id="work" min="10" max="90" step="5" value="60" required/>
+                    </label>
+                    <label for="name">Nombre de la asignatura<br>
+                    <input type="text" name="name" id="name" required>
+                    </label>
+
                     {{--ESTOS DOS PUNTOS LOS PODEMOS ELIMINAR CON UN $request->flash() en el controller--}}
                     <input type="hidden" id="course" name="course" value="{{$formValues['course']}}" readonly>
                     <input type="hidden" id="teacher" name="teacher" value="{{$formValues['teacher']}}" readonly>

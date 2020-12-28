@@ -29,13 +29,13 @@ class AdminController extends Controller
         //Lo enviamos al perfil.
         return self::profile($req);
     }
-    public static function profile(Request $req){
+    public static function profile(Request $req, $msg=null){
         $userId = $req->session()->get('sql_user_id');
         $mod = new UsersAdmin();
         $mod->getById($userId);
         $res = $mod->data->res;
         $user_data = self::getAdminUserData($res);
-        return view('admin', ['user_data'=>$user_data, 'selectedMenu'=>'profile']);
+        return view('admin', ['user_data'=>$user_data, 'selectedMenu'=>'profile','msg'=>$msg]);
     }
     public static function profilePost(Request $req){
         $userId = $req->session()->get('sql_user_id');
@@ -49,18 +49,17 @@ class AdminController extends Controller
         $checker = new DataValidator();
         $res = $checker->verifyData($value, $option, $user_data);
         if(!$res['status']){
-            return view('admin',['selectedMenu'=>'profile','user_data'=>$user_data, 'msg'=>$res['msg']]);
+            return self::profile($req, $msg=$res['msg']);
         }
-
-        //TODO: verificar duplicados en db username, email
 
         $res = self::updateDB($value,$option,$userId, $mod);
+
         if(!$res['status']){
-            return view('admin',['selectedMenu'=>'profile','user_data'=>$user_data, 'msg'=>$res['msg']]);
+            return self::profile($req, $res['msg']);
         }
 
-        $mod->getById($userId);
-        return view('admin',['selectedMenu'=>'profile', 'user_data'=>$mod->data->res[0], 'msg'=>$res['msg']]);
+        return self::profile($req, 'Datos actualizados');
+
     }
     public static function teacher(){
         $mod = new Teachers();
@@ -119,12 +118,12 @@ class AdminController extends Controller
         }
         return self::adminError('admin', 'Error de acceso a la base de datos.','teachers',$data);
     }
-    public static function courses(){
+    public static function courses($msg=null){
         $mod = new Courses();
         $mod->getAll();
         $courses_data = $mod->data->res;
 
-        return view('admin', ['courses_data'=>$courses_data, 'selectedMenu'=>'courses']);
+        return view('admin', ['courses_data'=>$courses_data, 'selectedMenu'=>'courses', 'msg'=>$msg]);
     }
     public static function coursesPost(Request $req){
         $values = $req->only(['name', 'date_start', 'date_end', 'active', 'description']);
@@ -133,19 +132,19 @@ class AdminController extends Controller
         $courses_data = $mod->data->res;
 
         if(MiscTools::in_ArrayObject($values['name'], $courses_data, 'name')){
-           return view('admin', ['selectedMenu'=>'courses', 'courses_data'=>$courses_data, 'msg'=>'Este nombre del curso ya existe.']);
-        } //Comprar q el nombre no existe.
-        if($values['date_start'] >= $values['date_end']){
-            return view('admin', ['selectedMenu'=>'courses', 'courses_data'=>$courses_data, 'msg'=>'La fecha de inicio no puede ser posterior o igual a la de finalización.']);
-        } //Comprobar que fecha fin superior fecha inicio.
-        $mod->insertValues($values['name'],$values['description'],$values['date_start'],$values['date_end'],$values['active']);
-        if($mod->data->affected_rows > 0){
-            $mod->getAll();
-            $courses_data=$mod->data->res;
-            return view('admin', ['selectedMenu'=>'courses', 'courses_data'=>$courses_data, 'msg'=>'¡Curso añadido!.']);
-        } //Comprobar que se han insertado los datos.
-        return view('admin', ['selectedMenu'=>'courses', 'courses_data'=>$courses_data, 'msg'=>'Error de acceso a la base de datos.']);
+           return self::courses('Este nombre del curso ya existe.');
+        }
 
+        if($values['date_start'] >= $values['date_end']){
+            return self::courses('La fecha de inicio no puede ser posterior o igual a la de finalización.');
+        }
+
+        $mod->insertValues($values['name'],$values['description'],$values['date_start'],$values['date_end'],$values['active']);
+        dd($mod);
+        if($mod->data->status){
+            return self::courses('Curso añadido.');
+        }
+        return self::courses('Error de acceso a la base de datos.');
     }
     public static function classes(string $msg=null){
         $tmod = new Teachers();
@@ -239,7 +238,22 @@ class AdminController extends Controller
     }
     public static function delete(){
         //TODO: logica para el borrado de los distintos elementos.
+    }
+    public static function courseActive($id_course){
+        $mod = new Courses();
+        $mod ->getById($id_course);
+
+        $active = 1;
+        if($mod->data->res[0]->active > 0){
+            $active = 0;
         }
+
+        $mod -> updateValueById('active', $active, $id_course);
+        if(!$mod->data->status){
+            return self::courses('No se ha podido actualizar el curso.');
+        }
+        return redirect()->route('admin',['courses']);
+    }
 
     //AUX FUNCTIONS
     private static function getArrayOfClasses($values, $date_start, $date_end, $id_class): array
@@ -324,7 +338,7 @@ class AdminController extends Controller
         if(!$mod->data->status || !($mod->data->affected_rows > 0)){
             return ['msg'=>'Error al actulizar el valor en la base de datos.', 'status'=>false];
         }
-        return ['msg'=>'¡Valor actualizado!', 'status'=>true];
+        return ['msg'=>'Valor actualizado.', 'status'=>true];
     }
     private static function checkOption($option){
         switch($option){
