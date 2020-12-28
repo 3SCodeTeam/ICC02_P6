@@ -409,4 +409,25 @@ div.form.table.container{
     margin: 0;
     padding-left: 15px;
 }
+.classes .class_name a{
+    display: inline-block;
+}
+.classes .class_name .text{
+    width: 50%
+}
+.classes .class_name button{
+    padding: 1px;
+}
+.classes #name{
+    border: thin red solid;
+    padding: 2px;
+    margin: 1px;
+    width: 47%;
+}
+.classes #continuous_assessment, .classes #exams{
+    border: thin red solid;
+    padding: 5px;
+    margin: 1px;
+    width: 12%;
+}
 

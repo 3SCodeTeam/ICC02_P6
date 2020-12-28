@@ -17,31 +17,58 @@
                 @foreach($classes as $c)
                     <tr>
                         <td class="class_name">
-                            <a href="{{asset('subjects/subjects/'.$c->id_class)}}">
-                                <div class="cell class_name">{{$c->class_name}}</div>
-                            </a>
+                            @if(($percent['type'] == 'name') && ($percent['id_class'] == $c->id_class))
+                                <form action="{{asset('/details/percentPost')}}" method="post" name="class_name" id="class_name">
+                                    @csrf
+                                    <input type="hidden" name="id_class" value="{{$percent['id_class']}}"/>
+                                    <input type="hidden" name="type" value="name"/>
+                                    <div class="cell name">
+                                        <input type="text" id="name" name="name" value="{{$c->class_name}}" autofocus/>
+                                        <input type="submit" value="OK">
+                                    </div>
+                                </form>
+                            @else
+                                <a class="text" href="{{asset('subjects/subjects/'.$c->id_class)}}">
+                                    <div class="cell class_name">{{$c->class_name}}</div>
+                                </a>
+                                <a class="button" href="{{asset('details/classes/'.$course["id_course"].'/'.$c->id_class.'/name')}}">
+                                    <button type="button">Editar</button>
+                                </a>
+                            @endif
                         </td>
                         <td class="continuous_assessment">
-                                @if(isset($percent) && ($percent == $c->id_class))
+                                @if(($percent['type'] =='continuous_assessment') && ($percent['id_class'] == $c->id_class))
                                     <form action="{{asset('/details/percentPost')}}" method="post" name="percent" id="percent">
                                         @csrf
-                                        <input type="text" name="id_class" hidden value="{{$percent}}"/>
-                                        <input type="text" name="type" hidden value="continuous_assessment"/>
+                                        <input type="hidden" name="id_class" value="{{$percent['id_class']}}"/>
+                                        <input type="hidden" name="type" value="continuous_assessment"/>
                                     <div class="cell continuous_assessment">
-                                        <input type="number" name="continuous_assessment" min="30" max="90" step="5" value="{{$c->continuous_assessment*100}}"/> %
+                                        <input type="number" id="continuous_assessment" name="continuous_assessment" min="30" max="90" step="5" value="{{$c->continuous_assessment*100}}"/> %
                                         <input type="submit" value="OK">
                                     </div>
                                     </form>
                                 @else
-                                    <a href="{{asset('details/classes/'.$course['id_course'].'/'.$c->id_class)}}">
+                                    <a href="{{asset('details/classes/'.$course["id_course"].'/'.$c->id_class.'/continuous_assessment')}}">
                                         <div class="cell continuous_assessment">{{$c->continuous_assessment*100}}%</div>
                                     </a>
                                 @endif
                         </td>
                         <td class="exams">
-                            <a href="{{asset('details/classes/'.$course['id_course'].'/'.$c->id_class)}}">
-                                <div class="cell exam">{{$c->exams*100}}%</div>
+                            @if(($percent['type'] =='exams') && ($percent['id_class'] == $c->id_class))
+                                <form action="{{asset('/details/percentPost')}}" method="post" name="percent" id="percent">
+                                    @csrf
+                                    <input type="hidden" name="id_class" value="{{$percent['id_class']}}"/>
+                                    <input type="hidden" name="type" value="exams"/>
+                                    <div class="cell exams">
+                                        <input type="number" id="exams" name="exams" min="10" max="70" step="5" value="{{$c->exams*100}}"/> %
+                                        <input type="submit" value="OK">
+                                    </div>
+                                </form>
+                            @else
+                            <a href="{{asset('details/classes/'.$course["id_course"].'/'.$c->id_class.'/exams')}}">
+                                <div class="cell exams">{{$c->exams*100}}%</div>
                             </a>
+                            @endif
                         </td>
                         <td class="teacher_name"><div class="cell teacher_name">{{$c->surname.', '.$c->teacher_name}}</div></td>
                         <td class="teacher_email"><div class="cell teacher_email"><a href="mailto:{{$c->email}}">{{$c->email}}</a></div></td>

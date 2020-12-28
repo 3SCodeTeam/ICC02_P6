@@ -14,6 +14,7 @@ use App\Models\Teachers;
 use App\Models\UsersAdmin;
 
 use App\Utils\DataValidator;
+use App\Utils\MiscTools;
 use DateInterval;
 use DateTime;
 
@@ -131,7 +132,7 @@ class AdminController extends Controller
         $mod->getAll();
         $courses_data = $mod->data->res;
 
-        if(self::in_ArrayObject($values['name'], $courses_data, 'name')){
+        if(MiscTools::in_ArrayObject($values['name'], $courses_data, 'name')){
            return view('admin', ['selectedMenu'=>'courses', 'courses_data'=>$courses_data, 'msg'=>'Este nombre del curso ya existe.']);
         } //Comprar q el nombre no existe.
         if($values['date_start'] >= $values['date_end']){
@@ -190,7 +191,7 @@ class AdminController extends Controller
         $classMod = new Classes();
         $classMod -> getByIdCourse($inputValues['course']);
 
-        If(self::in_ArrayObject($inputValues['name'],$classMod->data->res,'name')){
+        If(MiscTools::in_ArrayObject($inputValues['name'],$classMod->data->res,'name')){
             return self::classesPost($req,'El nombre de la asignatura introducido ya existe en este curso.');
         }
 
@@ -234,11 +235,10 @@ class AdminController extends Controller
         }
         /*SI ALGO FALLA BORRAMOS LOS INSERT*/
         $classMod->deleteById($classData->id_class);
-        //TODO: borrar Percentages.
         return self::classesPost($req,'Error insertando los datos.');
     }
     public static function delete(){
-        //TODO
+        //TODO: logica para el borrado de los distintos elementos.
         }
 
     //AUX FUNCTIONS
@@ -254,7 +254,7 @@ class AdminController extends Controller
 
         for($i = 0; $i < $daysInterval; $i++){
             foreach ($values as $dow=>$hours)
-                if(self::dowCheck(($start->format('w')+1),$dow)){
+                if(self::dowCheck((intval($start->format('w')) + 1),$dow)){
                     foreach ($hours as $h){
                         $end_date = new DateTime('2000-01-01 '.$h);
                         $end_date->add($plus1Hour);
@@ -334,17 +334,6 @@ class AdminController extends Controller
     }
     private static function adminError($view, $msg, $menu, $data){
         return view($view, ['selectedMenu'=>$menu, 'msg'=>$msg, $data['name']=>$data['values']]);
-    }
-    private static function in_ArrayObject($value, $obj, $key): bool
-    {
-        foreach($obj as $item){
-            foreach ($item as $k=>$v){
-                if($k == $key){
-                    if($v == $value){return true;}
-                }
-            }
-        }
-        return false;
     }
 
 }

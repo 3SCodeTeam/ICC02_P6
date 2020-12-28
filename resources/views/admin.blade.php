@@ -51,7 +51,7 @@
         @include('details/studentsDetails', ['course'=>$course, 'students'=>$students])
         @break
         @case('subjectsOfStudent')
-        @include('details/subjectsOfStudent', ['course'=>$course, 'subjects'=>$subjects, 'subject?'=>$subjects,'percent?'=>$percent])
+        @include('details/subjectsOfStudent', ['course'=>$course, 'subjects'=>$subjects, 'subject?'=>$subjects,])
         @break
 
         {{--CLASES--}}
@@ -67,7 +67,7 @@
 
         {{--¿¿¿SIN USO???--}}
         @case('classesDetails')
-        @include('details/classesDetails',['course'=>$course,'classes'=>$classes])
+        @include('details/classesDetails',['course'=>$course,'classes'=>$classes,'percent?'=>$percent])
         @break
 
         {{--DETALLES ASIGNATURA--}}

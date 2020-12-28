@@ -5,7 +5,7 @@ namespace App\Models;
 
 
 use Illuminate\Support\Facades\DB;
-
+use Exception;
 class Percentages extends DbQueries
 {
     public $data;
@@ -49,6 +49,19 @@ class Percentages extends DbQueries
     public function deleteById($id_percentage){
         $values = [$id_percentage];
         $stm = 'DELETE FROM percentage WHERE id_percentage = ?';
+        try {
+            $res = DB::connection('mysql')->delete($stm, $values);
+        } catch (Exception $e) {
+            $this->data->err = $e;
+            $this->data->status = false;
+            dd($e->getMessage());
+        }
+        $this->data->status = true;
+        $this->data->affected_rows = $res;
+    }
+    public function deleteByIdClass($id_class){
+        $values = [$id_class];
+        $stm = 'DELETE FROM percentage WHERE id_class = ?';
         try {
             $res = DB::connection('mysql')->delete($stm, $values);
         } catch (Exception $e) {

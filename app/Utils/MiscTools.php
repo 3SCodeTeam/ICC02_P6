@@ -105,6 +105,17 @@ class MiscTools
         }
         return false;
     }
+    public static function in_ArrayObject($searchedValue, $object, $field): bool
+    {
+        foreach($object as $item){
+            foreach ($item as $k=>$v){
+                if($k == $field){
+                    if($v == $searchedValue){return true;}
+                }
+            }
+        }
+        return false;
+    }
     public static function postNullRemove(array $post){
         $values = [];
         foreach ($post as $k => $v){

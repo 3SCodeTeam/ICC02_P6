@@ -9,8 +9,6 @@ use App\Models\Courses;
 use App\Models\Exams;
 use App\Models\JoinQueries;
 use App\Models\Percentages;
-
-use App\Models\Students;
 use App\Models\Works;
 use App\Utils\MiscTools;
 use Illuminate\Http\Request;
@@ -30,23 +28,38 @@ class DetailsController extends Controller
 
         return view('admin', ['selectedMenu'=>'studentsDetails', 'course'=>$course,'students'=>$students->res]);
     }
-    public static function classesDetails($id_course,$id_class=null, $msg=null){
+    public static function classesDetails($id_course,$id_class=null, $type=null, $msg=null){
         $joinMod = new JoinQueries();
         $classes = $joinMod->getClassesAndTeachersByCourse($id_course);
         $course= MiscTools::getCourseData($id_course);
 
-        $percent=$id_class;
+        $percent=['id_class'=>$id_class, 'type'=>$type];
+
         return view('admin', ['selectedMenu'=>'classesDetails','course'=>$course, 'classes'=>$classes->res, 'percent'=>$percent, 'msg'=>$msg]);
     }
     public static function percentPost(Request $req){
         $post = $req->except('_token');
         $course = MiscTools::getCourseDataByIdClass($post['id_class']);
-        $mod = new Percentages();
-        $data = self::getPercents($post[$post['type']], $post['type']);
-        if($mod ->updateMultipleValuesById($data,['id_class'=>$post['id_class']])<1){
-            return self::classesDetails($course['id_course'],null, 'No se ha actualizado el dato.');
-        };
-        return self::classesDetails($course['id_course'],null, 'Dato actualizado.');
+
+        switch ($post['type']){
+            case 'name':
+                $mod = new Classes();
+                $mod -> getByIdCourse($course['id_course']);
+                If(MiscTools::in_ArrayObject($post['name'],$mod->data->res,'name')){
+                    return self::classesDetails($course['id_course'],null,null,'El nombre introducido ya existe en este curso.');
+                }
+                $mod -> updateValueById('name', $post['name'], $post['id_class']);
+                break;
+            case 'continuous_assessment':
+            case 'exams':
+                $mod = new Percentages();
+                $data = self::getPercents($post[$post['type']], $post['type']);
+                if($mod ->updateMultipleValuesById($data,['id_class'=>$post['id_class']])<1){
+                    return self::classesDetails($course['id_course'],null, null, 'No se ha actualizado el dato.');
+                };
+                break;
+        }
+        return self::classesDetails($course['id_course'],null, null, 'Dato actualizado.');
     }
     public static function subjectsDetails($id, Request $req){
         $role = $req->session()->get('user_role');
@@ -94,7 +107,6 @@ class DetailsController extends Controller
         $course = MiscTools::getCourseDataByIdClass($mod->data->res[0]->id_class);
 
         return self::subjectsOfStudent($course['id_course'], $subject['id_student'], $subject);
-        //return view ( 'admin', ['selectedMenu'=>'record','subject'=>$subject, 'course'=>$course, 'student'=>$student, 'msg'=>$msg]);
     }
     public static function recordPost(Request $req){
         $values = $req->only(['mark','type','id_subject']);

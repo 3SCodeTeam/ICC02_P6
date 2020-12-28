@@ -116,10 +116,10 @@ Route::post('/admin/{method}', [function ($method, Request $req){
     return LogInController::error('Recurso no disponible');
 }])->middleware('Session:admin');//->name('admin');
 
-Route::match(array('GET', 'POST'),'details/{method}/{param1?}/{param2?}', function (Request $req, $method, $param1=null, $param2=null){
+Route::match(array('GET', 'POST'),'details/{method}/{param1?}/{param2?}/{param3?}', function (Request $req, $method, $param1=null, $param2=null, $param3=null){
     switch ($method){
         case 'students': return DetailsController::studentsDetails($param1,$req);
-        case 'classes': return DetailsController::classesDetails($param1, $param2);
+        case 'classes': return DetailsController::classesDetails($param1, $param2, $param3);
         case 'percentPost': return DetailsController::percentPost($req);
         case 'subjects': return DetailsController::subjectsDetails($param1,$req);
         case 'subjectsOfStudent': return DetailsController::subjectsOfStudent($param1, $param2);
@@ -140,7 +140,7 @@ Route::match(array('GET', 'POST'), 'teachers/{method}/{class?}/{student?}', func
         case 'students': return TeacherController::students($req, $class);
         //case 'subjects': return TeacherController::subjects($req, $class);
         case 'studentDetails': return  TeacherController::studentDetails($req, $class, $student);
-        case 'subjectsPost': return  TeacherController::subjectsPost($req,$class);
+       //case 'subjectsPost': return  TeacherController::subjectsPost($req,$class);
     }
     return LogInController::error('Recurso no disponible');
 })->middleware('Session:teacher')->name('teacher');
@@ -154,4 +154,5 @@ Route::match(array('GET', 'POST'),'subjects/{method}/{class?}/{student?}', funct
         case 'updatePost': return Subjects::updatePost($req, $class);
         case 'subjects': return Subjects::subjects($req, $class);
     }
+    return LogInController::error('Recurso no disponible');
 })->middleware('Session:teacher');
