@@ -140,7 +140,6 @@ class AdminController extends Controller
         }
 
         $mod->insertValues($values['name'],$values['description'],$values['date_start'],$values['date_end'],$values['active']);
-        dd($mod);
         if($mod->data->status){
             return self::courses('Curso añadido.');
         }
