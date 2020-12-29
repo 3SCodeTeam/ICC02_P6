@@ -215,7 +215,22 @@
 .courses .inactive{
     background-color: lavenderblush;
 }
-
+.courses .col.del{
+    width: 2%;
+    text-align: center;
+}
+.courses .col.del button{
+    font-size: 10px;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+}
+.courses .col.del button:hover {
+    color: tomato;
+}
+.courses .cell.date_start, .courses .cell.date_end{
+    text-align: center;
+}
 
 /*COURSES ENDS*/
 
@@ -394,6 +409,21 @@
     width: auto;
     margin: 10px;
     font-size: large;
+}
+.classes .col.action{
+    border-right: none;
+}
+.classes .col.name{
+    border-left: none;
+}
+.classes .col.action button{
+    font-size: 15px;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+}
+.classes .col.action button:hover {
+    color: tomato;
 }
 
 /*CLASSSES END*/

@@ -99,8 +99,10 @@ Route::get('/admin/{method}/{param1?}', function (Request $req, $method, $param1
         case 'teachers': return AdminController::teacher();
         case 'courses': return AdminController::courses();
         case 'classes': return AdminController::classes();
-        case 'delete': return AdminController::delete();
         case 'courseActive':  return AdminController::courseActive($param1);
+        case 'deleteClass': return AdminController::deleteClasses($param1);
+        case 'deleteCourse': return AdminController::deleteCourses($param1);
+        case 'deleteTeacher':return AdminController::deleteTeachers($param1);
         }
     return LogInController::error('Recurso no disponible');
 })->middleware('Session:admin')->name('admin');

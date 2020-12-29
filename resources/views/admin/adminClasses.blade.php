@@ -31,6 +31,7 @@
         <div class="classes list container">
             <table><tbody>
                 <tr class="row header">
+                    <th class="col action"><i class="fas fa-trash"></i></th>
                     <th class="col name"><p>Asignatura</p></th>
                     <th class="col course"><p>Curso</p></th>
                     <th class="col teacher"><p>Profesor</p></th>
@@ -38,6 +39,13 @@
                 </tr>
                 @foreach($classes as $c)
                     <tr>
+                        <td class="col action">
+                            <div class="cell action">
+                                <a href="{{asset('/admin/deleteClass/'.$c->id_class)}}">
+                                    <button type="button"><i class="fas fa-trash"></i></button>
+                                </a>
+                            </div>
+                        </td>
                         <td class="col name"><p><a href="{{asset('/subjects/subjects/'.$c->id_class)}}">{{$c->class_name}}</a></p></td>
                         <td class="col course"><p><a href="{{asset('/details/classes/'.$c->id_course)}}">{{$c->course_name}}</a></p></td>
                         <td class="col teacher"><p><a href="{{asset('/details/teachers/'.$c->id_teacher)}}">{{$c->surname.', '.$c->teacher_name}}</a><a href="mailto:{{$c->email}}">{{' ('.$c->email.')'}}</a></p></td>

@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Models\Classes;
 use App\Models\Courses;
 
+use App\Models\Exams;
 use App\Models\JoinQueries;
 use App\Models\Percentages;
 use App\Models\Schedules;
@@ -20,6 +21,7 @@ use DateTime;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use phpDocumentor\Reflection\Types\Self_;
 use stdClass;
 
 
@@ -235,8 +237,22 @@ class AdminController extends Controller
         $classMod->deleteById($classData->id_class);
         return self::classesPost($req,'Error insertando los datos.');
     }
-    public static function delete(){
-        //TODO: logica para el borrado de los distintos elementos.
+    public static function deleteClasses($id_class){
+        $res = self::delClass($id_class);
+        if(!$res['status']){
+            return self::classes($res['error']);
+        }
+        return self::classes('Clase borrada');
+    }
+    public static function deleteCourses($id_course){
+        $res = self::delCourse($id_course);
+        if(!$res['status']){
+            return self::courses($res['error']);
+        }
+        return self::courses('Curso borrado.');
+    }
+    public static function deleteTeachers($id_teacher){
+        //TODO: logica para el borrado de profesores.
     }
     public static function courseActive($id_course){
         $mod = new Courses();
@@ -255,6 +271,52 @@ class AdminController extends Controller
     }
 
     //AUX FUNCTIONS
+    private static function delCourse($id_course):array{
+        /*
+         * Obtener array de id_class del curso
+         * Borrar todas las classes
+         *
+         * Borrar course de
+         * enrollment
+         * courses*/
+
+        $mod = new Classes();
+        $mod -> getByIdCourse($id_course);
+        foreach ($mod->data->res as $r){
+            $res=self::delClass($r->id_class);
+            if(!$res['status']){
+                return $res;
+            }
+        }
+        $tables = ['enrollment', 'courses'];
+        $mod = new JoinQueries();
+        foreach ($tables as $t){
+            $mod -> deleteByAttributes($t, ['id_course'=>$id_course]);
+            if(!$mod->data->status){
+                return ['status'=>false, 'error'=>$mod->data->err];
+            }
+        }
+        return ['status'=>true, 'error'=>null];
+    }
+    private static function delClass($id_class): array
+    {
+        /*
+         * exams
+         * works
+         * class
+         * percentage
+         * schedule
+         * */
+        $tables = ['exams', 'works', 'percentage', 'schedule','class'];
+        $mod = new JoinQueries();
+        foreach ($tables as $t){
+            $mod -> deleteByAttributes($t, ['id_class'=>$id_class]);
+            if(!$mod->data->status){
+                return ['status'=>flase, 'error'=>$mod->data->err];
+            }
+        }
+        return ['status'=>true, 'error'=>null];
+    }
     private static function getArrayOfClasses($values, $date_start, $date_end, $id_class): array
     {
         $start = new DateTime($date_start);

@@ -40,6 +40,7 @@
             <div class="courses table container">
                 <table><thead>
                     <tr class="row header">
+                        <th class="col del"><div class="cell del"></div></th>
                         <th class="col action"><div class="cell action"></div></th>
                         <th class="col name"><div class="cell name">Nombre</div></th>
                         <th class="col start"><div class="cell date_start">Inicio del curso</div></th>
@@ -50,9 +51,19 @@
                     <tbody>
                     @foreach($courses_data as $c)
                         <tr class="row courses {{($c->active == 0) ? 'inactive':'active'}}">
+                            <td class="col del">
+                                <a href="{{asset('/admin/deleteCourse/'.$c->id_course)}}">
+                                    <button type="button"><i class="fas fa-trash"></i></button>
+                                </a>
+                            </td>
                             <td class="col action">
                                 <a href="{{asset('/admin/courseActive/'.$c->id_course)}}">
-                                    <button type="button">{{(($c->active == 0) ? 'ON':'OFF')}}</button>
+                                    @if($c->active == 0)
+                                        <i class="fas fa-toggle-off" style="color:red;"></i>
+                                    @else
+                                        <i class="fas fa-toggle-off" style="color:green;"></i>
+                                    @endif
+                                    {{--<button type="button">{{(($c->active == 0) ? 'ON':'OFF')}}</button>--}}
                                 </a>
                             </td>
                             <td class="col name"><a href="{{asset('/details/students/'.$c->id_course)}}"><div class="cell name">{{$c->name}}</div></a></td>

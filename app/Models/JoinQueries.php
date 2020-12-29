@@ -245,6 +245,19 @@ class JoinQueries
         return DBAlias::table($table)->where($attributes)->update($data);
     }
 
+    public function deleteByAttributes($table, array $attributes){
+        $this->data = new Data();
+        try{
+            $this->data->affected_rows = DBAlias::table($table)->where($attributes)->delete();
+            $this->data->status = true;
+        }catch (Exception $e){
+            $this->data->status = false;
+            $this->data->err = $e->getMessage();
+        } finally {
+            return $this->data;
+        }
+    }
+
     private function doQuery($stm, array $values=[]): Data
     {
         $data = new Data();
