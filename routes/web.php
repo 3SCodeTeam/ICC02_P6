@@ -92,7 +92,7 @@ Route::post('/student/{method}', function ($method, Request $request){
     return LogInController::error('Recurso no disponible');
 })->middleware('Session');
 
-Route::get('/admin/{method}/{param1?}', function ($method, $param1=null, Request $req){
+Route::get('/admin/{method}/{param1?}', function (Request $req, $method, $param1=null){
     switch ($method){
         case 'start': return AdminController::start($req);
         case 'profile': return AdminController::profile($req);
