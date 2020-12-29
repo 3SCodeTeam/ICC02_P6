@@ -92,7 +92,7 @@ Route::post('/student/{method}', function ($method, Request $request){
     return LogInController::error('Recurso no disponible');
 })->middleware('Session');
 
-Route::get('/admin/{method}', function ($method, Request $req){
+Route::get('/admin/{method}/{param1?}', function ($method, $param1=null, Request $req){
     switch ($method){
         case 'start': return AdminController::start($req);
         case 'profile': return AdminController::profile($req);
@@ -100,6 +100,7 @@ Route::get('/admin/{method}', function ($method, Request $req){
         case 'courses': return AdminController::courses();
         case 'classes': return AdminController::classes();
         case 'delete': return AdminController::delete();
+        case 'courseActive':  return AdminController::courseActive($param1);
         }
     return LogInController::error('Recurso no disponible');
 })->middleware('Session:admin')->name('admin');
