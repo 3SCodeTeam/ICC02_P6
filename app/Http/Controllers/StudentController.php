@@ -63,24 +63,40 @@ class StudentController extends Controller
         $res = $checker->verifyData($value,$option,$user_data);
         if(!$res['status']){
             return  self::profile($req, $res['msg']);
-            //return view('student',['selectedMenu'=>'profile','user_data'=>$user_data, 'msg'=>$res['msg']]);
         }
-        //TODO: db data check for username, email, nif => V2.3 control realizado con patttern en html.
+
+        switch ($option){
+            case 'username':
+                $mod->getByUsername($value);
+                if($mod->data->len > 0){
+                    return self::profile($req, 'Este nombre de usuario ya está en uso.');
+                }
+                break;
+            case 'email':
+                $mod->getByEmail($value);
+                if($mod->data->len > 0){
+                    return self::profile($req, 'Este email ya está en uso.');
+                }
+                break;
+            case 'nif':
+                $mod->getByNif($value);
+                if($mod->data->len > 0){
+                    return self::profile($req, 'Este NIF ya ha sido registrado.');
+                }
+        }
+
         $res = self::updateDB($value,$option,$userId);
+
         if(!$res['status']){
             return  self::profile($req, $res['msg']);
-            //$user_data =DataValidator::safeUserData($user_data);
-            //return view('student',['selectedMenu'=>'profile','user_data'=>$user_data, 'msg'=>$res['msg']]);
         }
 
         //Actualizar notificaciones
         $nmod = new Notifications();
         $nmod -> updateAllValuesByIdStudent($notifications['work'], $notifications['exam'], $notifications['continuous_assessment'], $notifications['final'], $userId);
 
-        $mod->getById($userId);
         return  self::profile($req, $res['msg']);
-        //$user_data =DataValidator::safeUserData($mod->data->res[0]);
-        //return view('student',['selectedMenu'=>'profile', 'user_data'=>$user_data, 'msg'=>$res['msg']]);
+
     }
     public static function enrollment(Request $req, $msg=null){/*SECCION ENROLLMENT*/
         $id_student = $req->session()->get('sql_user_id');
@@ -122,10 +138,8 @@ class StudentController extends Controller
             }
             $enroll_mod->updateValueById('status', $value, $id_enrollment);
 
-            $studentCourses = self::coursesArrayByStatus($userId);
             $course_mod->getByStatus('1');
             return self::enrollment($req, $msg);
-            //return view('student',['selectedMenu'=>'enrollment', 'courses_data'=>$course_mod->data->res, 'studentCourses'=>$studentCourses, 'msg'=>$msg]);
         }
 
         //NUEVA MATRICULA
@@ -137,7 +151,6 @@ class StudentController extends Controller
         $enroll_mod->insertValues($userId, $id_course,'1');
         $msg = 'Matricula realizada.';
         $course_mod->getByStatus('1');
-        $studentCourses = self::coursesArrayByStatus($userId);
 
         /*
          * Verificar si existen trabajos y exámenes para ese curso.
@@ -149,7 +162,6 @@ class StudentController extends Controller
         self::newStudentCheckWorks($id_course, $userId);
 
         return self::enrollment($req, $msg);
-        //return view('student',['selectedMenu'=>'enrollment', 'courses_data'=>$course_mod->data->res, 'studentCourses'=>$studentCourses, 'msg'=>$msg]);
     }
     public static function mSchedule(Request $req){/*SECCIÓN HOARIO PRIMERA CARGA DESDE EL MENÚ*/
         $id_student = $req->session()->get('sql_user_id');
@@ -216,44 +228,6 @@ class StudentController extends Controller
 
         return ['exam'=>$eWeight, 'works'=>$wWeight];
     }
-    private static function getClassesMarks($classes, $userId){
-        $wMod = new Works();
-        $eMod = new Exams();
-        $marks = [];
-
-        foreach ($classes as $c){
-            $wMod->getByIdClassAndIdStudent($c->id_class, $userId);
-            $worksMarks = '----';
-            foreach ($wMod->data->res as $w){
-                if(!(isset($w->mark))){
-                    $worksMarks = '----';
-                    break;
-                }
-                $worksMarks += $w->mark;
-            }
-            if(!$worksMarks == '----'){
-                $eMod->getByIdClassAndIdStudent($c->id_class, $userId);
-                $examsMarks = '----';
-                foreach ($eMod->data->res as $e){
-                    if(!(isset($e->mark))){
-                        $examsMarks = '----';
-                        break;
-                    }
-                    $examsMarks += $e->mark;
-                }
-            }else{
-                $examsMarks = '----';
-            }
-            $weights = self::getClassesMarksWeights($c->id_class);
-            if($examsMarks === '----' || $worksMarks === '----'){
-                $marks[$c->id_class] = ['exam'=>$examsMarks, 'work'=>$worksMarks, 'global'=>'----', 'weights'=>$weights];
-            }else{
-                $global = $examsMarks*$weights['exams'] + $worksMarks*$weights['works'];
-                $marks[$c->id_class] = ['exam'=>$examsMarks, 'work'=>$worksMarks, 'global'=>$global, 'weights'=>$weights];
-            }
-        }
-        return $marks;
-    }
     private static function checkOption($option){
         switch($option){
             case 'Password':
@@ -268,7 +242,7 @@ class StudentController extends Controller
         if(!$mod->data->status || !($mod->data->affected_rows > 0)){
             return ['msg'=>'Error al actulizar el valor en la base de datos.', 'status'=>false];
         }
-        return ['msg'=>'¡Valor actualizado!', 'status'=>true];
+        return ['msg'=>'Valor actualizado.', 'status'=>true];
     }
 
     private static function coursesArrayByStatus($Id){
@@ -290,12 +264,13 @@ class StudentController extends Controller
     private static function newStudentCheckExams($id_course, $userId){
         $joinQ_mod = new JoinQueries();
         $exams = $joinQ_mod -> getAllExamsByCourse($id_course);
+
         if($exams->len > 0){
             $studentExams = $joinQ_mod->getAllExamsByCourseStudent($id_course, $userId);
             if($studentExams->len < 1){
                 $subject=[];
                 foreach ($exams->res as $r){
-                    $subject = ['id_class'=>$r->id_class, 'id_student'=>$userId, 'name'=>$r->name, 'deadline'=>$r->deadline, 'description'=>$r->description, 'mark'=>-1];
+                    $subject[] = ['id_class'=>$r->id_class, 'id_student'=>$userId, 'name'=>$r->name, 'deadline'=>$r->deadline, 'description'=>$r->description, 'mark'=>-1];
                 }
                 $joinQ_mod->insertMultiple($subject, 'exams');
             }
@@ -309,20 +284,23 @@ class StudentController extends Controller
             if($studentWorks->len < 1){
                 $subject=[];
                 foreach ($works->res as $r){
-                    $subject = ['id_class'=>$r->id_class, 'id_student'=>$userId, 'name'=>$r->name, 'deadline'=>$r->deadline, 'description'=>$r->description, 'mark'=>-1];
+                    $subject[] = ['id_class'=>$r->id_class, 'id_student'=>$userId, 'name'=>$r->name, 'deadline'=>$r->deadline, 'description'=>$r->description, 'mark'=>-1];
                 }
                 $joinQ_mod->insertMultiple($subject, 'works');
+
             }
         }
     }
-    private static function setNotificationsData(array $selectedNotifications){
+    private static function setNotificationsData(array $selectedNotifications): array
+    {
         $notifications = ['work'=>0, 'exam'=>0, 'continuous_assessment'=>0, 'final'=>0];
         foreach ($selectedNotifications as $k=>$v){
             $notifications[$k] = $v;
         }
         return $notifications;
     }
-    private static function existClasses($id_student){
+    private static function existClasses($id_student): bool
+    {
         $jMod = new JoinQueries();
         $classes = $jMod->getClassesByStudent($id_student);
         if($classes->len>0){

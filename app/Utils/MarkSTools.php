@@ -95,7 +95,7 @@ class MarkSTools
             }
         }
         foreach ($courseMarks as $k => $v){
-            if(!($v === '----')){
+            if(!($v === '----') && $numMarks[$k]>0){
                 $courseMarks[$k] = $v / $numMarks[$k];
             }
         }

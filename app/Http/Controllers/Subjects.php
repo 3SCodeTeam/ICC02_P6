@@ -42,6 +42,12 @@ class Subjects extends Controller
 
     //Listado de trabajos y exámenes de una clase
     public static function subjects(Request $req, $id_class, $msg=null){
+
+        //Eliminamos la variable global para volver a hacer la selección.
+        if($req->session()->exists('selectedSubjects')){
+            $req->session()->remove('selectedSubjects');
+        }
+
         $id_values = MiscTools::getClassRelatedIds($id_class, 'class');
         $role = $req->session()->get('user_role');
 
@@ -125,19 +131,18 @@ class Subjects extends Controller
     //Actualizar/borrar los trabajos y exámenes.
     public static function update(Request $req, $id_class, $msg=null){
         $role = $req->session()->get('user_role');
-        //dd($req);
-        if(!isset($msg)){
+
+        if(!$req->session()->exists('selectedSubjects')){
             $values = $req->except(['_token', 'action']);
             $action = $req->get('action');
-            if(count($values)<1){//Si el post viene vaccío.
-                return self::subjects($req, $id_class, $msg="No se ha seleccionado ningún elemento.");
-            }
-            $req->flashExcept(['_token']);
+            $req->session()->put(['selectedSubjects'=>$values]);
         }else{
-            $action = $req->old('action');
-            $values = $req->old();
-            unset($values['action']);
-            $req->session()->reflash();
+            $values=$req->session()->get('selectedSubjects');
+            $action = 'update';
+        }
+
+        if(count($values)<1){ //Si el post viene vaccío.
+            return self::subjects($req, $id_class, $msg="No se ha seleccionado ningún elemento.");
         }
 
         $class_data = MiscTools::getClassData($id_class); //NECESITAMOS LOS DATOS DE LA CALSE EN ESTA VISTA TEACHER Y ADMIN
@@ -154,7 +159,7 @@ class Subjects extends Controller
             case 'update':
             default:
                 $subjects = self::getSubjectsRequested($values, $id_class);
-                //$req->session()->put('dataPosted',['action'=>$action, 'values'=>$values]);
+
                 if($role === 'teacher'){
                     $teacherId = $req->session()->get('sql_user_id');
                     $user_data = MiscTools::getTeacherData($teacherId); //Se necesita el user_data para la vista teacher
@@ -167,11 +172,9 @@ class Subjects extends Controller
         }
     }
     public static function updatePost(Request $req, $id_class){
-        $req->session()->reflash();
         $post = MiscTools::postNullRemove($req->except(['_token', 'type', 'subject_name']));
         $type = $req->only('type');
         $type=$type['type'];
-
         $subject_name = $req->only('subject_name');
 
         switch($type){
@@ -204,6 +207,27 @@ class Subjects extends Controller
         if($mod -> updateMultipleValuesByName($data, ['name'=>$subject_name, 'id_class'=>$id_class])<1){
             return self::update($req, $id_class, 'No hay datos que actualizar.');
         };
+
+        //Solución ad hoc para el problema de las tareas que se identifican por el nombre.
+        if(isset($post['name'])){
+            $tempData = $req->session()->get('selectedSubjects');
+            $newData =[];
+            foreach ($tempData as $k => $v){
+                if($v === $type){
+                    $t = explode(';',$k);
+                    if($t[1] === str_replace(' ','_',$subject_name['subject_name'])){
+                        $n = $type.';'.str_replace(' ','_',$post['name']);
+                        $newData[$n]=$type;
+                    }else{
+                        $newData[$k]=$v;
+                    }
+                }else{
+                    $newData[$k]=$v;
+                }
+            }
+            $req->session()->put(['selectedSubjects'=>$newData]);
+        }
+
         return self::update($req, $id_class, 'Datos actualizados.');
     }
 
@@ -235,6 +259,9 @@ class Subjects extends Controller
             default:$mod = new Works();
         }
         $mod -> getDistinctByIdClassName($id_class, $name);
+        if($mod->data->len <1){
+            return null;
+        }
         return $mod->data->res[0];
     }
     //DEVUELVE UN ARRAY CON LOS DATOS DE LOS SUBJECTS PASADO POR $VALUES
@@ -242,10 +269,12 @@ class Subjects extends Controller
         $subjects = [];
         foreach ($values as $k=>$v){
             $data = self::getSubjectData($id_class, $k, $v);
-            $date = date_create($data->deadline);
-            $time = date_format($date,"h:m");
-            $date = date_format($date,'Y-m-d');
-            $subjects[] = ['name' => $data->name, 'date'=>$date, 'time'=>$time, 'description'=>$data->description, 'type'=>$v];
+            if(isset($data)){
+                $date = date_create($data->deadline);
+                $time = date_format($date,"h:m");
+                $date = date_format($date,'Y-m-d');
+                $subjects[] = ['name' => $data->name, 'date'=>$date, 'time'=>$time, 'description'=>$data->description, 'type'=>$v];
+            }
         }
         return $subjects;
     }

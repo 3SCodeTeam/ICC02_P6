@@ -118,7 +118,7 @@ class JoinQueries
                 from class as C
                 INNER JOIN courses as CO ON C.id_course = CO.id_course
                 INNER JOIN enrollment AS E ON E.id_course = C.id_course
-                WHERE E.status = 1 and C.id_teacher = ?
+                WHERE C.id_teacher = ?
                 GROUP BY C.name, c.color, c.id_class, c.id_course, CO.name, CO.active, CO.date_end, CO.date_start, CO.description';
         $this->data = self::doQuery($stm, $values);
         return $this->data;
@@ -229,9 +229,16 @@ class JoinQueries
     }
 
     //Insert para multiples sentencias
-    public function insertMultiple(array $data, $table): bool
+    public function insertMultiple(array $data, $table): Data
     {
-        return DBAlias::table($table)->insert($data);
+        $this->data = new Data();
+        try{
+            $this->data->status = DBAlias::table($table)->insert($data);
+        }catch (Exception $e){
+            $this->data->err=$e;
+        } finally {
+            return $this->data;
+        }
     }
     //Update para multiples tablas
     public function updateMultiple(string $table, array $data, array $attributes){

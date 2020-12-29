@@ -4,8 +4,9 @@
 namespace App\Models;
 
 
+use App\Entities\Data;
 use Illuminate\Support\Facades\DB;
-
+use Exception;
 
 class Classes extends DbQueries
 {
@@ -31,22 +32,23 @@ class Classes extends DbQueries
     }
 
     public function getIdClass($id_teacher, $id_course, $id_schedule, $name, $color){
+        $this->data = new Data();
         $values = [$id_teacher, $id_course, $id_schedule, $name, $color];
         $stm ='SELECT id_class, id_teacher, id_course, id_schedule, name, color FROM class
         WHERE id_teacher = ? and id_course = ? and id_schedule = ? and name = ? and color = ?';
         try{
-            $res = DB::connection('mysql')->select($stm, $values);
+            $this->data->res = DB::connection('mysql')->select($stm, $values);
+            $this->data->status = true;
         }catch(Exception $e){
             $this->data->err = $e;
             $this->data->status = false;
-            dd($e->getMessage());
         }finally{
-            $this->data->status = true;
-            $this->data->affected_rows = $res;
+            return $this->data;
         }
     }
 
     public function insertValues($id_teacher, $id_course, $id_schedule, $name, $color) {
+        $this->data = new Data();
         $values=[$id_teacher, $id_course, $id_schedule, $name, $color];
         $stm ='INSERT INTO class (id_teacher, id_course, id_schedule, name, color) VALUES (?,?,?,?,?)';
         try{
