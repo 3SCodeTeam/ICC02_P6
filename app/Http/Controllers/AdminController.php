@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Entities\Colors;
 use App\Models\Classes;
 use App\Models\Courses;
 
@@ -171,6 +172,7 @@ class AdminController extends Controller
         $teachersMod->getById($values['teacher']);
         $course_data = $coursesMod->data->res;
         $teacher_data = $teachersMod->data->res;
+        $colors = Colors::$colors;
 
         $mod = new JoinQueries();
         $mod->getUsedHoursByTeacherByCourseByDates($values['teacher'], $values['course']);
@@ -181,7 +183,7 @@ class AdminController extends Controller
         $values['course_name'] = $course_data[0]->name;
         $values['teacher_email'] = $teacher_data[0]->email;
 
-        return view('admin', ['selectedMenu'=>'classesSchedule', 'freeHoursOfWeek'=>$freeHoursOfWeek, 'formValues'=>$values, 'msg'=>$msg]);
+        return view('admin', ['selectedMenu'=>'classesSchedule', 'colors'=>$colors,'freeHoursOfWeek'=>$freeHoursOfWeek, 'formValues'=>$values, 'msg'=>$msg]);
 
     }
     public static function classesPostSchedule(Request $req){

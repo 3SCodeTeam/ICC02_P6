@@ -227,6 +227,7 @@
 }
 .courses .col.del button:hover {
     color: tomato;
+
 }
 .courses .cell.date_start, .courses .cell.date_end{
     text-align: center;
@@ -315,6 +316,30 @@
     font-size: larger;
     border: none;
     display: block;
+
+}
+
+.classSchedule .colors{
+    width: 50%;
+    display: inline-block;
+    border: solid thin;
+    padding: 0;
+}
+.classSchedule .color{
+    display: inline-block;
+    margin: 1px;
+    padding: 0;
+
+
+}
+.classSchedule .color label{
+    margin: 0;
+    padding: 5px 0 5px 50px;
+    height: 12px;
+}
+
+.classSchedule .color input{
+    margin: 0;
 }
 
 .list.class.container table{
