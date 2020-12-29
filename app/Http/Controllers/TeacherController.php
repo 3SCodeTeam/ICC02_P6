@@ -81,12 +81,13 @@ class TeacherController extends Controller
 
         $jMod = new JoinQueries();
         $students=$jMod->getStudentsByClass($id_class);
-        //dd($students->res);
+        $course = MiscTools::getCourseDataByIdClass($id_class);
+        $class_data = $jMod->getAllClassDatabyId($id_class);
 
         $marks = MarkSTools::getStudentsMarksByClass($id_class, $students->res);
         //dd($marks);
 
-        return view('teacher', ['selectedMenu'=>'students', 'user_data'=>$user_data, 'students'=>$students->res, 'marks'=>$marks, 'id_class'=>$id_class]);
+        return view('teacher', ['selectedMenu'=>'students', 'course'=>$course, 'class_data'=>$class_data->res[0], 'user_data'=>$user_data, 'students'=>$students->res, 'marks'=>$marks, 'id_class'=>$id_class]);
     }
     //Listado de asignaturas de una clase desde el menu Teacher.
     public static function subjects(Request $req, $id_class, $msg=null){
@@ -113,7 +114,11 @@ class TeacherController extends Controller
     }
     public static function studentDetails(Request $req, $id_class, $id_student, $msg=null){
         $teacherId = $req->session()->get('sql_user_id');
+
+        $jMod = new JoinQueries();
         $user_data = MiscTools::getTeacherData($teacherId);
+        $course = MiscTools::getCourseDataByIdClass($id_class);
+        $class_data = $jMod->getAllClassDatabyId($id_class);
 
         $eMod = new Exams();
         $wMod = new Works();
@@ -123,6 +128,6 @@ class TeacherController extends Controller
         $sMod = new Students();
         $sMod->getById($id_student);
 
-        return view('teacher',['selectedMenu'=>'studentDetails', 'id_class'=>$id_class, 'user_data'=>$user_data, 'msg'=>$msg ,'works'=>$wMod->data->res, 'exams'=>$eMod->data->res, 'student'=>$sMod->data->res[0]]);
+        return view('teacher',['selectedMenu'=>'studentDetails', 'id_class'=>$id_class, 'course'=>$course, 'class_data'=>$class_data->res[0], 'user_data'=>$user_data, 'msg'=>$msg ,'works'=>$wMod->data->res, 'exams'=>$eMod->data->res, 'student'=>$sMod->data->res[0]]);
     }
 }

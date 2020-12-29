@@ -2,6 +2,8 @@
     @if(isset($admin))
         <h2>{{$course['name']}}</h2>
         <h3>{{$class_data->class_name}} (<a href="mailto:{{$user_data['email']}}">{{$user_data['email']}}</a>)</h3>
+    @else
+        <h3>{{$class_data->class_name}} (<a href="{{asset('/teachers/students/'.$class_data->id_class)}}"><span>{{$course['name']}}</span></a>)</h3>
     @endif
     <div class="subjects create form container">
         <form action="{{asset('/subjects/subjectsPost/'.$id_class)}}" method="post" id="newSubject" >

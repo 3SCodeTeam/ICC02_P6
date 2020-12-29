@@ -25,17 +25,17 @@ class Subjects extends Controller
         $role = $req->session()->get('user_role');
         $values = MiscTools::getClassRelatedIds($id_class, 'class');
 
-        //Datos de la clase.
+        //Datos de la vista.
         $jMod = new JoinQueries();
         $class_data = $jMod->getAllClassDatabyId($id_class);
+        $course = MiscTools::getCourseDataByIdClass($id_class);
 
         if($role === 'teacher'){
             $teacherId = $req->session()->get('sql_user_id');
             $user_data = MiscTools::getTeacherData($teacherId);
-            return view('teacher', ['selectedMenu'=>'subjectsCreate', 'id_class'=>$id_class, 'user_data'=>$user_data, 'class_data'=>$class_data->res[0], 'msg'=>$msg]);
+            return view('teacher', ['selectedMenu'=>'subjectsCreate', 'course'=>$course, 'id_class'=>$id_class, 'user_data'=>$user_data, 'class_data'=>$class_data->res[0], 'msg'=>$msg]);
         }else{
             $user_data = MiscTools::getTeacherData($values['id_teacher']);
-            $course = MiscTools::getCourseDataByIdClass($id_class);
             return view('admin', ['selectedMenu'=>'subjectsCreate', 'id_class'=>$id_class, 'course'=>$course, 'user_data'=>$user_data, 'class_data'=>$class_data->res[0], 'msg'=>$msg]);
         }
     }
@@ -53,6 +53,7 @@ class Subjects extends Controller
 
         $jMod = new JoinQueries();
         $class_data = $jMod ->getAllClassDatabyId($id_class);
+        $course = MiscTools::getCourseDataByIdClass($id_class);
 
         $wMod=new Works();
         $eMod = new Exams();
@@ -68,14 +69,13 @@ class Subjects extends Controller
         }
         switch ($role){
             case 'admin':
-                $course = MiscTools::getCourseDataByIdClass($id_class);
                 $user_data = MiscTools::getTeacherData($id_values['id_teacher']);
                 return view ('admin', ['selectedMenu'=>'subjects', 'id_class'=>$id_class, 'course'=>$course,'class_data'=>$class_data->res[0] ,'user_data'=>$user_data, 'msg'=>$msg, 'subjects'=>$subjects]);
             case 'teacher':
             default:
                 $teacherId = $req->session()->get('sql_user_id');
                 $user_data = MiscTools::getTeacherData($teacherId);
-                return view('teacher', ['selectedMenu'=>'subjects', 'id_class'=>$id_class, 'class_data'=>$class_data->res[0] ,'user_data'=>$user_data, 'msg'=>$msg, 'subjects'=>$subjects]);
+                return view('teacher', ['selectedMenu'=>'subjects', 'id_class'=>$id_class, 'course'=>$course, 'class_data'=>$class_data->res[0] ,'user_data'=>$user_data, 'msg'=>$msg, 'subjects'=>$subjects]);
         }
 
     }
@@ -145,7 +145,9 @@ class Subjects extends Controller
             return self::subjects($req, $id_class, $msg="No se ha seleccionado ningún elemento.");
         }
 
-        $class_data = MiscTools::getClassData($id_class); //NECESITAMOS LOS DATOS DE LA CALSE EN ESTA VISTA TEACHER Y ADMIN
+        //Datos para las vistas
+        $course = MiscTools::getCourseDataByIdClass($id_class);
+        $class_data = MiscTools::getClassData($id_class);
         $id_values = MiscTools::getClassRelatedIds($id_class, 'class');
 
         switch($action){
@@ -163,9 +165,8 @@ class Subjects extends Controller
                 if($role === 'teacher'){
                     $teacherId = $req->session()->get('sql_user_id');
                     $user_data = MiscTools::getTeacherData($teacherId); //Se necesita el user_data para la vista teacher
-                    return view('teacher', ['selectedMenu'=>'subjectsUpdate', 'user_data'=>$user_data, 'class_data' => $class_data, 'id_class'=>$id_class, 'selectedSubjects' => $subjects, 'msg'=>$msg]);
+                    return view('teacher', ['selectedMenu'=>'subjectsUpdate', 'course'=>$course, 'user_data'=>$user_data, 'class_data' => $class_data, 'id_class'=>$id_class, 'selectedSubjects' => $subjects, 'msg'=>$msg]);
                 }else{
-                    $course = MiscTools::getCourseDataByIdClass($id_class); //Necesario para la vista admin.
                     $user_data = MiscTools::getTeacherData($id_values['id_teacher']);
                     return view('admin', ['selectedMenu'=>'subjectsUpdate', 'course'=>$course,'user_data'=>$user_data, 'class_data' => $class_data, 'id_class'=>$id_class, 'selectedSubjects' => $subjects, 'msg'=>$msg]);
                 }

@@ -107,6 +107,24 @@ form label{
     border-radius: 5px;
     margin: 25px 0 0 0;
 }
+.subjects h3 a {
+    font-size: medium;
+    text-decoration: none;
+    color: black;
+}
+.subjects a span:hover{
+    color: tomato;
+}
+
+.updateSubjects h3 a {
+    font-size: medium;
+    text-decoration: none;
+    color: black;
+}
+.updateSubjects a span:hover{
+    color: tomato;
+}
+
 
 /*updateSubjects*/
 .updateSubjects .col{

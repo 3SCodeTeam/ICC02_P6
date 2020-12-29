@@ -1,5 +1,6 @@
 <div class="teachers classDetails container">
     @if($selectedMenu =='students')
+        <h3>{{$class_data->class_name}} (<a href="{{asset('/teachers/students/'.$class_data->id_class)}}"><span>{{$course['name']}}</span></a>)</h3>
         <div class="teachers classDetails students">
             <table>
                 <thead>

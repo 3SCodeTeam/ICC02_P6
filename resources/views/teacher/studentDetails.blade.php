@@ -1,12 +1,13 @@
-<div class="teacher studentDetails container">
+<div class="teachers studentDetails container">
+    <h3>{{$class_data->class_name}} (<a href="{{asset('/teachers/students/'.$class_data->id_class)}}"><span>{{$course['name']}}</span></a>)</h3>
     <form action="{{asset('/subjects/subjectsMarks/'.$id_class.'/'.$student->id)}}" method="post" name="marks" id="marks">
         @csrf
         <div class="student data">
             <div>
-                <div>Alumno: {{$student->surname.', '.$student->name}} <span><a href="mailto:{{$student->email}}">({{$student->email}})</a></span></div>
+                <div>Alumno: {{$student->surname.', '.$student->name}} <span>(<a href="mailto:{{$student->email}}">{{$student->email}}</a>)</span></div>
             </div>
             <div class="techer studentDetails submit container">
-                <input type="submit" name="submit" value="Actualizar"/>
+                <input id="submit" type="submit" name="submit" value="Actualizar"/>
             </div>
         </div>
         <div class="teacher studentDetails subject form">
