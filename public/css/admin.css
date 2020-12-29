@@ -450,7 +450,19 @@
 .classes .col.action button:hover {
     color: tomato;
 }
-
+.classes .cell button{
+    background-color: transparent;
+    border: none;
+}
+.classes .cell button:hover{
+    color:tomato;
+}
+.classes .cell.teacher select{
+    width: 150px;
+}
+.classes .cell:hover{
+    color: tomato;
+}
 /*CLASSSES END*/
 
 /*Student subject*/

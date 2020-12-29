@@ -24,7 +24,7 @@
                                     <input type="hidden" name="type" value="name"/>
                                     <div class="cell name">
                                         <input type="text" id="name" name="name" value="{{$c->class_name}}" autofocus/>
-                                        <input type="submit" value="OK">
+                                        <button type="submit" value="OK"><i class="fas fa-check"></i></button>
                                     </div>
                                 </form>
                             @else
@@ -32,7 +32,8 @@
                                     <div class="cell class_name">{{$c->class_name}}</div>
                                 </a>
                                 <a class="button" href="{{asset('details/classes/'.$course["id_course"].'/'.$c->id_class.'/name')}}">
-                                    <button type="button">Editar</button>
+                                    <i class="fas fa-pencil-alt"></i>
+                                    {{--<button type="button">Editar</button>--}}
                                 </a>
                             @endif
                         </td>
@@ -44,7 +45,7 @@
                                         <input type="hidden" name="type" value="continuous_assessment"/>
                                     <div class="cell continuous_assessment">
                                         <input type="number" id="continuous_assessment" name="continuous_assessment" min="30" max="90" step="5" value="{{$c->continuous_assessment*100}}"/> %
-                                        <input type="submit" value="OK">
+                                        <button type="submit" value="OK"><i class="fas fa-check"></i></button>
                                     </div>
                                     </form>
                                 @else
@@ -61,7 +62,7 @@
                                     <input type="hidden" name="type" value="exams"/>
                                     <div class="cell exams">
                                         <input type="number" id="exams" name="exams" min="10" max="70" step="5" value="{{$c->exams*100}}"/> %
-                                        <input type="submit" value="OK">
+                                        <button type="submit" value="OK"><i class="fas fa-check"></i></button>
                                     </div>
                                 </form>
                             @else
@@ -70,7 +71,27 @@
                             </a>
                             @endif
                         </td>
-                        <td class="teacher_name"><div class="cell teacher_name">{{$c->surname.', '.$c->teacher_name}}</div></td>
+                        <td class="teacher_name">
+                            @if($percent['type'] == 'teacher' && $percent['id_class'] == $c->id_class)
+                                <form action="{{'/details/teacherUpdate'}}" method="post" name="teacher" id="teacher">
+                                    @csrf
+                                    <input type="hidden" name="org_teacher" value="{{$c->id_teacher}}"/>
+                                    <input type="hidden" name="id_class" value="{{$percent['id_class']}}"/>
+                                    <div class="cell teacher">
+                                        <select for="teacher" name="new_teacher">
+                                            @foreach($teachers as $t)
+                                                <option value="{{$t['id_teacher']}}">{{$t['surname'].', '.$t['name']}}</option>
+                                            @endforeach
+                                        </select>
+                                        <button type="submit" value="OK"><i class="fas fa-check"></i></button>
+                                    </div>
+                                </form>
+                            @else
+                                <a href="{{asset('/details/classes/'.$course['id_course'].'/'.$c->id_class.'/teacher')}}">
+                                    <div class="cell teacher_name">{{$c->surname.', '.$c->teacher_name}}</div>
+                                </a>
+                            @endif
+                        </td>
                         <td class="teacher_email"><div class="cell teacher_email"><a href="mailto:{{$c->email}}">{{$c->email}}</a></div></td>
                     </tr>
                 @endforeach

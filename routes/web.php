@@ -128,10 +128,9 @@ Route::match(array('GET', 'POST'),'details/{method}/{param1?}/{param2?}/{param3?
         case 'subjectsOfStudent': return DetailsController::subjectsOfStudent($param1, $param2);
         case 'records': return DetailsController::record($param1, $param2);
         case 'recordPost': return DetailsController::recordPost($req);
+        case 'teacherUpdate': return DetailsController::teacherUpdate($req);
     }
     return LogInController::error('Recurso no disponible');
-
-
 })->middleware('Session:admin');
 
 Route::match(array('GET', 'POST'), 'teachers/{method}/{class?}/{student?}', function (Request $req, $method, $class=null,$student=null){

@@ -37,6 +37,17 @@ class JoinQueries
         $this->data = self::doQuery($stm);
         return $this->data;
     }
+    public function getDiscardedTeachers($id_class){
+        $values = [$id_class, $id_class,$id_class];
+        $stm='SELECT DISTINCT S1.id_class, C.name as class_name, T.id_teacher, T.email FROM schedule as S1
+        INNER JOIN schedule as S2 on S1.day = S2.day and S1.time_start = S2.time_start
+        INNER JOIN class AS C on S1.id_class = C.id_class
+        INNER JOIN teachers AS T ON C.id_teacher = T.id_teacher
+        WHERE S2.id_class = ?
+        and S1.day BETWEEN (SELECT MIN(day) FROM schedule WHERE id_class = ?) and (SELECT MAX(day) FROM schedule WHERE id_class = ?)';
+        $this->data = self::doQuery($stm, $values);
+        return $this->data;
+    }
 
     //Devuelve las horas ocupadas de un profesor en un periodo por días de la semana.
     public function getScheduleByTeacherAndDate($id_teacher, $start_date, $end_date): Data

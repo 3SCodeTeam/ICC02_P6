@@ -5,6 +5,7 @@ namespace App\Utils;
 use App\Models\Classes;
 use App\Models\Courses;
 use App\Models\JoinQueries;
+use App\Models\Schedules;
 use App\Models\Students;
 use App\Models\Teachers;
 
@@ -124,5 +125,21 @@ class MiscTools
             }
         }
         return $values;
+    }
+
+    public static function getAvailableTeachers($id_class):array{
+        $availableTeachers = [];
+        $mod = new JoinQueries();
+        $mod -> getDiscardedTeachers($id_class);
+        $discardedTeachers = $mod->data->res;
+
+        $mod = new Teachers();
+        $mod -> getAll();
+        foreach ($mod->data->res as $r){
+            if(!self::in_ArrayObject($r->id_teacher,$discardedTeachers,'id_teacher')){
+                $availableTeachers [] = self::safeUserData($r);
+            }
+        }
+        return $availableTeachers;
     }
 }

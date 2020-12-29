@@ -32,10 +32,13 @@ class DetailsController extends Controller
         $joinMod = new JoinQueries();
         $classes = $joinMod->getClassesAndTeachersByCourse($id_course);
         $course= MiscTools::getCourseData($id_course);
-
+        $teachers = [];
+        if(isset($type) && $type==='teacher'){
+            $teachers = MiscTools::getAvailableTeachers($id_class);
+        }
         $percent=['id_class'=>$id_class, 'type'=>$type];
 
-        return view('admin', ['selectedMenu'=>'classesDetails','course'=>$course, 'classes'=>$classes->res, 'percent'=>$percent, 'msg'=>$msg]);
+        return view('admin', ['selectedMenu'=>'classesDetails', 'teachers'=>$teachers, 'course'=>$course, 'classes'=>$classes->res, 'percent'=>$percent, 'msg'=>$msg]);
     }
     public static function percentPost(Request $req){
         $post = $req->except('_token');
@@ -60,6 +63,17 @@ class DetailsController extends Controller
                 break;
         }
         return self::classesDetails($course['id_course'],null, null, 'Dato actualizado.');
+    }
+    public static function teacherUpdate(Request $req){
+        $post = $req->except(['_token']);
+
+        $course = MiscTools::getCourseDataByIdClass($post['id_class']);
+        $mod = new Classes();
+        $mod -> updateValueById('id_teacher', $post['new_teacher'], $post['id_class']);
+        if(!$mod->data->status){
+            return self::classesDetails($course['id_course'], $post['id_class'], 'teacher','No se ha podido actualizar el dato.');
+        }
+        return self::classesDetails($course['id_course'],null,null, 'Dato actualizado');
     }
     public static function subjectsDetails($id, Request $req){
         $role = $req->session()->get('user_role');
