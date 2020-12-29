@@ -59,7 +59,7 @@
                 </td>
                 <td class="mark">
                     <a href="{{($s->type == "exam") ? asset('details/records/exam/'.$s->id_exam) : asset('details/records/work/'.$s->id_work)}}">
-                        <div class="cell">{{$s->mark}}</div>
+                        <div class="cell">{{($s->mark < 0 ) ? '-,-' : $s->mark}}</div>
                     </a>
                 </td>
                 </tr>

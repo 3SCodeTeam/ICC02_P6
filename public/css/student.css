@@ -74,31 +74,54 @@
 
 /*EDICIÓN DATOS PERFIL*/
 .student .profile-data-container{
+    display: block;
     font-family: Arial, Helvetica, sans-serif;
-    columns: 2;
-    margin: 3%;
-    align-self: baseline;
-}
-.student .profile-data{
-    margin: 2%;
-    background-color: pink;
+    margin: 10px;
+    margin-left: auto;
+    margin-right: auto;
 
 }
+.student .profile-data{
+    text-align: justify;
+    font-size: medium;
+    display: inline-block;
+    width: 25%;
+    margin: 15px;
+    padding-left: 10px;
+
+}
+
 .student .profile-data span{
-    padding: 1%
+    text-align: left;
+    font-size: larger;
+    display: block;
+    width: 95%;
+    height: 40px;
+    border: solid thin;
+    border-radius: 5px;
+    padding-top: 10px;
+}
+.student .profile-data span{
+    padding-left: 10px;
 }
 
 .student .selector-container select{
-    border: none;
-    border-bottom: thin black solid;
+    text-align: center;
+    height: 30px;
+    border: thin black solid;
+    width: 150px;
+    margin: 10px;
+    display: inline-block;
 }
 .student .form-container{
     border: solid thin black;
-    padding: 1%;
     margin-bottom: 100px;
+    display: block;
+    margin-top: 20px;
+    padding: 10px;
+
 }
 /*EDICIÓN DATOS PERFIL END*/
-
 
 
 /*EDICIÓN ASIGNATURAS*/
@@ -187,3 +210,38 @@
     font-weight: bold;
 }
 
+/*ClassDetails*/
+
+.classDetails.marks{
+    display: block;
+}
+.classDetails h3{
+    display: block;
+}
+.classDetails .table{
+    display: inline-block;
+    margin: 1%;
+    width: 40%;
+}
+.classDetails table{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+.classDetails thead .cell{
+    font-size: large;
+
+}
+.classDetails tbody .cell{
+    font-size: small;
+    padding-left: 15px;
+}
+.classDetails .finished{
+    background-color: #d7eec7;
+}
+.classDetails .notFinised{
+    background-color: lightcyan;
+}
+.classDetails .fail{
+    background-color: #eac3c3;
+}

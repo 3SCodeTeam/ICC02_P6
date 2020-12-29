@@ -57,13 +57,22 @@ class MarkSTools
             if($examsMarks === '----' || $worksMarks === '----'){
                 $marks[$c->id_class] = ['exam'=>$examsMarks, 'work'=>$worksMarks, 'global'=>'----', 'weights'=>$weights];
             }else{
-                $global = $examsMarks*$weights['exams'] + $worksMarks*$weights['works'];
-                $marks[$c->id_class] = ['exam'=>$examsMarks, 'work'=>$worksMarks, 'global'=>$global, 'weights'=>$weights];
+                if($examsMarks < 5 || $worksMarks < 5){
+                    if($examsMarks < $worksMarks){
+                        $marks[$c->id_class] = ['exam'=>$examsMarks, 'work'=>$worksMarks, 'global'=>$examsMarks, 'weights'=>$weights];
+                    }else{
+                        $marks[$c->id_class] = ['exam'=>$examsMarks, 'work'=>$worksMarks, 'global'=>$worksMarks, 'weights'=>$weights];
+                    }
+                }else{
+                    $global = $examsMarks*$weights['exams'] + $worksMarks*$weights['works'];
+                    $marks[$c->id_class] = ['exam'=>$examsMarks, 'work'=>$worksMarks, 'global'=>$global, 'weights'=>$weights];
+                }
             }
         }
         return $marks;
     }
     public static function getCourseMarks($classesMarks){
+
         $courseMarks = ['exam'=>0, 'work'=>0, 'global'=>0];
         $numMarks = ['exam'=>0, 'work'=>0, 'global'=>0];
         foreach ($classesMarks as $m){
@@ -71,13 +80,13 @@ class MarkSTools
                 if($k === 'exam' || $k === 'work'){
                     if(!($v === '----')){
                         $numMarks[$k] += 1;
-                        $courseMarks[$k] = ($courseMarks[$k] += $v)/$numMarks[$k];
+                        $courseMarks[$k] = $courseMarks[$k] += $v;
                     }
                 }else{
                     if(!($k === 'weights') && !($courseMarks[$k] === '----')){
-                        if(!($v === '----')){
+                        if(!($v === '----') && !($v<5)){
                             $numMarks[$k] += 1;
-                            $courseMarks[$k] = ($courseMarks[$k] += $v)/$numMarks[$k];
+                            $courseMarks[$k] = $courseMarks[$k] += $v;
                         }else{
                             $courseMarks[$k] = '----';
                         }
@@ -85,7 +94,11 @@ class MarkSTools
                 }
             }
         }
-        //dd($courseMarks);
+        foreach ($courseMarks as $k => $v){
+            if(!($v === '----')){
+                $courseMarks[$k] = $v / $numMarks[$k];
+            }
+        }
         return $courseMarks;
     }
     private static function getMarks($mod){

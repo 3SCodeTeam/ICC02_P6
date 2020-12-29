@@ -1,12 +1,12 @@
 <div class="student profile main container">
     <H2>Datos del usuario</H2>
             <div class="profile-data-container">
-                <div class="profile-data profile-username"><span>Nombre de usuario: </span>{{$user_data['username']}}</div>
-                <div class="profile-data profile-name"><span>Nombre: </span>{{$user_data['name']}}</div>
-                <div class="profile-data profile-surname"><span>Apellido: </span>{{$user_data['surname']}}</div>
-                <div class="profile-data profile-email"><span>Email: </span>{{$user_data['email']}}</div>
-                <div class="profile-data profile-nif"><span>NIF: </span>{{$user_data['nif']}}</div>
-                <div class="profile-data profile-phone"><span>Teléfono: </span>{{$user_data['telephone']}}</div>
+                <div class="profile-data profile-username">Nombre de usuario: <span>{{$user_data['username']}}</span></div>
+                <span class="profile-data profile-name">Nombre: <span>{{$user_data['name']}}</span></span>
+                <div class="profile-data profile-surname">Apellido: <span>{{$user_data['surname']}}</span></div>
+                <div class="profile-data profile-email">Email: <span>{{$user_data['email']}}</span></div>
+                <div class="profile-data profile-nif">NIF: <span>{{$user_data['nif']}}</span></div>
+                <div class="profile-data profile-phone">Teléfono: <span>{{$user_data['telephone']}}</span></div>
             </div>
 
             <div class="form-container">

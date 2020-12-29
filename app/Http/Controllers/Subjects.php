@@ -78,8 +78,6 @@ class Subjects extends Controller
     public static function subjectsPost(Request $req, $id_class){
         $values = $req->only('name', 'date', 'time', 'type', 'description');
         $msg=null;
-        $teacherId = $req->session()->get('sql_user_id');
-        $user_data = MiscTools::getTeacherData($teacherId);
 
         if(self::nameExist($values['name'],$values['type'],$id_class)){
             $msg = 'Este nombre ya se ha usado.';
