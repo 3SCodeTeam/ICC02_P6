@@ -42,8 +42,8 @@
         @include('admin/adminClassesSchedule',['freeHoursOfWeek'=>$freeHoursOfWeek, 'formValues'=>$formValues])
         @break
         {{--INSERTAR VISTA BORRAR--}}
-        @case('delete')
-        @include('admin/adminDelete',['delete_data'=>$teachers_data])
+        @case('users')
+        @include('admin.users',['students'=>$students])
         @break
 
         {{--DETALLES EN ADMIN--}}

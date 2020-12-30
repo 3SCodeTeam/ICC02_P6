@@ -11,8 +11,8 @@
     <div class="item {{(in_array($selectedMenu,['classesSchedule','classes'])) ? 'selected':''}}">
         <a {{(!(in_array($selectedMenu,['classesSchedule','classes']))) ? 'href='.asset('/admin/classes').'':''}}>Asignaturas</a>
     </div>
-    <div class="item {{($selectedMenu == 'delete') ? 'selected':''}}">
-        <a {{(!($selectedMenu == 'delete')) ? 'href='.asset('/admin/delete').'':''}}>Eliminar</a>
+    <div class="item {{($selectedMenu == 'users') ? 'selected':''}}">
+        <a {{(!($selectedMenu == 'users')) ? 'href='.asset('/admin/users').'':''}}>Usuarios</a>
     </div>
     @if(in_array($selectedMenu,['studentsDetails','classesDetails','subjectDetails','subjectsOfStudent','record', 'subjects', 'subjectsCreate','subjectsUpdate']))
         <div id="courseAdmin-menu" class="menu-items-cont submenu">

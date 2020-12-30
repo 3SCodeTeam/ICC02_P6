@@ -8,10 +8,10 @@ use App\Entities\Colors;
 use App\Models\Classes;
 use App\Models\Courses;
 
-use App\Models\Exams;
 use App\Models\JoinQueries;
 use App\Models\Percentages;
 use App\Models\Schedules;
+use App\Models\Students;
 use App\Models\Teachers;
 use App\Models\UsersAdmin;
 
@@ -22,7 +22,6 @@ use DateTime;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use phpDocumentor\Reflection\Types\Self_;
 use stdClass;
 
 
@@ -64,12 +63,11 @@ class AdminController extends Controller
         return self::profile($req, 'Datos actualizados');
 
     }
-    public static function teacher(){
-        $mod = new Teachers();
-        $mod ->getAll();
-        $teachers_data = $mod->data->res;
-
-        return view('admin', ['selectedMenu'=>'teachers', 'teachers_data'=>$teachers_data]);
+    public static function teacher($msg=null){
+        $mod = new JoinQueries();
+        $mod -> getTeachersNClasses();
+        $teachers_data = $mod -> data->res;
+        return view('admin', ['selectedMenu'=>'teachers', 'teachers_data'=>$teachers_data, 'msg'=>$msg]);
     }
     public static function teachersPost(Request $req){
         $mod = new Teachers();
@@ -84,21 +82,21 @@ class AdminController extends Controller
                 case 'name':
                 case 'surname':
                     if(!$checker->checkNames($v)){
-                        return self::adminError('admin','El nombre contiene caracteres no validos.', 'teachers',$data);
+                        return self::teacher('El nombre contiene caracteres no validos.');
                     }
                     break;
                 case 'nif':
                     $res=$checker->checkNIF($v);
-                    if(!$res['status']){return self::adminError('admin',$res['msg'],'teachers',$data);}
+                    if(!$res['status']){return self::teacher($res['msg']);}
                     break;
                 case 'password':
-                    if(!$checker->checkLen($v,6)){return self::adminError('admin','La contraseña debe tener al menos 6 caracteres.','teachers',$data);}
+                    if(!$checker->checkLen($v,6)){return self::teacher('La contraseña debe tener al menos 6 caracteres.');}
                     break;
                 case 'telephone':
-                    if(!$checker->checkPhones($v)){return self::adminError('admin','Teléfono mal formado.','teachers',$data);}
+                    if(!$checker->checkPhones($v)){return self::teacher('Teléfono mal formado.');}
                     break;
                 case 'email':
-                    if(!$checker->checkEmail($v)){return self::adminError('admin','Email mal formado.','teachers',$data);}
+                    if(!$checker->checkEmail($v)){return self::teacher('Email mal formado.');}
                     break;
             }
         }
@@ -106,20 +104,19 @@ class AdminController extends Controller
         foreach ($values as $key=>$v){
             switch ($key){
                 case 'nif':
-                    if(in_array($v,$data['values'])){return self::adminError('admin', 'El NIF introducido ya existe en la base de datos.','teachers',$data);}
+                    if(MiscTools::in_ArrayObject($v, $data['values'],$key)){return self::teacher( 'El NIF introducido ya existe en la base de datos.');}
+
                     break;
                 case 'email':
-                    if(in_array($v,$data['values'])){return self::adminError('admin', 'El email introducido ya existe en la base de datos.','teachers',$data);}
+                    if(MiscTools::in_ArrayObject($v,$data['values'],$key)){return self::teacher( 'El email introducido ya existe en la base de datos.');}
             }
         }
         //Insertar datos en DB
         $mod->insertValues($values['name'],$values['surname'],$values['telephone'],$values['nif'],$values['email'],Hash::make($values['password']));
-        if($mod->data->affected_rows>0){
-            $mod->getAll();
-            $teachers_data = $mod->data->res;
-            return view('admin',['msg'=>'¡Profesor registrado!', 'selectedMenu'=>'teachers','teachers_data'=>$teachers_data]);
+        if($mod->data->affected_rows > 0){
+            return self::teacher('Profesor registrado.');
         }
-        return self::adminError('admin', 'Error de acceso a la base de datos.','teachers',$data);
+        return self::teacher( 'Error de acceso a la base de datos.');
     }
     public static function courses($msg=null){
         $mod = new Courses();
@@ -254,8 +251,24 @@ class AdminController extends Controller
         return self::courses('Curso borrado.');
     }
     public static function deleteTeachers($id_teacher){
-        //TODO: logica para el borrado de profesores.
+        /*
+         * Solo se pueden borrar teachers que no tengan clases asociadas.
+         * Borrar las tablas:
+         * teachers
+         */
+        $mod = new Teachers();
+        $mod ->deleteById($id_teacher);
+
+        return self::teacher('Profesor borrado.');
     }
+    public static function deleteStudents($id_student){
+        $res = self::delStudent($id_student);
+        if($res['status']){
+            return self::users('Usuario eliminado');
+        }
+        return self::users($res['error']);
+    }
+
     public static function courseActive($id_course){
         $mod = new Courses();
         $mod ->getById($id_course);
@@ -271,8 +284,44 @@ class AdminController extends Controller
         }
         return redirect()->route('admin',['courses']);
     }
+    public static function users($msg=null){
+        $mod = new Students();
+        $mod -> getAll();
+
+        $students = MiscTools::safeUserData($mod->data->res);
+
+        return view('admin', ['selectedMenu'=>'users', 'students'=>$students, 'msg'=>$msg]);
+    }
+    public static function resetPass($id_student){
+        $defaultPass = Hash::make('plschgme');
+        $mod = new Students();
+        $mod -> updateValueById('pass',$defaultPass,$id_student);
+
+        if($mod->data->status){
+            return self::users('Password restablecido');
+        }
+        return self::users($mod->data->err);
+    }
 
     //AUX FUNCTIONS
+    private static function delStudent($id_student){
+        /*
+         * Tablas student, enrollment, exams, works, notifications,
+         * */
+        $tables = ['exams', 'works', 'enrollment', 'notifications', 'students'];
+        $mod = new JoinQueries();
+        foreach ($tables as $t){
+            if($t === 'students'){
+                $mod->deleteByAttributes($t, ['id'=>$id_student]);
+            }else{
+                $mod->deleteByAttributes($t, ['id_student'=>$id_student]);
+            }
+            if(!$mod->data->status){
+                return ['status'=>false, 'error'=>$mod->data->err];
+            }
+        }
+        return ['status'=>true, 'error'=>null];
+    }
     private static function delCourse($id_course):array{
         /*
          * Obtener array de id_class del curso
@@ -314,7 +363,7 @@ class AdminController extends Controller
         foreach ($tables as $t){
             $mod -> deleteByAttributes($t, ['id_class'=>$id_class]);
             if(!$mod->data->status){
-                return ['status'=>flase, 'error'=>$mod->data->err];
+                return ['status'=> false, 'error'=>$mod->data->err];
             }
         }
         return ['status'=>true, 'error'=>null];
@@ -387,7 +436,8 @@ class AdminController extends Controller
         }
         return false;
     }
-    private static function getAdminUserData($res){
+    private static function getAdminUserData($res): stdClass
+    {
         $user_data = new stdClass();
         $user_data->name = $res[0]->name;
         $user_data->username = $res[0]->username;
@@ -395,7 +445,7 @@ class AdminController extends Controller
         return $user_data;
     }
 
-    private static function updateDB($newValue, $attr, $userId, $mod)
+    private static function updateDB($newValue, $attr, $userId, $mod): array
     {
         $mod->updateValueById(self::checkOption($attr), $newValue, $userId);
         if(!$mod->data->status || !($mod->data->affected_rows > 0)){
@@ -409,8 +459,4 @@ class AdminController extends Controller
         //TODO: actualizar función update para hacerla común a varios models.
         return $option;
     }
-    private static function adminError($view, $msg, $menu, $data){
-        return view($view, ['selectedMenu'=>$menu, 'msg'=>$msg, $data['name']=>$data['values']]);
-    }
-
 }

@@ -68,40 +68,55 @@
 
 /*TEACHER START*/
 .form-container.teachers{
-    width: 925px;
     text-align: center;
+    width: 30%
 }
 .teachers.form.input{
-    margin: 10px 30px 10px 30px;
+    margin: 3px;
     font-size: large;
 }
 .teachers.list.container{
     display: block;
-    text-align: center;
-    margin: 2%;
+    margin-top: 30px;
 }
 .teachers.list.container table{
-    text-align: center;
-    width: 100%;
-    border-bottom: black solid thin;
+    width: 75%;
     border-collapse: collapse;
 }
 .teachers.list.container th {
-    background-color: #a0aec0;
+    text-align: left;
+    padding: 5px 0 0 15px;
+    background-color: tomato;
+    color: white;
 }
 .teachers.list.container td{
-    border: solid thin;
-    text-align: justify;
-    padding: 5px;
+    border-bottom: thin solid black;
+    padding: 1px 0 1px 12px;
+}
+.teachers .col.del{
+    width: 75px;
+    border-left: none;
+}
+.teachers .col.del .cell.del button{
+    background-color: transparent;
+    border: none;
+    font-size: 11px;
+}
+.teachers .cell.del {
+    margin: 0 auto 0 auto;
+}
+.teachers .col.del .cell.del button:hover {
+    color: tomato;
 }
 .teachers.list.container a{
     color: black;
     text-decoration: none;
 }
-.teachers.list.container a:hover{
-    color: #a0aec0;
+.teachers .cell a:hover{
+    color:tomato;
+    font-style:  italic;
 }
-/*TEACHER ENDS*/
+
 
 /*COURSES*/
 .courses .container{
@@ -524,3 +539,25 @@
     width: 12%;
 }
 
+.users thead .cell {
+    font-size: larger;
+}
+.users td .cell{
+    font-size: small;
+    padding: 3px;
+}
+.users tbody button{
+    font-size: smaller;
+}
+.users .cell.del{
+    margin: 0 auto 0 auto;
+    text-align: center;
+}
+.users .cell.pass{
+    margin: 0 auto 0 auto;
+    text-align: center;
+}
+.users tr:hover{
+    background-color: tomato;
+    color: white;
+}

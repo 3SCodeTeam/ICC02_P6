@@ -19,7 +19,7 @@
         <form action="{{asset('/signin/post')}}" method="post">
             @csrf
             <div class="signin-form-input">
-                <input class="signin-form-input" type="text" name="username" patter="[a-zA-Z0-9]{4,}" placeholder="Nombre de usuario" required/>
+                <input class="signin-form-input" type="text" name="username" pattern="[a-zA-Z0-9]{4,}" placeholder="Nombre de usuario" required/>
                 <input class="signin-form-input" type="email" name="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" placeholder="Email" required/>
 
                 {{--pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" PASSWORD PATTERN--}}
@@ -28,9 +28,9 @@
 
             </div>
             <div class="signin-form-input">
-                <input class="signin-form-input" type="text" name="name" patter="[a-zA-Z]{3,}" placeholder="Nombre" required/>
-                <input class="signin-form-input" type="text" name="surname" patter="[a-zA-Z]{3,}" placeholder="Apellidos" required/>
-                <input class="signin-form-input" type="tel" name="telephone" patter="[0-9-]{9,}" placeholder="Teléfono" required/>
+                <input class="signin-form-input" type="text" name="name" pattern="[[a-zA-ZáéíóúÁÉÍÓÚÜ]{3,}" placeholder="Nombre" required/>
+                <input class="signin-form-input" type="text" name="surname" pattern="[a-zA-ZáéíóúÁÉÍÓÚÜ]{3,}" placeholder="Apellidos" required/>
+                <input class="signin-form-input" type="tel" name="telephone" pattern="[0-9-]{9,}" placeholder="Teléfono" required/>
                 <input class="signin-form-input" type="text" name="nif" pattern="([0-9]{9})+([TRWAGMYFPDXBNJZSQVHLCKE]{1})" placeholder="NIF"/>
             </div>
             <div class="signin notification selector container">

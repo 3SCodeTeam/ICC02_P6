@@ -103,6 +103,9 @@ Route::get('/admin/{method}/{param1?}', function (Request $req, $method, $param1
         case 'deleteClass': return AdminController::deleteClasses($param1);
         case 'deleteCourse': return AdminController::deleteCourses($param1);
         case 'deleteTeacher':return AdminController::deleteTeachers($param1);
+        case 'deleteStudent': return AdminController::deleteStudents($param1);
+        case 'users':return AdminController::users();
+        case 'resetPass': return AdminController::resetPass($param1);
         }
     return LogInController::error('Recurso no disponible');
 })->middleware('Session:admin')->name('admin');
@@ -114,7 +117,6 @@ Route::post('/admin/{method}', [function ($method, Request $req){
         case 'coursesPost': return AdminController::coursesPost($req);
         case 'classesPost': return AdminController::classesPost($req);
         case 'classesPostSchedule': return AdminController::classesPostSchedule($req);
-        case 'deletePost': return AdminController::deletePost();
     }
     return LogInController::error('Recurso no disponible');
 }])->middleware('Session:admin');//->name('admin');

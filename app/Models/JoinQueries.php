@@ -48,6 +48,14 @@ class JoinQueries
         $this->data = self::doQuery($stm, $values);
         return $this->data;
     }
+    public function getTeachersNClasses(){
+        $stm = 'SELECT t.id_teacher, t.name, t.email, t.surname, t.telephone, t.nif, COUNT(c.id_class) as classes FROM teachers as t LEFT JOIN class as c
+        ON t.id_teacher = c.id_teacher
+        GROUP BY t.id_teacher, t.name, t.email, t.surname, t.telephone, t.nif
+        ORDER by t.surname, t.name';
+        $this->data = self::doQuery($stm);
+        return $this->data;
+    }
 
     //Devuelve las horas ocupadas de un profesor en un periodo por días de la semana.
     public function getScheduleByTeacherAndDate($id_teacher, $start_date, $end_date): Data

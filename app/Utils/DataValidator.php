@@ -115,7 +115,7 @@ class DataValidator
             $this->res['msg'] = 'El valor debe contener al menos 1 número y una letra.';
             return $this->res;
         }
-        if(strlen($value) > 9){
+        if(strlen($value) > 10){
             $this->res['msg'] = 'El valor excede el número de caracteres.';
             return $this->res;
         }
