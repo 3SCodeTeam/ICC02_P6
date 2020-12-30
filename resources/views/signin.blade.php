@@ -28,8 +28,8 @@
 
             </div>
             <div class="signin-form-input">
-                <input class="signin-form-input" type="text" name="name" pattern="[[a-zA-ZáéíóúÁÉÍÓÚÜ]{3,}" placeholder="Nombre" required/>
-                <input class="signin-form-input" type="text" name="surname" pattern="[a-zA-ZáéíóúÁÉÍÓÚÜ]{3,}" placeholder="Apellidos" required/>
+                <input class="signin-form-input" type="text" name="name" pattern="[[a-zA-ZáéíóúÁÉÍÓÚÜ ]{3,}" placeholder="Nombre" required/>
+                <input class="signin-form-input" type="text" name="surname" pattern="[a-zA-ZáéíóúÁÉÍÓÚÜ ]{3,}" placeholder="Apellidos" required/>
                 <input class="signin-form-input" type="tel" name="telephone" pattern="[0-9-]{9,}" placeholder="Teléfono" required/>
                 <input class="signin-form-input" type="text" name="nif" pattern="([0-9]{9})+([TRWAGMYFPDXBNJZSQVHLCKE]{1})" placeholder="NIF"/>
             </div>

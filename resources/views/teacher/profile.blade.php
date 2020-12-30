@@ -5,9 +5,9 @@
             @csrf
             <div class="teacher profile inputs left container">
                 <label for="name">Nombre</label>
-                <input type="text" name="name" id="name" placeholder="{{$user_data['name']}}" pattern="[a-zA-ZáéíóúÁÉÍÓÚÜ]{3,}"/>
+C                <input type="text" name="name" id="name" placeholder="{{$user_data['name']}}" pattern="[a-zA-ZáéíóúÁÉÍÓÚÜ ]{3,}"/>
                 <label for="surname">Apellidos</label>
-                <input type="text" name="surname" id="surname" placeholder="{{$user_data['surname']}}" pattern="[a-zA-ZáéíóúÁÉÍÓÚÜ]{3,}"/>
+                <input type="text" name="surname" id="surname" placeholder="{{$user_data['surname']}}" pattern="[a-zA-ZáéíóúÁÉÍÓÚÜ ]{3,}"/>
                 <label for="phone">Teléfono</label>
                 <input type="tel" name="phone" id="phone" placeholder="{{$user_data['telephone']}}" pattern="[0-9-]{9,}"/>
                 <label for="nif">NIF</label>

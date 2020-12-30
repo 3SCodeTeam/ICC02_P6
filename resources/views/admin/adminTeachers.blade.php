@@ -4,9 +4,9 @@
                 <form action="{{asset('admin/teachersPost')}}" method="post">
                     @csrf
                     <div class="techers form-inputs container">
-                        <input class="teachers form input" type="text" id="name" name="name" placeholder="Nombre del profesor" pattern="[a-zA-ZáéíóúÁÉÍÓÚÜ]{3,}" required/>
+                        <input class="teachers form input" type="text" id="name" name="name" placeholder="Nombre del profesor" pattern="[a-zA-ZáéíóúÁÉÍÓÚÜ ]{3,}" required/>
                         <input class="teachers form input" type="text" id="nif" name="nif" placeholder="NIF" pattern="([0-9]{9})+([TRWAGMYFPDXBNJZSQVHLCKE]{1})" required/><br>
-                        <input class="teachers form input" type="text" id="surname" name="surname" placeholder="Apellido" pattern="[a-zA-ZáéíóúÁÉÍÓÚÜ]{3,}" required/>
+                        <input class="teachers form input" type="text" id="surname" name="surname" placeholder="Apellido" pattern="[a-zA-ZáéíóúÁÉÍÓÚÜ ]{3,}" required/>
                         <input class="teachers form input" type="tel" id="telephone" name="telephone" placeholder="Teléfono" pattern="[0-9-]{9,}" required/><br>
                         <input class="teachers form input" type="email" id="email" name="email" placeholder="Email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"  required/>
                         <input class="teachers form input" type="password" id="password" name="password" placeholder="Contraseña" pattern=".{6,}" required/><br>
