@@ -19,6 +19,7 @@ class JoinQueries
 
     public function getClassesOfDay($id, $date): Data
     {
+        $this->data = new Data();
         $values = [$id, $date];
         $stm = 'SELECT S.id_class, S.day, S.time_start, S.time_end, C.name as class_name, C.color, Co.name as course_name FROM schedule as S inner JOIN class as C ON S.id_class=C.id_class INNER JOIN courses as Co ON C.id_course = Co.id_course
         WHERE Co.id_course IN (SELECT id_course FROM enrollment WHERE id_student = ? and status = 1) and S.day =? ORDER BY S.day, S.time_start';

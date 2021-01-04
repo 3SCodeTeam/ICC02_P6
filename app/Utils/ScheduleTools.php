@@ -34,8 +34,8 @@ class ScheduleTools
        for ($i = $weekNum; $i < intval($weekNum) + 6; $i++) {
            foreach ($dow as $d) {
                if ($d === 'SEMANA') {
-                   if ($i > 53) {
-                       $weekData[] = ['col' => $d, 'value' => '1'];
+                   if ($i > 52) {
+                       $weekData[] = ['col' => $d, 'value' => $i-52];
                    } else {
                        $weekData[] = ['col' => $d, 'value' => $i];
                    }
@@ -116,7 +116,7 @@ class ScheduleTools
             case 'Tue': $days+=1; break;
             case 'Wed': $days+=2; break;
             case 'Thu': $days+=3; break;
-            case 'Fry': $days+=4; break;
+            case 'Fri': $days+=4; break;
             case 'Sat': $days+=5; break;
             case 'Sun': $days+=6; break;
         }

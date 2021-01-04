@@ -16,7 +16,7 @@
                         @else
                             <td class="col classes {{$d['col']}}">
                                 @foreach($d['value'] as $v)
-                                    <div class="subject"><a style="color: {{$v['color']}}" href="{{asset('/student/record/'.$v['id'])}}">{{$v['name']}}</a></div>
+                                    <div class="subject"><a style="color: {{$v['color']}}" href="{{asset('/student/classDetails/'.$v['id'])}}">{{$v['name']}}</a></div>
                                 @endforeach
                             </td>
                         @endif
@@ -43,7 +43,7 @@
                             @else
                                 <td class="col classes {{$d['col']}}">
                                     @foreach($d['value'] as $v)
-                                        <span><a style="color:{{$v['color']}}" href="{{asset('student/record/'.$v['id'])}}">{{$v['name']}}</a></span>
+                                        <span><a style="color:{{$v['color']}}" href="{{asset('/student/classDetails/'.$v['id'])}}">{{$v['name']}}</a></span>
                                     @endforeach
                                 </td>
                             @endif
@@ -74,7 +74,7 @@
                                 @else
                                     <td class="col date">
                                         @foreach($d['value'] as $v)
-                                            <span><a style="color:{{$v['color']}}" href="{{asset('student/record/'.$v['id'])}}">{{$v['name']}}</a></span>
+                                            <span><a style="color:{{$v['color']}}" href="{{asset('/student/classDetails/'.$v['id'])}}">{{$v['name']}}</a></span>
                                         @endforeach
                                     </td>
                                 @endif

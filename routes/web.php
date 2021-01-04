@@ -66,7 +66,7 @@ Route::match(array('GET', 'POST'),'/signin/{method}', function ($method, Request
     return SignInController::error('La ruta solicitada no es accesible.');
 });
 
-//SESION CONTROL FROM THIS POINT
+//SESION CONTROL FROM THIS POINT DOWN
 Route::get('/student/{method}/{id?}', function (Request $req, $method, $id=null){
     switch ($method){
         case 'start': return StudentController::start($req);
