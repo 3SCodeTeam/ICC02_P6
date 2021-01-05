@@ -190,6 +190,9 @@ class AdminController extends Controller
         $classMod = new Classes();
         $classMod -> getByIdCourse($inputValues['course']);
 
+        if(count($inputSchedule)<1){
+            return self::classesPost($req,'Debe seleccionarse al menos un hora.');
+        }
         If(MiscTools::in_ArrayObject($inputValues['name'],$classMod->data->res,'name')){
             return self::classesPost($req,'El nombre de la asignatura introducido ya existe en este curso.');
         }

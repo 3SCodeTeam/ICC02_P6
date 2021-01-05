@@ -20,7 +20,7 @@
     <div class="teachers list container">
         <table><tbody>
             <tr class="row header">
-                <th class="col del">Alumnos</th>
+                <th class="col del">Clases</th>
                 <th class="col name surname">Apellidos, nombre</th>
                 <th class="col email">Email</th>
                 <th class="col nif">NIF</th>
