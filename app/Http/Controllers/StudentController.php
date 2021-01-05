@@ -15,6 +15,8 @@ use App\Models\Works;
 use App\Utils\MarkSTools;
 use App\Utils\ScheduleTools;
 use App\Utils\DataValidator;
+use DateInterval;
+use DateTime;
 use Illuminate\Http\Request;
 
 
@@ -25,6 +27,7 @@ class StudentController extends Controller
         //Lo enviamos al perfil.
         return self::profile($req);
     }
+
     public static function profile(Request $req, $msg=null){/*SECCION PROFILE*/
         $id_student = $req->session()->get('sql_user_id');
         $existClasses = self::existClasses($id_student);
@@ -98,6 +101,7 @@ class StudentController extends Controller
         return  self::profile($req, $res['msg']);
 
     }
+
     public static function enrollment(Request $req, $msg=null){/*SECCION ENROLLMENT*/
         $id_student = $req->session()->get('sql_user_id');
         $existClasses = self::existClasses($id_student);
@@ -163,26 +167,54 @@ class StudentController extends Controller
 
         return self::enrollment($req, $msg);
     }
+
     public static function mSchedule(Request $req){/*SECCIÓN HOARIO PRIMERA CARGA DESDE EL MENÚ*/
         $id_student = $req->session()->get('sql_user_id');
+        $current_date = $req->session()->get('schedule_date');
         $existClasses = self::existClasses($id_student);
-        $schedule_data = ScheduleTools::buildMonthSchedule($id_student);
-        return view('student', ['selectedMenu'=>'mSchedule', 'existClasses'=>$existClasses, 'schedule_data' => $schedule_data,]);
+        $schedule_data = ScheduleTools::buildMonthSchedule($id_student, $req);
+        return view('student', ['selectedMenu'=>'mSchedule', 'existClasses'=>$existClasses, 'schedule_data' => $schedule_data, 'current_date'=>$current_date]);
     }
     public static function wSchedule(Request $req){/*SECCIÓN HORARIO SEMANAL CARGA DESDE EL MENÚ*/
         $id_student = $req->session()->get('sql_user_id');
+        $current_date = $req->session()->get('schedule_date');
         $existClasses = self::existClasses($id_student);
-        $schedule_data = ScheduleTools::buildWeekSchedule($id_student);
+        $schedule_data = ScheduleTools::buildWeekSchedule($id_student, $req);
 
-        return view('student', ['selectedMenu'=>'wSchedule', 'existClasses'=>$existClasses, 'schedule_data'=>$schedule_data]);
+        return view('student', ['selectedMenu'=>'wSchedule', 'existClasses'=>$existClasses, 'schedule_data'=>$schedule_data, 'current_date'=>$current_date]);
     }
     public static function dSchedule(Request $req){/*SECCIÓN HORARIO DIARIO CARGA DESDE EL MENÚ*/
         $id_student = $req->session()->get('sql_user_id');
         $existClasses = self::existClasses($id_student);
-        $schedule_data = ScheduleTools::buildDaySchedule($id_student);
+        $schedule_data = ScheduleTools::buildDaySchedule($id_student, $req);
 
         return view('student', ['selectedMenu'=>'dSchedule', 'existClasses'=>$existClasses, 'schedule_data'=>$schedule_data]);
     }
+    public static function scheduleForward(Request $req, $type){
+        $current_date = $req->session()->get('schedule_date');
+        $date_interval = self::getInterval($type);
+
+        $new_date = $current_date->add($date_interval);
+        $req->session()->put(['schedule_date'=>$new_date]);
+
+        return self::getSchedule($req, $type);
+    }
+    public static function scheduleBackward(Request $req, $type){
+        $current_date = $req->session()->get('schedule_date');
+        $date_interval = self::getInterval($type);
+
+        $new_date = $current_date->sub($date_interval);
+        $req->session()->put(['schedule_date'=>$new_date]);
+
+        return self::getSchedule($req, $type);
+    }
+    public static function scheduleToday(Request $req, $type){
+        $new_date = new DateTime(date('Y-m-d'));
+        $req->session()->put(['schedule_date'=>$new_date]);
+
+        return self::getSchedule($req, $type);
+    }
+
     public static function record(Request $req){/*SECCIÓN RECORD CARGA DESDE EL MENÚ*/
         $id_student = $req->session()->get('sql_user_id');
         $existClasses = self::existClasses($id_student);
@@ -220,6 +252,24 @@ class StudentController extends Controller
     }
 
     /*AUX FUNCTIONS*/
+    private static function getSchedule($req, $type){
+        switch ($type){
+            case 'dSchedule': return self::dSchedule($req);
+            case 'wSchedule': return self::wSchedule($req);
+            case 'mSchedule':
+            default: return self::mSchedule($req);
+        }
+    }
+    private static function getInterval($type): DateInterval
+    {
+        switch ($type){
+            case 'dSchedule': $date_interval = new DateInterval('P1D');break;
+            case 'wSchedule': return $date_interval = new DateInterval('P7D'); break;
+            case 'mSchedule':
+            default: $date_interval = new DateInterval('P1M');
+        }
+        return $date_interval;
+    }
     private static function getClassesMarksWeights($id_class){
         $pMod = new Percentages();
         $pMod->getByIdClass($id_class);

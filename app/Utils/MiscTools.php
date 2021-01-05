@@ -142,4 +142,5 @@ class MiscTools
         }
         return $availableTeachers;
     }
+
 }

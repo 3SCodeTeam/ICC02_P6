@@ -27,13 +27,13 @@
             <a {{(!($selectedMenu == 'mSchedule')) ? 'href='.asset('/student/mSchedule').'':''}}>Mensual</a>
         </div>
         <div class="item backward">
-            <a href="{{asset('/student/'.$selectedMenu.'/backward')}}"><</a>
+            <a href="{{asset('/student/backward/'.$selectedMenu)}}"><</a>
         </div>
         <div class="item today">
-            <a href="{{asset('/student/'.$selectedMenu.'/today')}}">Hoy</a>
+            <a href="{{asset('/student/today/'.$selectedMenu)}}">Hoy</a>
         </div>
         <div class="item forward">
-            <a href="{{asset('/student/'.$selectedMenu.'/forward')}}">></a>
+            <a href="{{asset('/student/forward/'.$selectedMenu)}}">></a>
         </div>
     </div>
 @endif

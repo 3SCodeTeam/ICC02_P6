@@ -77,6 +77,9 @@ Route::get('/student/{method}/{id?}', function (Request $req, $method, $id=null)
         case 'dSchedule': return StudentController::dSchedule($req);
         case 'record': return StudentController::record($req);
         case 'classDetails':return StudentController::recordDetail($id, $req);
+        case 'forward': return StudentController::scheduleForward($req, $id);
+        case 'backward': return StudentController::scheduleBackward($req, $id);
+        case 'today': return StudentController::scheduleToday($req, $id);
     }
     return LogInController::error('Recurso no disponible');
 })->middleware('Session')->name('student');
@@ -85,9 +88,6 @@ Route::post('/student/{method}', function ($method, Request $request){
     switch ($method){
         case 'enrollmentPost': return StudentController::enrollmentPost($request);
         case 'profilePost': return StudentController::profilePost($request);
-        //TODO: horario día concreto
-        //TODO: horario semana concreta
-        //TODO: horario mes concreto
     }
     return LogInController::error('Recurso no disponible');
 })->middleware('Session');

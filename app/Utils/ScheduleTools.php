@@ -7,7 +7,7 @@ namespace App\Utils;
 use App\Models\JoinQueries;
 use DateInterval;
 use DateTime;
-
+use Illuminate\Http\Request;
 
 class ScheduleTools
 {
@@ -15,10 +15,15 @@ class ScheduleTools
    private static $dow = ['HORA','LUNES', 'MARTES','MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO', 'DOMINGO'];
 
 
-    public static function buildMonthSchedule($id_student)
+    public static function buildMonthSchedule($id_student, Request $req)
    {
-       date_default_timezone_set('Europe/London');
-       $date = new DateTime(date('Y-m-d'));
+
+       $date = $req->session()->get('schedule_date');
+       if(!isset($date)){
+           date_default_timezone_set('Europe/Madrid');
+           $date = new DateTime(date('Y-m-d'));
+           $req->session()->put(['schedule_date'=>$date]);
+       }
 
        $plus1Day = new DateInterval('P1D');
        $currentMonthFirstDay = self::getCurrentMonthFirstDate($date); //Primer día del mes.
@@ -40,7 +45,7 @@ class ScheduleTools
                        $weekData[] = ['col' => $d, 'value' => $i];
                    }
                } else {
-                   $weekData[] = ['col' => $d, 'value' => self::getClassesByDay($ctrlDate, $id_student), 'date'=>$ctrlDate->format('Y-m-d-l')];
+                   $weekData[] = ['col' => $d, 'value' => self::getClassesByDay($ctrlDate, $id_student), 'date'=>$ctrlDate->format('d-m-Y')];
                    $ctrlDate->add($plus1Day);
                }
            }
@@ -49,10 +54,15 @@ class ScheduleTools
        }
        return $monthData;
    }
-    public static function buildWeekSchedule($id_student){
+    public static function buildWeekSchedule($id_student, Request $req){
+        $date = $req->session()->get('schedule_date');
+        if(!isset($date)){
+            date_default_timezone_set('Europe/Madrid');
+            $date = new DateTime(date('Y-m-d'));
+            $req->session()->put(['schedule_date'=>$date]);
+        }
         $plus1Day = new DateInterval('P1D');
-        date_default_timezone_set('Europe/London');
-        $date = new DateTime();
+
 /*Si se asigna el valor $date a $ctrlDate las variables apuntan a la misma dirección de memoria al ser static.*/
         $ctrlDate = self::getFirstDate($date); //Fecha del primer día de la semana actual.
 
@@ -75,8 +85,13 @@ class ScheduleTools
         }
         return $weekData;
     }
-    public static function buildDaySchedule($id_student){
-        $date = new DateTime(date('Y-m-d'));
+    public static function buildDaySchedule($id_student, Request $req){
+        $date = $req->session()->get('schedule_date');
+        if(!isset($date)){
+            date_default_timezone_set('Europe/Madrid');
+            $date = new DateTime(date('Y-m-d'));
+            $req->session()->put(['schedule_date'=>$date]);
+        }
 
         $col=['HORA', $date->format("d/m/Y")];
 

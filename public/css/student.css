@@ -39,15 +39,32 @@
     text-align: center;
     font-size: larger;
 }
-.schedule .col.classes{
-    padding-left: 20px;
+.schedule .day{
+    padding: 2px;
+}
+.schedule .dayClasses{
+    display: inline-block;
+    width: 90%;
+}
+.schedule .dayDate{
+    padding: 0;
+    display: inline-block;
+    writing-mode: vertical-rl;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 /*Row high for daily and weekly schedule*/
 .schedule .row.week.hour td{
     height: 35px;
 }
-
+.schedule .weeknum{
+    padding: 10px;
+    font-size: larger;
+}
+.schedule td.sem{
+    padding-left:10px;
+}
 .schedule .week.col.SEMANA{
     width: 6%;
 }

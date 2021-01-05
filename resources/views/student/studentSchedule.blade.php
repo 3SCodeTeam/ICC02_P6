@@ -15,9 +15,14 @@
                             <td class="col {{$d['col']}}"><span>{{$d['value']}}</span></td>
                         @else
                             <td class="col classes {{$d['col']}}">
-                                @foreach($d['value'] as $v)
-                                    <div class="subject"><a style="color: {{$v['color']}}" href="{{asset('/student/classDetails/'.$v['id'])}}">{{$v['name']}}</a></div>
-                                @endforeach
+                                <div class="day">
+                                    <div class="dayDate">{{$d['date']}}</div>
+                                    <div class="dayClasses">
+                                        @foreach($d['value'] as $v)
+                                            <div class="subject"><a style="color: {{$v['color']}}" href="{{asset('/student/classDetails/'.$v['id'])}}">{{$v['name']}}</a></div>
+                                        @endforeach
+                                    </div>
+                                </div>
                             </td>
                         @endif
                     @endforeach
@@ -27,6 +32,7 @@
         </tbody></table>
     @endif
     @if($selectedMenu == 'wSchedule')
+        <div class="weeknum">Semana {{$current_date->format('W')}}</div>
         <table class="weekly schedule"><tbody>
             @foreach($schedule_data as $row)
                 @if($loop->first)
@@ -39,11 +45,11 @@
                     <tr class="row week hour">
                         @foreach($row as $d)
                             @if($d['col']=='HORA')
-                                <td class="col {{$d['col']}}"><span>{{$d['value']}}</span></td>
+                                <td class="col {{$d['col']}}"><div class="hour">{{$d['value']}}</div></td>
                             @else
-                                <td class="col classes {{$d['col']}}">
+                                <td class="col classes {{($d['col'] === 'SÁBADO' || $d['col'] === 'DOMINGO') ? 'finde ':'sem'}} {{$d['col']}}">
                                     @foreach($d['value'] as $v)
-                                        <span><a style="color:{{$v['color']}}" href="{{asset('/student/classDetails/'.$v['id'])}}">{{$v['name']}}</a></span>
+                                        <div class="subject"><a style="color:{{$v['color']}}" href="{{asset('/student/classDetails/'.$v['id'])}}">{{$v['name']}}</a></div>
                                     @endforeach
                                 </td>
                             @endif
