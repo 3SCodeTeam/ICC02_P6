@@ -18,6 +18,7 @@ use App\Utils\DataValidator;
 use DateInterval;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 
 class StudentController extends Controller
@@ -49,8 +50,13 @@ class StudentController extends Controller
         $userId = $req->session()->get('sql_user_id');
         $option = $req->input('user_data_option');
         $value = $req->input('value');
+        if($option === 'password'){
+            $value = Hash::make($value);
+        }
+
         $notifications = $req->only('work', 'exam', 'continuous_assessment', 'final');
         $notifications = self::setNotificationsData($notifications);
+
         if($option === 'notifications'){
             //Actualizar notificaciones
             $nmod = new Notifications();
