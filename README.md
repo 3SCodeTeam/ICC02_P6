@@ -3,7 +3,7 @@ El proyecto que se recoge en el presente documento consiste en el diseño, desar
 Este proyecto se ha generado con Laravel 8.x
 
 ## Hecho con
-Laravel 8.x y MySQL
+Laravel 8.x, MySQL y PHPStorm
 
 ## Contributing
 3SCode no se hace responsable, en ningún caso, de los daños y perjuicios de cualquier naturaleza que pudieran ocasionar, a título enunciativo: errores u omisiones en los contenidos, falta de disponibilidad del portal o la transmisión de virus o programas maliciosos o lesivos en los contenidos, a pesar de haber adoptado todas las medidas tecnológicas necesarias para evitarlo.
