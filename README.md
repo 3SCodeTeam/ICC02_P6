@@ -1,4 +1,4 @@
-#3SCode
+####3SCode
 El proyecto que se recoge en el presente documento consiste en el diseño, desarrollo e implementación de una aplicación backend con PHP y framework MVC para la gestión académica.
 Este proyecto se ha generado con Laravel 8.x
 
